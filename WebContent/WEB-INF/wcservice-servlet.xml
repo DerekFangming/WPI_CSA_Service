@@ -1,11 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:mvc="http://www.springframework.org/schema/mvc"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xsi:schemaLocation="
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx" xsi:schemaLocation="
         http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
         http://www.springframework.org/schema/mvc 
@@ -16,50 +10,59 @@
         http://www.springframework.org/schema/context/spring-context-4.2.xsd
         http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
-        
-	
-	<mvc:annotation-driven/>
-	
- <import resource="classpath:/sdkServiceConfiguration.xml"/>
- 
-  <context:component-scan base-package="com.fmning.wcservice"/>
- 
-      <aop:aspectj-autoproxy/>
 
-    <tx:annotation-driven transaction-manager="txManagerWC"/>
-  
-    <bean id="txManagerWC" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-      <property name="dataSource" ref="dataSourceWcService"/>
-    </bean>
 
-    <!--Bean to load properties file -->  
-   <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">    
-     <!--reads config.properties file-->
-     <property name="location" value="classpath:dataSource.properties" />
-   </bean>    
+  <mvc:annotation-driven/>
 
-    <bean id="dataSourceWcService" class="com.fmning.service.dao.impl.SdkDataSourceImpl">
-      <property name="driverClassName" value="org.postgresql.Driver"/>
-      <property name="url" value="jdbc:postgresql://${serverCore}/${coreDb}"/>
-      <property name="username" value="${coreDbUsername}"/>
-      <property name="password" value="${coreDbPassword}"/>
-      <property name="dbNickname" value="WC_SERVICE"/>
-    </bean>
- 	
- <bean 
-    class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <import resource="classpath:/sdkServiceConfiguration.xml" />
+
+  <context:component-scan base-package="com.fmning.wcservice" />
+
+  <aop:aspectj-autoproxy/>
+
+  <tx:annotation-driven transaction-manager="txManagerWC" />
+
+  <bean id="txManagerWC" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSourceWcService" />
+  </bean>
+
+  <!--Bean to load properties file -->
+  <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <!--reads config.properties file-->
+    <property name="location" value="classpath:dataSource.properties" />
+  </bean>
+
+  <bean id="dataSourceWcService" class="com.fmning.service.dao.impl.SdkDataSourceImpl">
+    <property name="driverClassName" value="org.postgresql.Driver" />
+    <property name="url" value="jdbc:postgresql://${serverCore}/${coreDb}" />
+    <property name="username" value="${coreDbUsername}" />
+    <property name="password" value="${coreDbPassword}" />
+    <property name="dbNickname" value="WC_SERVICE" />
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject" ref="dataSourceRegistry" />
     <property name="targetMethod" value="dataSourcesAndTablesInitialize" />
-    
+
     <property name="arguments">
       <list>
         <value type="java.lang.Class">com.fmning.wcservice.dao.impl.WcTableType</value>
         <list>
-          <ref bean="dataSourceWcService"/> 
+          <ref bean="dataSourceWcService" />
         </list>
       </list>
     </property>
   </bean>
 
-   
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="prefix" value="/WEB-INF/jsp/" />
+    <property name="suffix" value=".jsp" />
+    <property name="redirectHttp10Compatible" value="false" />
+  </bean>
+
+  <mvc:resources mapping="/resources/**" location="/WEB-INF/jsp/" cache-period="31556926" />
+
+  <mvc:annotation-driven />
+
+
 </beans>

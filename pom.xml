@@ -25,6 +25,11 @@
                 </configuration>
             </plugin>
         </plugins>
+        <testResources>
+			<testResource>
+				<directory>WebContent/WEB-INF</directory>
+			</testResource>
+		</testResources>
     </build>
     <dependencyManagement>
         <dependencies>

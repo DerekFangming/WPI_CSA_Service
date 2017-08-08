@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import junit.framework.TestCase;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/wcservice-servlet.xml")
+@ContextConfiguration(locations="**/wcservice-servlet.xml")
 public class AboutManagerTests extends TestCase
 {
 	@Autowired private AboutManager helloMgr;
