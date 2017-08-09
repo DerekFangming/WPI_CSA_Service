@@ -45,15 +45,6 @@ public class SgController {
 	@Autowired private UserManager userManager;
 	@Autowired private HelperManager helperManager;
 	
-	public static String CURRENT_VERSION = "1.00";
-	@SuppressWarnings("serial")
-	public static Map<String, String> versionInfo = new HashMap<String, String>(){
-		{
-			put("0.00", "AppUpdate&App out of date&Please go to app store and download the newest version");
-			put(CURRENT_VERSION, "Ok& & ");
-		}
-	};
-	
 	
 	@RequestMapping(value = "/get_sg", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getSg(HttpServletRequest request) {
@@ -163,7 +154,7 @@ public class SgController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/add_sg_report", method = RequestMethod.POST)
+	@RequestMapping(value = "/create_sg_report", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> addSgReport(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
@@ -198,7 +189,7 @@ public class SgController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/add_sg_article", method = RequestMethod.POST)
+	@RequestMapping(value = "/create_sg_article", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> addSgArticle(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{

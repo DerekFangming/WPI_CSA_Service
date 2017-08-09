@@ -16,7 +16,8 @@ public class WebController {
     public String emailVerifivation(HttpServletRequest request, ModelMap model) {
 		
 		//model.addAttribute("msg", "Your email address has been confirmed");
-		
+
+
 		System.out.println(Util.emailValidationPath);
 		return "index";
 	}
