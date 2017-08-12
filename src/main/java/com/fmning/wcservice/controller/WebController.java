@@ -18,7 +18,7 @@ public class WebController {
 		//model.addAttribute("msg", "Your email address has been confirmed");
 
 
-		System.out.println(Util.emailValidationPath);
+		System.out.println("WORKING");
 		return "index";
 	}
 
