@@ -40,11 +40,7 @@ public class TestController {
 	
 	@RequestMapping(value="/build", method = RequestMethod.GET)
 	public String goToBuilder(HttpServletRequest request, ModelMap model){
-		//Pair<Cookie, Cookie> cookies = cookieManager.extractPartnerCookies(request);
-		//model.addAttribute("username",cookies.getFirst().getValue());
-		String a = (String)request.getParameter("haha");
 		model.addAttribute("message", "Hello Spring MVC Framework!");
-		model.addAttribute("color", a);
 		return "emailConfirm";
 	}
 	

@@ -82,14 +82,10 @@ public class EmailController {
 		if (respond.equals("success")) {
 			model.addAttribute("msg", "Your email address has been confirmed");
 		} else if (respond.equals("resend")) {
-			model.addAttribute("msgFont", "text-danger");
-			model.addAttribute("msg", "Your confirmation code has expired");
-			model.addAttribute("extraMsg", "<div class=\"intro-lead-in\">A new confirmation email has been sent to your inbox</div>");
+			model.addAttribute("msg", "Your confirmation code has expired and a new confirmation email has been sent to your inbox.");
 		} else {
-			model.addAttribute("msgFont", "text-danger");
-			model.addAttribute("msg", respond);
-			model.addAttribute("extraMsg", "<div class=\"intro-lead-in\">Please email <a href=\"mailto:admin@fmning.com?Subject="
-					+ respond.replace(" ", "%20") + "\" target=\"_top\">admin@fmning.com</a> for support</div>");
+			model.addAttribute("msg", respond + "<br>Please email <a style=\"color:white\" href=\"mailto:admin@fmning.com?Subject=" + 
+						respond.replace(" ", "%20") + "\" target=\"_top\">admin@fmning.com</a> for support");
 		}
 		
 		return "emailConfirm";
