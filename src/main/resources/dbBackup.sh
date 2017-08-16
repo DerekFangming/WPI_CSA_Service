@@ -3,9 +3,8 @@
 # Backup a Postgresql database into a daily file.
 #
 
-sleep 5
 
-BACKUP_DIR=/Users/Cyan/Documents/pg_backup
+BACKUP_DIR=$1
 DAYS_TO_KEEP=0
 FILE_SUFFIX=_pg_backup.sql
 DATABASE=projectNing11

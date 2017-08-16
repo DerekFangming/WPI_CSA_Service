@@ -7,6 +7,8 @@ public class Utils {
 	//************************* PROD
 	public final static String emailVerificationPath = "https://wcservice.fmning.com/email_verification/";
 	
+	public final static String dbBackupFolder = "/Users/Cyan/Documents/pg_backup";
+	
 	public static String createVerificationEmail(String veriCode) {
 		String message = "Hi there,";
 		message += "\n";

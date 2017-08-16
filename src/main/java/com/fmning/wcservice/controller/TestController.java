@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class TestController {
@@ -52,7 +53,7 @@ public class TestController {
 			System.out.println(file.getAbsolutePath());
 			respond.put("path", file.getAbsolutePath());
 			
-			process = Runtime.getRuntime().exec(file.getAbsolutePath());
+			process = Runtime.getRuntime().exec(file.getAbsolutePath() + " " + Utils.dbBackupFolder);
 			
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 			        process.getErrorStream()));             
