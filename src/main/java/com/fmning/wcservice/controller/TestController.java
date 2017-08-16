@@ -1,5 +1,11 @@
 package com.fmning.wcservice.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.ProcessBuilder.Redirect;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Date;
@@ -7,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,6 +40,54 @@ public class TestController {
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}
+
+		respond.put("exp", "");
+		respond.put("e", "");
+
+	    Process process = null;
+		try {
+
+			ClassLoader classLoader = getClass().getClassLoader();
+			File file = new File(classLoader.getResource("dbBackup.sh").getFile());
+			System.out.println(file.getAbsolutePath());
+			respond.put("path", file.getAbsolutePath());
+			
+			process = Runtime.getRuntime().exec(file.getAbsolutePath());
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+			        process.getErrorStream()));             
+			String line;
+			while ((line = in.readLine()) != null) {
+				respond.put("exp", respond.get("exp") + line + "\n");
+			    System.out.println("-----" + line);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			respond.put("e", respond.get("e") + e.getStackTrace().toString() + "\n");
+		}
+
+	    int exitValue = 0;
+		try {
+			exitValue = process.waitFor();
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+			        process.getErrorStream()));             
+			String line;
+			while ((line = in.readLine()) != null) {
+			    System.out.println("+++++" + line);
+			}
+			
+			
+		} catch (InterruptedException | NullPointerException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    if (exitValue != 0) {
+	        // check for errors
+	        //new BufferedInputStream(process.getErrorStream());
+	        throw new RuntimeException("execution of script failed!");
+	    }
+		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
@@ -52,6 +105,8 @@ public class TestController {
 		System.out.println(a.toString());
 		System.out.println(Date.from(a));
 		System.out.println(Timestamp.from(a));
+		
+		
 		
 		
 		return new ResponseEntity<String>("", HttpStatus.OK);
