@@ -7,7 +7,16 @@ public class Utils {
 	//************************* PROD
 	public final static String emailVerificationPath = "https://wcservice.fmning.com/email_verification/";
 	
+	/*Scheduler parameters*/
+	//Database backup script parameters
 	public final static String dbBackupFolder = "/Users/Cyan/Documents/pg_backup";
+	public final static String dbBackupFilePrefix = "db_backup_";
+	public final static String dbBackupToolLocation = "/Library/PostgreSQL/9.5/bin";
+	public final static String dbName = "WcServiceProd";
+	public final static String dbUsername = "postgres";
+	
+	//Google drive uploader parameters
+	public final static String credentialFolder = "/Users/Cyan/Documents/pg_backup/credential";
 	
 	public static String createVerificationEmail(String veriCode) {
 		String message = "Hi there,";
