@@ -24,7 +24,9 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -35,12 +37,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -174,6 +179,25 @@ private String backupScriptPath;
 		
 		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/files", method = RequestMethod.GET)
+	public void getFile(
+	    //@PathVariable("file_name") String fileName, 
+	    HttpServletResponse response) {
+	    try {
+	      // get your file as InputStream
+	      java.io.File file = new java.io.File("/Volumes/Data/images/1.jpg");
+	      InputStream is = new FileInputStream(file);
+	      // copy it to response's OutputStream
+	      IOUtils.copy(is, response.getOutputStream());
+	      response.flushBuffer();
+	    } catch (IOException ex) {
+	      //log.info("Error writing file to output stream. Filename was '{}'", fileName, ex);
+	      throw new RuntimeException("IOError writing file to output stream");
+	    }
+
+	}
+	
 
 	private void sendScheduleErrorReportEmail(String report){
 		String emailList = "fning@wpi.edu,sxie@wpi.edu";

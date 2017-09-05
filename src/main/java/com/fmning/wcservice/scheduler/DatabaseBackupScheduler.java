@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fmning.service.manager.HelperManager;
+import com.fmning.util.Util;
 import com.fmning.wcservice.controller.TestController;
 import com.fmning.wcservice.utils.Utils;
 
@@ -49,7 +50,7 @@ public class DatabaseBackupScheduler {
 
 	@Scheduled(cron = "0 0 1 * * ?")
     public void dbDailyBackup() {
-		try {
+		/*try {
 			Calendar calendar = Calendar.getInstance();
 			int dayOfWeek = calendar.get(Calendar.DAY_OF_MONTH);
 			
@@ -121,7 +122,7 @@ public class DatabaseBackupScheduler {
 		} catch (IOException | InterruptedException e) {
 			String report = "Error during backup of the database:\n\n";
 			sendScheduleErrorReportEmail(report + e.getMessage());
-		}
+		}*/
         
     }
 

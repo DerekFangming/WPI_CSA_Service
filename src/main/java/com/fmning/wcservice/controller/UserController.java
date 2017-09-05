@@ -111,11 +111,9 @@ public class UserController {
 				UserDetail detail = userManager.getUserDetail(user.getId());
 				
 				respond.put("name", Util.nullToEmptyString(detail.getName()));
-				respond.put("nickname", Util.nullToEmptyString(detail.getNickname()));
-				respond.put("age", detail.getAge());
-				respond.put("gender", Util.nullToEmptyString(detail.getGender()));
-				respond.put("location", Util.nullToEmptyString(detail.getLocation()));
-				respond.put("whatsUp", Util.nullToEmptyString(detail.getWhatsUp()));
+				respond.put("birthday", Util.nullToEmptyString(detail.getBirthday()));
+				respond.put("year", Util.nullToEmptyString(detail.getYear()));
+				respond.put("major", Util.nullToEmptyString(detail.getMajor()));
 			}catch(NotFoundException e){}
 			respond.put("error", "");
 		}catch(Exception e){
@@ -138,11 +136,9 @@ public class UserController {
 			UserDetail detail = userManager.getUserDetail((int)request.get("userId"));
 			
 			respond.put("name", Util.nullToEmptyString(detail.getName()));
-			respond.put("nickname", Util.nullToEmptyString(detail.getNickname()));
-			respond.put("age", detail.getAge());
-			respond.put("gender", Util.nullToEmptyString(detail.getGender()));
-			respond.put("location", Util.nullToEmptyString(detail.getLocation()));
-			respond.put("whatsUp", Util.nullToEmptyString(detail.getWhatsUp()));
+			respond.put("birthday", Util.nullToEmptyString(detail.getBirthday()));
+			respond.put("year", Util.nullToEmptyString(detail.getYear()));
+			respond.put("major", Util.nullToEmptyString(detail.getMajor()));
 			respond.put("error", "");
 			
 		}catch(Exception e){
@@ -158,9 +154,8 @@ public class UserController {
 		try{
 			int userId = userManager.validateAccessToken(request);
 
-			int age = request.get("age") == null ? Util.nullInt : (int)request.get("age");
-			userManager.saveUserDetail(userId, (String)request.get("name"), (String)request.get("nickname"), age,
-					(String)request.get("gender"), (String)request.get("location"), (String)request.get("whatsUp"));
+			userManager.saveUserDetail(userId, (String)request.get("name"), null, Util.nullInt, null, null, null, 
+					(String)request.get("birthday"), (String)request.get("year"), (String)request.get("major"));
 			respond.put("error", "");
 			
 		}catch(Exception e){
