@@ -17,17 +17,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fmning.service.domain.Image;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.ImageManager;
-import com.fmning.service.manager.RelationshipManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
-import com.fmning.util.ImageType;
-import com.fmning.util.RelationshipType;
 import com.fmning.util.Util;
 
 @Controller
@@ -35,39 +30,8 @@ public class ImageController {
 	
 	@Autowired private ImageManager imageManager;
 	@Autowired private UserManager userManager;
-	@Autowired private RelationshipManager relationshipManager;
 	
-	@RequestMapping("/create_image")
-    public ResponseEntity<Map<String, Object>> uploadImage(@RequestBody Map<String, Object> request) {
-		Map<String, Object> respond = new HashMap<String, Object>();
-		try{
-			int id = userManager.validateAccessToken(request);
-			
-			String title = "";
-			try{
-				title = (String)request.get("title");
-			}catch(NullPointerException e){
-				//
-			}
-			
-			String verifiedType = "";
-			int typeMappingId = 0;
-			try{
-				verifiedType = Util.verifyImageType((String)request.get("type"));
-				typeMappingId = (int)request.get("typeMappingId");
-			}catch(NullPointerException e){
-				//
-			}
-			
-			imageManager.saveImage((String)request.get("image"), verifiedType, typeMappingId, id, title);
-			
-			respond.put("error", "");
-		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
-		}
-		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
-		
-	}
+	
 	
 	@RequestMapping("/download_image_by_id")
     public ResponseEntity<Map<String, Object>> downloadImageById(@RequestBody Map<String, Object> request) {
@@ -147,19 +111,31 @@ public class ImageController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
-	
-	@RequestMapping(value = "/file", method = RequestMethod.GET)
-	public void getFile(HttpServletResponse response) {
-	    try {
-
-	    	File file = new File("/Volumes/Data/images/1.jpg");
-	        InputStream is = new FileInputStream(file);
-	        org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-	      response.flushBuffer();
-	    } catch (IOException ex) {
-	      ex.printStackTrace();
-	    }
-
+	//Following methods are used for CSA project
+	@RequestMapping("/create_image")
+    public ResponseEntity<Map<String, Object>> uploadImage(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			int id = userManager.validateAccessToken(request);
+			
+			String title = (String)request.get("title");
+			String type = (String)request.get("type");
+			int typeMappingId = Util.nullInt;
+			if(type != null) {
+				try{
+					typeMappingId = (int)request.get("typeMappingId");
+				}catch(NullPointerException e) {}
+			}
+			
+			
+			imageManager.saveImage((String)request.get("image"), type, typeMappingId, id, title);
+			
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+		
 	}
 	
 	@RequestMapping(value = "/get_image", method = RequestMethod.GET)

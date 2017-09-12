@@ -148,7 +148,7 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
-	@RequestMapping("/create_user_detail")
+	@RequestMapping("/save_user_detail")
     public ResponseEntity<Map<String, Object>> saveCurrentUserDetail(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
@@ -169,7 +169,7 @@ public class UserController {
 	/*
 	 * Changing user info
 	 */
-	@RequestMapping("/change_password")
+	@RequestMapping("/update_password")
     public ResponseEntity<Map<String, Object>> changePassword(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
