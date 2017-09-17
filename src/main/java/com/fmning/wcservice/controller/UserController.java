@@ -16,6 +16,7 @@ import com.fmning.service.domain.User;
 import com.fmning.service.domain.UserDetail;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.HelperManager;
+import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
@@ -24,6 +25,7 @@ import com.fmning.wcservice.utils.Utils;
 public class UserController {
 	
 	@Autowired private UserManager userManager;
+	@Autowired private ImageManager imageManager;
 	@Autowired private HelperManager helperManager;
 	
 	/*
@@ -115,6 +117,12 @@ public class UserController {
 				respond.put("year", Util.nullToEmptyString(detail.getYear()));
 				respond.put("major", Util.nullToEmptyString(detail.getMajor()));
 			}catch(NotFoundException e){}
+			
+			try{
+				int avatarId = imageManager.getTypeUniqueImage("Avatar", user.getId()).getId();
+				respond.put("avatarId", avatarId);
+			}catch(Exception e){}
+			
 			respond.put("error", "");
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);

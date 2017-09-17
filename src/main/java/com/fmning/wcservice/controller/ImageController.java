@@ -96,7 +96,7 @@ public class ImageController {
 			String imgType = (String)request.get("imgType");
 			int avatarId;
 			try{
-				avatarId = imageManager.getSingltonImageIdByType(imgType, userId);
+				avatarId = imageManager.getTypeUniqueImage(imgType, userId).getId();
 			}catch(NotFoundException nfe){
 				throw new NotFoundException(ErrorMessage.SINGLETON_IMG_NOT_FOUND.getMsg() + imgType.toLowerCase());
 			}
@@ -112,7 +112,7 @@ public class ImageController {
 	}
 	
 	//Following methods are used for CSA project
-	@RequestMapping("/create_image")
+	@RequestMapping("/save_type_unique_image")
     public ResponseEntity<Map<String, Object>> uploadImage(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
@@ -121,15 +121,18 @@ public class ImageController {
 			String title = (String)request.get("title");
 			String type = (String)request.get("type");
 			int typeMappingId = Util.nullInt;
-			if(type != null) {
+			/*if(type != null) { //Commented out for type unique image
 				try{
 					typeMappingId = (int)request.get("typeMappingId");
 				}catch(NullPointerException e) {}
-			}
+			}*/
+			String base64 = (String)request.get("image");
+			if(base64 == null)
+				throw new IllegalStateException(ErrorMessage.INCORRECT_PARAM.getMsg());
 			
+			int imgId = imageManager.saveTypeUniqueImage(base64, type, typeMappingId, id, title);
 			
-			imageManager.saveImage((String)request.get("image"), type, typeMappingId, id, title);
-			
+			respond.put("imageId", imgId);
 			respond.put("error", "");
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
