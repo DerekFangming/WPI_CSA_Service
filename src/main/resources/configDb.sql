@@ -46,7 +46,9 @@ create table user_details (
 
 create table feeds (
     id serial primary key,
-    body varchar(400),
+    title varchar(100),
+    type varchar(10),
+    body text,
     owner_id integer NOT NULL,
     enabled boolean NOT NULL DEFAULT true,
     created_at timestamp without time zone NOT NULL
@@ -99,6 +101,3 @@ create table wc_articles (
 );
 
 -- Update scripts
-alter table user_details add column birthday varchar(8);
-alter table user_details add column year varchar(4);
-alter table user_details add column major varchar(10);
