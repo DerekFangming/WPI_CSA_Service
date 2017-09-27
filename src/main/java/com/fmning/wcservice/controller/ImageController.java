@@ -40,7 +40,7 @@ public class ImageController {
 			userManager.validateAccessToken(request);
 			int imageId = (int)request.get("imageId");
 			
-			Image image = imageManager.retrieveImageById(imageId);
+			Image image = imageManager.getImageById(imageId);
 			
 			respond.put("error", "");
 			respond.put("createdAt", image.getCreatedAt().toString());
@@ -101,7 +101,7 @@ public class ImageController {
 				throw new NotFoundException(ErrorMessage.SINGLETON_IMG_NOT_FOUND.getMsg() + imgType.toLowerCase());
 			}
 			
-			Image avatar = imageManager.retrieveImageById(avatarId);
+			Image avatar = imageManager.getImageById(avatarId);
 			respond.put("image", avatar.getImageData());
 			
 			respond.put("error", "");
@@ -145,7 +145,7 @@ public class ImageController {
 	public void getImage(HttpServletRequest request, HttpServletResponse response) {
 		try{
 			int imageId = Integer.parseInt(request.getParameter("id"));
-			Image image = imageManager.retrieveImageById(imageId);
+			Image image = imageManager.getImageById(imageId);
 			File file = new File(image.getLocation());
 			InputStream is = new FileInputStream(file);
 	        org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());

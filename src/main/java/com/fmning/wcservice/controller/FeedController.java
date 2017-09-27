@@ -34,11 +34,8 @@ public class FeedController {
 	@RequestMapping(value = "/get_recent_feeds", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
-		//respond.put("h", request.getParameter("limit"));
-		//respond.put("c", Instant.now().toString());
 		try{
-			//userManager.validateAccessToken(request);
-			
+			Thread.sleep(3000);
 			int limit = 10;
 			try{
 				limit = Integer.parseInt(request.getParameter("limit"));
@@ -62,12 +59,24 @@ public class FeedController {
 				processedFeed.put("feedTitle", m.getTitle());
 				processedFeed.put("feedType", m.getType());
 				processedFeed.put("feedBody", m.getBody());
+				processedFeed.put("ownerId", m.getOwnerId());
+				processedFeed.put("ownerName", userManager.getUserDisplayedName(m.getOwnerId()));
 				processedFeed.put("createdAt", m.getCreatedAt().toString());
+				try {
+					int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
+					processedFeed.put("coverImgId", imgId);
+				}catch(Exception e) {}
+				
+				try {
+					int avatarId = imageManager.getTypeUniqueImage("Avatar", m.getOwnerId()).getId();
+					processedFeed.put("avatarId", avatarId);
+				}catch(Exception e) {}
+				
 				/*try{
 					List<Integer> idList = imageManager.getImageIdListByTypeAndMappingId(ImageType.FEED.getName(), 
 							m.getId(), userId);
 					processedFeed.put("hasImage", true);
-					processedFeed.put("imageIdList", idList);
+					processedFe-ed.put("imageIdList", idList);
 				}catch(NotFoundException e){
 					processedFeed.put("hasImage", false);
 					processedFeed.put("imageIdList", null);
