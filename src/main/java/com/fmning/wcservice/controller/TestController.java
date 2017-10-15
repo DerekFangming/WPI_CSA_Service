@@ -35,11 +35,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fmning.service.manager.EventManager;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
 
@@ -57,6 +60,8 @@ import com.fmning.wcservice.utils.Utils;
 public class TestController {
 	
 private String backupScriptPath;
+
+	@Autowired private EventManager eventManager;
 	
 	private HttpTransport httpTransport;
 	private FileDataStoreFactory dataStoreFactory;
@@ -170,9 +175,8 @@ private String backupScriptPath;
 	public ResponseEntity<String> test(@RequestBody Map<String, Object> request) {
 		
 		Instant a = Instant.now();
-		System.out.println(a.toString());
-		System.out.println(Date.from(a));
-		System.out.println(Timestamp.from(a));
+		Date b = Date.from(a);
+		
 		
 		
 		
@@ -181,23 +185,15 @@ private String backupScriptPath;
 	}
 	
 	@RequestMapping(value = "/files", method = RequestMethod.GET)
-	public void getFile(
-	    //@PathVariable("file_name") String fileName, 
-	    HttpServletResponse response) {
-	    try {
-	      // get your file as InputStream
-	      java.io.File file = new java.io.File("/Volumes/Data/images/1.jpg");
-	      InputStream is = new FileInputStream(file);
-	      // copy it to response's OutputStream
-	      IOUtils.copy(is, response.getOutputStream());
-	      response.flushBuffer();
-	    } catch (IOException ex) {
-	      //log.info("Error writing file to output stream. Filename was '{}'", fileName, ex);
-	      throw new RuntimeException("IOError writing file to output stream");
-	    }
-
+	public void getFile(){
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+	    //eventManager.createEvent(0, "title", Instant.now(), Instant.now(), "location", 11);
 	}
 	
+	@RequestMapping(value = "/haha", method = RequestMethod.GET)
+	public void gethaha(){
+		System.out.println(Date.from(Instant.now()));
+	}
 
 	private void sendScheduleErrorReportEmail(String report){
 		String emailList = "fning@wpi.edu,sxie@wpi.edu";

@@ -100,4 +100,15 @@ create table wc_articles (
 	created_at timestamp without time zone not null
 );
 
+create table events (
+    id serial primary key,
+	mapping_id integer,
+	title varchar(100),
+	start_time timestamp without time zone,
+	end_time timestamp without time zone,
+	location varchar(100),
+	owner_id integer NOT NULL,
+	created_at timestamp without time zone NOT NULL
+);
+
 -- Update scripts

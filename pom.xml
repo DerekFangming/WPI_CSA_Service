@@ -101,5 +101,10 @@
     		<artifactId>commons-io</artifactId>
     		<version>2.5</version>
 		</dependency>
+		<dependency>
+			<groupId>com.braintreepayments.gateway</groupId>
+			<artifactId>braintree-java</artifactId>
+			<version>2.73.0</version>
+		</dependency>
     </dependencies>
 </project>

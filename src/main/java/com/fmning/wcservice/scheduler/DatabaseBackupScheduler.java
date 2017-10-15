@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
@@ -128,6 +129,9 @@ public class DatabaseBackupScheduler {
 
 	@PostConstruct
     public void runOnceOnlyOnStartup() {
+		//Set up time zone
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		
 		ClassLoader classLoader = getClass().getClassLoader();
 		backupScriptPath = classLoader.getResource("dbBackup.sh").getFile();
         

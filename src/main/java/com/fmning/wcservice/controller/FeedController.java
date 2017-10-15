@@ -13,12 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.Feed;
-import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
@@ -35,7 +33,7 @@ public class FeedController {
     public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			Thread.sleep(3000);
+			Thread.sleep(500);
 			int limit = 10;
 			try{
 				limit = Integer.parseInt(request.getParameter("limit"));
@@ -71,16 +69,6 @@ public class FeedController {
 					int avatarId = imageManager.getTypeUniqueImage("Avatar", m.getOwnerId()).getId();
 					processedFeed.put("avatarId", avatarId);
 				}catch(Exception e) {}
-				
-				/*try{
-					List<Integer> idList = imageManager.getImageIdListByTypeAndMappingId(ImageType.FEED.getName(), 
-							m.getId(), userId);
-					processedFeed.put("hasImage", true);
-					processedFe-ed.put("imageIdList", idList);
-				}catch(NotFoundException e){
-					processedFeed.put("hasImage", false);
-					processedFeed.put("imageIdList", null);
-				}*/
 				
 				processedFeedList.add(processedFeed);
 			}
