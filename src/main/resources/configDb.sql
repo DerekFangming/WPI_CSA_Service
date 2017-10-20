@@ -102,11 +102,14 @@ create table wc_articles (
 
 create table events (
     id serial primary key,
+    type varchar(10),
 	mapping_id integer,
 	title varchar(100),
+	description varchar(1000),
 	start_time timestamp without time zone,
 	end_time timestamp without time zone,
-	location varchar(100),
+	location varchar(300),
+	fee integer,
 	owner_id integer NOT NULL,
 	created_at timestamp without time zone NOT NULL
 );

@@ -16,10 +16,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fmning.service.domain.Event;
 import com.fmning.service.domain.Feed;
+import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.EventManager;
 import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
+import com.fmning.util.EventType;
 import com.fmning.util.Util;
 
 @Controller
@@ -28,9 +32,10 @@ public class FeedController {
 	@Autowired private UserManager userManager;
 	@Autowired private FeedManager feedManager;
 	@Autowired private ImageManager imageManager;
+	@Autowired private EventManager eventManager;
 	
 	@RequestMapping(value = "/get_recent_feeds", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> getRecentFeeds(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
 			Thread.sleep(500);
@@ -53,10 +58,10 @@ public class FeedController {
 			
 			for(Feed m : feedList){
 				Map<String, Object> processedFeed = new HashMap<String, Object>();
-				processedFeed.put("feedId", m.getId());
-				processedFeed.put("feedTitle", m.getTitle());
-				processedFeed.put("feedType", m.getType());
-				processedFeed.put("feedBody", m.getBody());
+				processedFeed.put("id", m.getId());
+				processedFeed.put("title", m.getTitle());
+				processedFeed.put("type", m.getType());
+				//processedFeed.put("body", m.getBody());
 				processedFeed.put("ownerId", m.getOwnerId());
 				processedFeed.put("ownerName", userManager.getUserDisplayedName(m.getOwnerId()));
 				processedFeed.put("createdAt", m.getCreatedAt().toString());
@@ -74,6 +79,45 @@ public class FeedController {
 			}
 			respond.put("feedList", processedFeedList);
 			respond.put("checkPoint", feedList.get(feedList.size() - 1).getCreatedAt().toString());
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/get_feed", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			Thread.sleep(500);
+			int feedId = Integer.parseInt(request.getParameter("id"));
+			
+			Feed feed = feedManager.getFeedById(feedId);
+			
+			respond.put("id", feed.getId());
+			respond.put("title", feed.getTitle());
+			respond.put("type", feed.getType());
+			respond.put("body", feed.getBody());
+			respond.put("ownerId", feed.getOwnerId());
+			respond.put("createdAt", feed.getCreatedAt().toString());
+			
+			try {
+				Event event = eventManager.getEventByType(EventType.FEED.getName(), feed.getId());
+				Map<String, Object> values = new HashMap<String, Object>();
+				values.put("id", event.getId());
+				values.put("title", event.getTitle());
+				values.put("description", event.getDescription());
+				values.put("startTime",event.getStartTime().toString());
+				values.put("endTime", event.getEndTime().toString());
+				values.put("location", event.getLocation());
+				values.put("fee", event.getFee());
+				values.put("ownerId",event.getOwnerId());
+				values.put("createdAt",event.getCreatedAt().toString());
+				
+				respond.put("event", values);
+			} catch (NotFoundException e) {}
+			
 			respond.put("error", "");
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);

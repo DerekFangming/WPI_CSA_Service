@@ -18,6 +18,9 @@ public class Utils {
 	//Google drive uploader parameters
 	public final static String credentialFolder = "/Users/Cyan/Documents/pg_backup/credential";
 	
+	//Pass output location
+	public final static String passPath = "/Volumes/Data/passes/";
+	
 	public static String createVerificationEmail(String veriCode) {
 		String message = "Hi there,";
 		message += "\n";

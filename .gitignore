@@ -3,3 +3,7 @@
 src/main/resources/dataSource.properties
 
 logging.out
+
+*.cer
+
+*.p12
