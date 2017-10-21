@@ -6,15 +6,10 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.googleapis.media.MediaHttpDownloader;
-import com.google.api.client.googleapis.media.MediaHttpUploader;
 import com.google.api.client.http.FileContent;
-import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.Preconditions;
-import com.google.api.client.util.store.DataStoreFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.Drive.Files.Create;
@@ -24,11 +19,8 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Collections;
@@ -38,21 +30,15 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.fmning.service.manager.EventManager;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
 
@@ -61,7 +47,6 @@ public class TestController {
 	
 private String backupScriptPath;
 
-	@Autowired private EventManager eventManager;
 	
 	private HttpTransport httpTransport;
 	private FileDataStoreFactory dataStoreFactory;
@@ -173,9 +158,7 @@ private String backupScriptPath;
 	
 	@RequestMapping("/test")
 	public ResponseEntity<String> test(@RequestBody Map<String, Object> request) {
-		
-		Instant a = Instant.now();
-		Date b = Date.from(a);
+	
 		
 		
 		
@@ -196,8 +179,8 @@ private String backupScriptPath;
 	}
 
 	private void sendScheduleErrorReportEmail(String report){
-		String emailList = "fning@wpi.edu,sxie@wpi.edu";
-		System.out.println(report);
+		//String emailList = "fning@wpi.edu,sxie@wpi.edu";
+		//System.out.println(report);
 		//helperManager.sendEmail("admin@fmning.com", emailList, 
 		//		"WPI CSA scheduler error report", report);
 	}

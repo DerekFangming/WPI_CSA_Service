@@ -1,18 +1,11 @@
 package com.fmning.wcservice.controller;
 
-import java.awt.Color;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,9 +22,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.fmning.service.domain.Image;
-import com.fmning.wcservice.utils.Utils;
-
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKField;
 import de.brendamour.jpasskit.PKLocation;
@@ -39,12 +29,9 @@ import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.enums.PKDateStyle;
 import de.brendamour.jpasskit.passes.PKEventTicket;
-import de.brendamour.jpasskit.passes.PKGenericPass;
-import de.brendamour.jpasskit.passes.PKStoreCard;
 import de.brendamour.jpasskit.signing.PKFileBasedSigningUtil;
 import de.brendamour.jpasskit.signing.PKSigningInformation;
 import de.brendamour.jpasskit.signing.PKSigningInformationUtil;
-import de.brendamour.jpasskit.signing.PKSigningUtil;
 
 @Controller
 public class PassController {

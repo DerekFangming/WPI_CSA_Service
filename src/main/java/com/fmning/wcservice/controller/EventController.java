@@ -40,9 +40,12 @@ public class EventController {
 			respond.put("startTime",event.getStartTime().toString());
 			respond.put("endTime", event.getEndTime().toString());
 			respond.put("location", event.getLocation());
-			respond.put("fee", event.getFee());
 			respond.put("ownerId",event.getOwnerId());
 			respond.put("createdAt",event.getCreatedAt().toString());
+			
+			if(event.getFee() != Util.nullInt) {
+				respond.put("fee", event.getFee());
+			}
 			respond.put("error", "");
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);

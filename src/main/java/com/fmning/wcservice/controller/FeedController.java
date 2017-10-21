@@ -111,9 +111,11 @@ public class FeedController {
 				values.put("startTime",event.getStartTime().toString());
 				values.put("endTime", event.getEndTime().toString());
 				values.put("location", event.getLocation());
-				values.put("fee", event.getFee());
 				values.put("ownerId",event.getOwnerId());
 				values.put("createdAt",event.getCreatedAt().toString());
+				if(event.getFee() != Util.nullInt) {
+					values.put("fee", event.getFee());
+				}
 				
 				respond.put("event", values);
 			} catch (NotFoundException e) {}
