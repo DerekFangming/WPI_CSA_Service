@@ -42,3 +42,6 @@ VALUES ('1.02.001', 'OK', '', '', '');
 
 UPDATE WC_APP_VERSIONS SET STATUS = 'AU', TITLE = 'App Update', MESSAGE = 'A new version is available on test flight. Please download the new version by clicking on the test flight link from email. This current version will not be supported.'
 WHERE APP_VERSION in ('1.01.001');
+
+INSERT INTO WC_APP_VERSIONS (APP_VERSION, STATUS, TITLE, MESSAGE, UPDATES)
+VALUES ('1.03.001', 'OK', '', '', '');

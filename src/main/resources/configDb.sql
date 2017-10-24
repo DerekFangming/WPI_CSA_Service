@@ -109,9 +109,47 @@ create table events (
 	start_time timestamp without time zone,
 	end_time timestamp without time zone,
 	location varchar(300),
-	fee integer,
+	fee decimal(10, 2),
 	owner_id integer NOT NULL,
-	created_at timestamp without time zone NOT NULL
+	created_at timestamp without time zone NOT NULL,
+	ticket_template_id integer
+);
+
+-- not on prod yet
+
+create table ticket_templates (
+	id serial primary key,
+	location varchar(50) not null,
+	serial_number integer not null,
+	description varchar(50) not null,
+	logo_text varchar(30),
+	bg_color varchar(10),
+	owner_id integer not null,
+	created_at timestamp without time zone not null
+);
+
+create table tickets (
+	id serial primary key,
+	template_id int not null,
+	type varchar(10),
+	mapping_id integer,
+	location varchar(50) not null,
+	owner_id integer not null,
+	created_at timestamp without time zone not null
+);
+
+create table payments (
+	id serial primary key,
+	type varchar(10),
+	mapping_id integer,
+	amount decimal(10, 2) not null,
+	status varchar(10) not null,
+	message varchar(200),
+	payer_id integer not null,
+	receiver_id integer not null,
+	method varchar(10),
+	nonce varchar(50),
+	created_at timestamp without time zone not null
 );
 
 -- Update scripts

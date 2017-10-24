@@ -16,11 +16,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.fmning.service.domain.Ticket;
+import com.fmning.service.manager.TicketManager;
+import com.fmning.service.manager.UserManager;
+import com.fmning.util.ErrorMessage;
+import com.fmning.util.Util;
 
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKField;
@@ -34,7 +42,10 @@ import de.brendamour.jpasskit.signing.PKSigningInformation;
 import de.brendamour.jpasskit.signing.PKSigningInformationUtil;
 
 @Controller
-public class PassController {
+public class TicketController {
+	
+	@Autowired private UserManager userManager;
+	@Autowired private TicketManager ticketManager;
 
 	@RequestMapping(value = "/create_pass", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
@@ -90,6 +101,14 @@ public class PassController {
             date.setTimeStyle(PKDateStyle.PKDateStyleMedium);
             date.setValue("2018-04-10T22:00:00Z");
             auxilField.add(date);
+            PKField date1 = new PKField();
+            date1.setKey("date2");
+            date1.setLabel("End time");
+            date1.setDateStyle(PKDateStyle.PKDateStyleMedium);
+            date1.setTimeStyle(PKDateStyle.PKDateStyleMedium);
+            date1.setValue("2018-04-10T22:00:00Z");
+            auxilField.add(date1);
+            
             PKField att = new PKField();
             att.setKey("participant");
             att.setLabel("Participant");
@@ -99,10 +118,7 @@ public class PassController {
             event.setAuxiliaryFields(auxilField);
             
             pass.setEventTicket(event);
-
             
-            
-           
             PKLocation location = new PKLocation();
             location.setLatitude(37.33182); // replace with some lat
             location.setLongitude(-122.03118); // replace with some long
@@ -113,7 +129,8 @@ public class PassController {
             if (pass.isValid()) {
                 String pathToTemplateDirectory = "/Volumes/Data/StoreCard.raw"; // replace with your folder with the icons
                 byte[] passZipAsByteArray = new PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
-               
+                respond.put("data", passZipAsByteArray);
+                
                 String outputFile = "/Volumes/Data/mypass.pkpass"; // change the name of the pass
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(passZipAsByteArray);
                 IOUtils.copy(inputStream, new FileOutputStream(outputFile));
@@ -132,23 +149,41 @@ public class PassController {
 	@RequestMapping(value = "/get_pass", method = RequestMethod.GET)
 	public void getPass(HttpServletRequest request, HttpServletResponse response) {
 		try{
+			
 			InputStream is = new FileInputStream("/Volumes/Data/mypass.pkpass");
-	        org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+	        IOUtils.copy(is, response.getOutputStream());
 	        response.flushBuffer();
 		} catch (Exception e) {
-			//e.printStackTrace();
 			try {
 				response.setStatus(200);
 				response.getWriter().write(e.getMessage());
 				response.getWriter().flush();
 				response.getWriter().close();
-				
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 
+	}
+	
+	@RequestMapping("/get_ticket")
+    public ResponseEntity<Map<String, Object>> getTicket(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			int userId = userManager.validateAccessToken(request);
+			Ticket ticket = ticketManager.getTicketById((int)request.get("id"));
+			if (ticket.getOwnerId() != userId)
+				throw new IllegalStateException(ErrorMessage.TICKET_NOT_OWNED.getMsg());
+			
+			InputStream is = new FileInputStream(ticket.getLocation());
+			
+			respond.put("ticket", IOUtils.toByteArray(is));
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+	
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
 }
