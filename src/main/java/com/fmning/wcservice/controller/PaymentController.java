@@ -45,10 +45,11 @@ import com.fmning.util.PaymentStatusType;
 import com.fmning.util.PaymentType;
 import com.fmning.util.TicketType;
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.Utils;
 
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKField;
-import de.brendamour.jpasskit.PKLocation;
+//import de.brendamour.jpasskit.PKLocation;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.enums.PKDateStyle;
@@ -144,7 +145,7 @@ public class PaymentController {
 					TicketTemplate template = ticketManager.getTicketTemplateById(event.getTicketTemplateId());
 					try{
 						byte[] ticket = createTicket(event, template, payerId);
-						String ticketFile = "/Volumes/Data/passes/T_" + Integer.toString(payerId);
+						String ticketFile = Utils.ticketPath + "T_" + Integer.toString(payerId);
 						ticketFile += "_" + formatter.format(Instant.now()) + ".pkpass";
 						ticketManager.createTicket(template.getId(), TicketType.PAYMENT.getName(), paymentId,
 								ticketFile, payerId);
@@ -175,8 +176,7 @@ public class PaymentController {
 		ClassLoader classLoader = getClass().getClassLoader();
 		String privateKeyPath = classLoader.getResource("passCertificate.p12").getFile();
 		String appleWWDRCA = classLoader.getResource("AppleWWDRCA.cer").getFile();
-		
-		String privateKeyPassword = "fmning123!"; // the password you used to export
+		String privateKeyPassword = "fmning123!";
 		
 		PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
                 privateKeyPath, privateKeyPassword, appleWWDRCA);
@@ -184,7 +184,7 @@ public class PaymentController {
         PKPass pass = new PKPass();
         pass.setPassTypeIdentifier("pass.com.fmning.WPI-CSA");
         pass.setSerialNumber(Integer.toString(template.getSerialNumber()));
-        pass.setTeamIdentifier("NK4455562X"); // replace this with your team ID
+        pass.setTeamIdentifier("NK4455562X");
         pass.setOrganizationName("fmning.com");
         pass.setDescription(template.getDescription());
         pass.setLogoText(template.getLogoText());
@@ -228,12 +228,12 @@ public class PaymentController {
         
         pass.setEventTicket(eventTicket);
         
-        PKLocation ticketLocation = new PKLocation();
-        ticketLocation.setLatitude(37.33182); // replace with some lat
-        ticketLocation.setLongitude(-122.03118); // replace with some long
+        /*PKLocation ticketLocation = new PKLocation();
+        ticketLocation.setLatitude(37.33182);
+        ticketLocation.setLongitude(-122.03118);
         List<PKLocation> locations = new ArrayList<PKLocation>();
         locations.add(ticketLocation);
-        pass.setLocations(locations);
+        pass.setLocations(locations);*/
         
         if (pass.isValid()) {
             String pathToTemplateDirectory = template.getLocation();

@@ -42,6 +42,7 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
+@SuppressWarnings("unused")
 @Controller
 public class TestController {
 	
@@ -169,14 +170,12 @@ private String backupScriptPath;
 	
 	@RequestMapping(value = "/files", method = RequestMethod.GET)
 	public void getFile(){
-		DateTimeFormatter formatter =
-				  DateTimeFormatter.ofPattern("yyMMddHHmmss").withZone(ZoneId.systemDefault());
-		System.out.println(formatter.format(Instant.now()));
+		Util.imagePath = "/Volumes/Data/images111/";
 	}
 	
 	@RequestMapping(value = "/haha", method = RequestMethod.GET)
 	public void gethaha(){
-		System.out.println(Date.from(Instant.now()));
+		System.out.println(Util.imagePath);
 	}
 
 	private void sendScheduleErrorReportEmail(String report){

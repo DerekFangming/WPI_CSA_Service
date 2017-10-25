@@ -133,7 +133,7 @@ create table tickets (
 	template_id int not null,
 	type varchar(10),
 	mapping_id integer,
-	location varchar(50) not null,
+	location varchar(100) not null,
 	owner_id integer not null,
 	created_at timestamp without time zone not null
 );

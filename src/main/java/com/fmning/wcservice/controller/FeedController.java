@@ -38,7 +38,7 @@ public class FeedController {
     public ResponseEntity<Map<String, Object>> getRecentFeeds(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			Thread.sleep(500);
+			//Thread.sleep(500);
 			int limit = 10;
 			try{
 				limit = Integer.parseInt(request.getParameter("limit"));
@@ -90,7 +90,7 @@ public class FeedController {
     public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			Thread.sleep(500);
+			
 			int feedId = Integer.parseInt(request.getParameter("id"));
 			
 			Feed feed = feedManager.getFeedById(feedId);
