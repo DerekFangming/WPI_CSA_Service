@@ -112,7 +112,9 @@ create table events (
 	fee decimal(10, 2),
 	owner_id integer NOT NULL,
 	created_at timestamp without time zone NOT NULL,
-	ticket_template_id integer
+	ticket_template_id integer,
+	active boolean not null default true,
+	message varchar(100)
 );
 
 -- not on prod yet

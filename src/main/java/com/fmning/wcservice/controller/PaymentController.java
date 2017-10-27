@@ -49,7 +49,6 @@ import com.fmning.wcservice.utils.Utils;
 
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKField;
-//import de.brendamour.jpasskit.PKLocation;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.enums.PKDateStyle;
@@ -123,14 +122,25 @@ public class PaymentController {
 			if(event.getFee() != amount)
 				throw new IllegalStateException("Payment amount is not correct.");
 			
+			if(!event.getActive()){
+				if(event.getMessage() == null)
+					throw new IllegalStateException(ErrorMessage.EVENT_NOT_ACTIVE.getMsg());
+				else
+					throw new IllegalStateException(event.getMessage());
+			}
+			
 			try{
 				Payment payment = paymentManager.getPaymentByTypeAndPayer(PaymentType.EVENT.getName(),
 						event.getId(), payerId, event.getOwnerId());
-				Ticket ticket = ticketManager.getTicketByType(TicketType.PAYMENT.getName(), payment.getId());
-				respond.put("error", "");
-				respond.put("status", "AlreadyPaid");
-				respond.put("ticketStatus", "ok");
-				respond.put("ticketId", ticket.getId());
+				try{
+					Ticket ticket = ticketManager.getTicketByType(TicketType.PAYMENT.getName(), payment.getId());
+					respond.put("error", "");
+					respond.put("status", "AlreadyPaid");
+					respond.put("ticketStatus", "ok");
+					respond.put("ticketId", ticket.getId());
+				} catch (NotFoundException e){
+					throw new IllegalStateException(ErrorMessage.TICKET_INTERNAL_ERROR.getMsg());
+				}
 				
 			}catch (NotFoundException e){
 				//Validation done
@@ -227,13 +237,6 @@ public class PaymentController {
         eventTicket.setAuxiliaryFields(auxilField);
         
         pass.setEventTicket(eventTicket);
-        
-        /*PKLocation ticketLocation = new PKLocation();
-        ticketLocation.setLatitude(37.33182);
-        ticketLocation.setLongitude(-122.03118);
-        List<PKLocation> locations = new ArrayList<PKLocation>();
-        locations.add(ticketLocation);
-        pass.setLocations(locations);*/
         
         if (pass.isValid()) {
             String pathToTemplateDirectory = template.getLocation();

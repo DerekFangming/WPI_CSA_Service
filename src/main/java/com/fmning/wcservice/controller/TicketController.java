@@ -47,15 +47,15 @@ public class TicketController {
 	@Autowired private UserManager userManager;
 	@Autowired private TicketManager ticketManager;
 
-	@RequestMapping(value = "/create_pass", method = RequestMethod.GET)
+	@RequestMapping(value = "/test_pass", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		
 		ClassLoader classLoader = getClass().getClassLoader();
-		String privateKeyPath = classLoader.getResource("Certificates.p12").getFile();
+		String privateKeyPath = classLoader.getResource("passCertificate.p12").getFile();
 		String appleWWDRCA = classLoader.getResource("AppleWWDRCA.cer").getFile();
 		
-		String privateKeyPassword = "flashvb6"; // the password you used to export
+		String privateKeyPassword = "fmning123!"; // the password you used to export
         try {
           
             PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
@@ -69,8 +69,9 @@ public class TicketController {
             pass.setOrganizationName("fmning.com");
             pass.setDescription("WPI CSA Event");
             pass.setLogoText("WPI CSA");
-            pass.setForegroundColor("#FFFFFF");
-            pass.setBackgroundColor("#007AFF");
+            pass.setForegroundColor("#000000");
+            pass.setBackgroundColor("#000000");
+            pass.setLabelColor("#000000");
 
             PKBarcode barcode = new PKBarcode();
             barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
@@ -89,7 +90,7 @@ public class TicketController {
             PKField loc = new PKField();
             loc.setKey("location"); // some unique key for primary field
             loc.setLabel("Location");
-            loc.setValue("CC 1st floor");
+            loc.setValue("CC ODEUM");
             secondField.add(loc);
             event.setSecondaryFields(secondField);
             
@@ -99,15 +100,8 @@ public class TicketController {
             date.setLabel("Start time");
             date.setDateStyle(PKDateStyle.PKDateStyleMedium);
             date.setTimeStyle(PKDateStyle.PKDateStyleMedium);
-            date.setValue("2018-04-10T22:00:00Z");
+            date.setValue("2017-10-29T16:00:00Z");
             auxilField.add(date);
-            PKField date1 = new PKField();
-            date1.setKey("date2");
-            date1.setLabel("End time");
-            date1.setDateStyle(PKDateStyle.PKDateStyleMedium);
-            date1.setTimeStyle(PKDateStyle.PKDateStyleMedium);
-            date1.setValue("2018-04-10T22:00:00Z");
-            auxilField.add(date1);
             
             PKField att = new PKField();
             att.setKey("participant");
@@ -127,11 +121,11 @@ public class TicketController {
             pass.setLocations(locations);
            
             if (pass.isValid()) {
-                String pathToTemplateDirectory = "/Volumes/Data/StoreCard.raw"; // replace with your folder with the icons
+                String pathToTemplateDirectory = "/Volumes/Data/passTemplates/test"; // replace with your folder with the icons
                 byte[] passZipAsByteArray = new PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
-                respond.put("data", passZipAsByteArray);
+                //respond.put("data", passZipAsByteArray);
                 
-                String outputFile = "/Volumes/Data/mypass.pkpass"; // change the name of the pass
+                String outputFile = "/Volumes/Data/testTickets/test.pkpass"; // change the name of the pass
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(passZipAsByteArray);
                 IOUtils.copy(inputStream, new FileOutputStream(outputFile));
                 System.out.println("Done!");
