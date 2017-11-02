@@ -60,7 +60,7 @@ public class UserController {
 			String message = Utils.createVerificationEmail(veriCode);
 			helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
 			
-			Instant exp = Instant.now().plus(Duration.ofDays(1));
+			Instant exp = Instant.now().plus(Duration.ofDays(7));
 			//Convert to ISO8601 formatted string such as 2013-06-25T16:22:52.966Z
 			String accessToken = helperManager.createAccessToken(username, exp);
 			userManager.updateAccessToken(username, accessToken);
@@ -98,16 +98,14 @@ public class UserController {
 		try{
 			String username = (String)request.get("username");
 			String password = (String)request.get("password");
+
 			
-			Instant exp = Instant.now().plus(Duration.ofDays(1));
-			String accessToken = helperManager.createAccessToken(username, exp);
-			
-			User user = userManager.login(username, password, accessToken);
+			User user = userManager.login(username, password);
 			
 			respond.put("userId", user.getId());//TODO really need this id?
 			respond.put("username", username);
-			respond.put("accessToken", accessToken);
-			respond.put("expire", exp.toString());
+			respond.put("accessToken", user.getAuthToken());
+			//respond.put("expire", exp.toString());
 			respond.put("emailConfirmed",user.getEmailConfirmed());
 			try{
 				UserDetail detail = userManager.getUserDetail(user.getId());
@@ -160,7 +158,7 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> saveCurrentUserDetail(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int userId = userManager.validateAccessToken(request);
+			int userId = userManager.validateAccessToken(request).getId();
 
 			userManager.saveUserDetail(userId, (String)request.get("name"), null, Util.nullInt, null, null, null, 
 					(String)request.get("birthday"), (String)request.get("year"), (String)request.get("major"));
@@ -181,15 +179,13 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> changePassword(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int userId = userManager.validateAccessToken(request);
+			User user = userManager.validateAccessToken(request);
 			String oldPwd = (String)request.get("oldPwd");
 			String newPwd = (String)request.get("newPwd");
-			String username = userManager.getUsername(userId);
-			Instant exp = Instant.now().plus(Duration.ofDays(1));
-			String accessToken = helperManager.createAccessToken(username, exp);
+			String username = user.getUsername();
 			
-			userManager.changePassword(username, oldPwd, newPwd, accessToken);
-			respond.put("accessToken", accessToken);
+			userManager.changePassword(username, oldPwd, newPwd);
+			respond.put("accessToken", user.getAuthToken());
 			respond.put("error", "");
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);

@@ -104,7 +104,7 @@ public class PaymentController {
 	public ResponseEntity<Map<String, Object>> getTicket(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int payerId = userManager.validateAccessToken(request);
+			int payerId = userManager.validateAccessToken(request).getId();
 			String type = (String)request.get("type");
 			int id = (int)request.get("id"); 
 			double amount = 0;
@@ -122,14 +122,8 @@ public class PaymentController {
 			if(event.getFee() != amount)
 				throw new IllegalStateException("Payment amount is not correct.");
 			
-			if(!event.getActive()){
-				if(event.getMessage() == null)
-					throw new IllegalStateException(ErrorMessage.EVENT_NOT_ACTIVE.getMsg());
-				else
-					throw new IllegalStateException(event.getMessage());
-			}
 			
-			try{
+			try{//If the payment is already done, re-provide ticket and bypass validation
 				Payment payment = paymentManager.getPaymentByTypeAndPayer(PaymentType.EVENT.getName(),
 						event.getId(), payerId, event.getOwnerId());
 				try{
@@ -143,6 +137,20 @@ public class PaymentController {
 				}
 				
 			}catch (NotFoundException e){
+				//Validation for buying new ticket
+				if(!event.getActive()){
+					if(event.getMessage() == null)
+						throw new IllegalStateException(ErrorMessage.EVENT_NOT_ACTIVE.getMsg());
+					else
+						throw new IllegalStateException(event.getMessage());
+				}
+				if(event.getTicketBalance() < 1) {
+					throw new IllegalStateException(ErrorMessage.TICKET_SOLD_OUT.getMsg());
+				} else {
+					eventManager.setBalance(event.getId(), event.getTicketBalance() - 1);
+				}
+				
+				
 				//Validation done
 				int paymentId = paymentManager.createPayment(PaymentType.EVENT.getName(), event.getId(), amount,
 						PaymentStatusType.DONE.getName(), null, payerId, event.getOwnerId(), null, null);

@@ -56,7 +56,7 @@ public class ImageController {
     public ResponseEntity<Map<String, Object>> deleteImage(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int id = userManager.validateAccessToken(request);
+			int id = userManager.validateAccessToken(request).getId();
 			
 			int imageId = (int)request.get("imageId");
 			imageManager.softDeleteImage(imageId, id);
@@ -116,7 +116,7 @@ public class ImageController {
     public ResponseEntity<Map<String, Object>> uploadImage(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int id = userManager.validateAccessToken(request);
+			int id = userManager.validateAccessToken(request).getId();
 			
 			String title = (String)request.get("title");
 			String type = (String)request.get("type");

@@ -193,7 +193,7 @@ public class SgController {
     public ResponseEntity<Map<String, Object>> addSgArticle(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int userId = userManager.validateAccessToken(request);
+			int userId = userManager.validateAccessToken(request).getId();
 			int menuId = (int)request.get("menuId");
 			String title = (String)request.get("title");
 			String article = (String)request.get("article");

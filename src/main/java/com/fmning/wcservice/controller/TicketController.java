@@ -83,14 +83,14 @@ public class TicketController {
             PKEventTicket event = new PKEventTicket();
             PKField member = new PKField();
             member.setKey("name");
-            member.setValue("Hot Pot Event");
+            member.setValue("11/11 Singles' Day Formal");
             event.setPrimaryFields(Collections.singletonList(member));
             
             List<PKField> secondField = new ArrayList<PKField>();
             PKField loc = new PKField();
             loc.setKey("location"); // some unique key for primary field
             loc.setLabel("Location");
-            loc.setValue("CC ODEUM");
+            loc.setValue("Campus Center Odeum");
             secondField.add(loc);
             event.setSecondaryFields(secondField);
             
@@ -100,7 +100,7 @@ public class TicketController {
             date.setLabel("Start time");
             date.setDateStyle(PKDateStyle.PKDateStyleMedium);
             date.setTimeStyle(PKDateStyle.PKDateStyleMedium);
-            date.setValue("2017-10-29T16:00:00Z");
+            date.setValue("2017-11-11T23:00:00Z");
             auxilField.add(date);
             
             PKField att = new PKField();
@@ -144,7 +144,7 @@ public class TicketController {
 	public void getPass(HttpServletRequest request, HttpServletResponse response) {
 		try{
 			
-			InputStream is = new FileInputStream("/Volumes/Data/mypass.pkpass");
+			InputStream is = new FileInputStream("/Volumes/Data/testTickets/test.pkpass");
 	        IOUtils.copy(is, response.getOutputStream());
 	        response.flushBuffer();
 		} catch (Exception e) {
@@ -164,7 +164,7 @@ public class TicketController {
     public ResponseEntity<Map<String, Object>> getTicket(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int userId = userManager.validateAccessToken(request);
+			int userId = userManager.validateAccessToken(request).getId();
 			Ticket ticket = ticketManager.getTicketById((int)request.get("id"));
 			if (ticket.getOwnerId() != userId)
 				throw new IllegalStateException(ErrorMessage.TICKET_NOT_OWNED.getMsg());

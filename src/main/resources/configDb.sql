@@ -114,7 +114,8 @@ create table events (
 	created_at timestamp without time zone NOT NULL,
 	ticket_template_id integer,
 	active boolean not null default true,
-	message varchar(100)
+	message varchar(100),
+	ticket_balance integer not null default 0
 );
 
 -- not on prod yet

@@ -32,7 +32,7 @@ public class EmailController {
     public ResponseEntity<Map<String, Object>> sendEmailConfirmation(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int userId = userManager.validateAccessToken(request);
+			int userId = userManager.validateAccessToken(request).getId();
 			String username = userManager.getUsername(userId);
 			
 			String veriCode = helperManager.getEmailConfirmCode(username);
