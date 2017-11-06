@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.UserManager;
@@ -32,8 +33,12 @@ public class EmailController {
     public ResponseEntity<Map<String, Object>> sendEmailConfirmation(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int userId = userManager.validateAccessToken(request).getId();
-			String username = userManager.getUsername(userId);
+			User user = userManager.validateAccessToken(request);
+			if(user.getEmailConfirmed()) {
+				throw new IllegalStateException("Your email is already confirmed. Please restart the app or log out and log back in again.");
+			}
+			
+			String username = user.getUsername();
 			
 			String veriCode = helperManager.getEmailConfirmCode(username);
 			userManager.updateVeriCode(username, veriCode);
