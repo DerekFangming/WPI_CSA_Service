@@ -1,29 +1,41 @@
 package com.fmning.wcservice.controller;
 
+import java.io.StringReader;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import com.fmning.service.domain.Event;
 import com.fmning.service.domain.Feed;
+import com.fmning.service.domain.User;
+import com.fmning.service.domain.UserDetail;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.EventManager;
 import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
+import com.fmning.util.ErrorMessage;
 import com.fmning.util.EventType;
+import com.fmning.util.ImageType;
 import com.fmning.util.Util;
 
 @Controller
@@ -124,6 +136,55 @@ public class FeedController {
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+
+	@RequestMapping("/create_feed")
+    public ResponseEntity<Map<String, Object>> creatFeed(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			//int userId = userManager.validateAccessToken(request).getId();
+			int userId = 1;
+			
+			String title = (String)request.get("title");
+			String type = (String)request.get("type");
+			String body = (String)request.get("body");
+			String coverImageString = (String)request.get("coverImage");
+
+			if (title == null || type == null || body == null) {
+				throw new IllegalStateException(ErrorMessage.INVALID_FEED_INPUT.getMsg());
+			}
+			
+			List<String> allMatches = new ArrayList<String>();
+			body = "<img src=\"file:///Attachment.png\" alt=\"Attachment.png\">wtf<img src=\"file:///Attachment123.png\">";
+			Matcher imgMatcher = Pattern.compile("<img.*?>").matcher(body);
+			while (imgMatcher.find()) {
+				String imgTag = imgMatcher.group();
+				
+				Matcher srcMatcher = Pattern.compile("src=\".*?\"").matcher(imgTag);
+				
+				if (srcMatcher.find()) {
+					String base64 = srcMatcher.group().replace("src=", "").replace("\"", "");
+					try {
+						//int imgId = imageManager.createImage(base64, ImageType.FEED.getName(), Util.nullInt, userId, null);
+						int imgId = 33;
+						body = body.replace(base64, "WCImage_" + Integer.toString(imgId));
+					} catch (Exception e) {
+						body = body.replace(imgTag, "");
+					}
+				} else {
+					body = body.replace(imgTag, "");
+				}
+			}
+			
+			System.out.println(body);
+			
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 

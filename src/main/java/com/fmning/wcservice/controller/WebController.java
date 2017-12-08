@@ -1,6 +1,8 @@
 package com.fmning.wcservice.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -54,15 +56,23 @@ public class WebController {
 		List<User> list = new ArrayList<User>();
 		
 		try{
-			int hardCodedId = 1;//TODO: Remove this in future ...
+			int hardCodedId = 2;//TODO: Remove this in future ...
 			if(Utils.schedulerEnabled) {
-				hardCodedId = 2;
+				hardCodedId = 1;
 			}
 			List<User> userList = paymentManager.getPaidUserByType(PaymentType.EVENT.getName(), hardCodedId);//
 			for(User u : userList){
 				u.setName(userManager.getUserDisplayedName(u.getId()));
 				list.add(u);
 			}
+			
+			Collections.sort(list, new Comparator<User>() {
+		        @Override
+		        public int compare(User o1, User o2) {
+		            return o1.getName().compareTo(o2.getName());
+		        }
+		    });
+			
 		}catch(NotFoundException e){}
 		
 		model.addAttribute("nameList", list);

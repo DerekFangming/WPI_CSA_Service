@@ -13,7 +13,7 @@
   <h2>11.11 Event tickets, total sale count : ${count}</h2>
 
   <br/>
-  <table class="table">
+  <table class="table table-striped table-bordered">
     <thead class="thead-default">
       <tr>
         <th>Name</th>

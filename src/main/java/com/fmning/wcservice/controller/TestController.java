@@ -1,8 +1,10 @@
 package com.fmning.wcservice.controller;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +16,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -170,7 +173,15 @@ private String backupScriptPath;
 	
 	@RequestMapping(value = "/files", method = RequestMethod.GET)
 	public void getFile(){
-		Util.imagePath = "/Volumes/Data/images111/";
+		String a = null;
+		byte[] data = Base64.decodeBase64(a);
+		
+		try (OutputStream stream = new FileOutputStream(Util.imagePath + Integer.toString(99) + ".jpg")) {
+		    stream.write(data);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@RequestMapping(value = "/haha", method = RequestMethod.GET)
