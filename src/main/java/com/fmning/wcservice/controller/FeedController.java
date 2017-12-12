@@ -144,8 +144,8 @@ public class FeedController {
     public ResponseEntity<Map<String, Object>> creatFeed(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			//int userId = userManager.validateAccessToken(request).getId();
-			int userId = 1;
+			int userId = userManager.validateAccessToken(request).getId();
+			//int userId = 1;
 			
 			String title = (String)request.get("title");
 			String type = (String)request.get("type");
@@ -156,8 +156,7 @@ public class FeedController {
 				throw new IllegalStateException(ErrorMessage.INVALID_FEED_INPUT.getMsg());
 			}
 			
-			List<String> allMatches = new ArrayList<String>();
-			body = "<img src=\"file:///Attachment.png\" alt=\"Attachment.png\">wtf<img src=\"file:///Attachment123.png\">";
+			//body = "<img src=\"file:///Attachment.png\" alt=\"Attachment.png\">wtf<img src=\"file:///Attachment123.png\">";
 			Matcher imgMatcher = Pattern.compile("<img.*?>").matcher(body);
 			while (imgMatcher.find()) {
 				String imgTag = imgMatcher.group();
@@ -167,8 +166,8 @@ public class FeedController {
 				if (srcMatcher.find()) {
 					String base64 = srcMatcher.group().replace("src=", "").replace("\"", "");
 					try {
-						//int imgId = imageManager.createImage(base64, ImageType.FEED.getName(), Util.nullInt, userId, null);
-						int imgId = 33;
+						int imgId = imageManager.createImage(base64, ImageType.FEED.getName(), Util.nullInt, userId, null);
+						//int imgId = 33;
 						body = body.replace(base64, "WCImage_" + Integer.toString(imgId));
 					} catch (Exception e) {
 						body = body.replace(imgTag, "");
@@ -178,7 +177,10 @@ public class FeedController {
 				}
 			}
 			
-			System.out.println(body);
+			int feedId = feedManager.createFeed(title, type, body, userId);
+			if (coverImageString != null) {
+				imageManager.createImage(coverImageString, ImageType.FEED_COVER.getName(), feedId, userId, null);
+			}
 			
 			respond.put("error", "");
 		}catch(Exception e){
