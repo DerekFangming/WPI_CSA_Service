@@ -18,6 +18,7 @@ import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
+import com.fmning.util.ErrorMessage;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
 
@@ -162,6 +163,13 @@ public class UserController {
 
 			userManager.saveUserDetail(userId, (String)request.get("name"), null, Util.nullInt, null, null, null, 
 					(String)request.get("birthday"), (String)request.get("year"), (String)request.get("major"));
+			
+			String base64 = (String)request.get("avatar");
+			if(base64 != null){
+				int imgId = imageManager.saveTypeUniqueImage(base64, "Avatar", Util.nullInt, userId, null);
+				respond.put("imageId", imgId);
+			}
+			
 			respond.put("error", "");
 			
 		}catch(Exception e){
