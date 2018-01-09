@@ -1,0 +1,40 @@
+body {
+  padding-top: 54px;
+}
+
+@media (min-width: 992px) {
+  body {
+    padding-top: 56px;
+  }
+}
+
+.card {
+  height: 100%;
+}
+
+.top-buffer { margin-top:20px; }
+
+.feed-image {
+  height: 300px;
+  width: 500px;
+  overflow: hidden;
+  position:relative;
+}
+
+
+.feed-image img.tall {
+  width: auto;
+    height: auto;
+    position: absolute;  
+    top: 0;  
+    bottom: 0;  
+    left: 0;  
+    right: 0;  
+    margin: auto;
+  width: 100%;
+}​
+
+.fa {
+    margin-left: -12px;
+    margin-right: 8px;
+}

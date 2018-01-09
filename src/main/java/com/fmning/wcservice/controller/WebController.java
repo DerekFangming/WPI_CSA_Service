@@ -1,25 +1,39 @@
 package com.fmning.wcservice.controller;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fmning.service.domain.Ticket;
 import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.PaymentManager;
 import com.fmning.service.manager.UserManager;
+import com.fmning.util.ErrorMessage;
 import com.fmning.util.PaymentType;
+import com.fmning.util.Util;
+import com.fmning.wcservice.formObject.LoginForm;
 import com.fmning.wcservice.utils.Utils;
 
 @Controller
@@ -79,6 +93,22 @@ public class WebController {
 		model.addAttribute("count", list.size());
 		
 		return "list";
+	}
+	
+	@RequestMapping("/web_login")
+    public String getTicket(@ModelAttribute LoginForm form) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			System.out.println(form.getUsername() + " " + form.getPassword() + " " + form.getRemember());
+			
+			
+			respond.put("ticket", 1);
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+	
+		return "index";
 	}
 
 }
