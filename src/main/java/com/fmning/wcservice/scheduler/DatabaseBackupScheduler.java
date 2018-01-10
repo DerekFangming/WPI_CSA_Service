@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.fmning.service.manager.HelperManager;
 import com.fmning.util.Util;
-import com.fmning.wcservice.controller.TestController;
+import com.fmning.wcservice.controller.rest.TestController;
 import com.fmning.wcservice.utils.Utils;
 
 import com.google.api.client.auth.oauth2.Credential;

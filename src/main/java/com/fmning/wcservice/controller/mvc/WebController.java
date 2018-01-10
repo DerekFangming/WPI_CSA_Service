@@ -1,4 +1,4 @@
-package com.fmning.wcservice.controller;
+package com.fmning.wcservice.controller.mvc;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -33,7 +33,7 @@ import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
 import com.fmning.util.PaymentType;
 import com.fmning.util.Util;
-import com.fmning.wcservice.formObject.LoginForm;
+import com.fmning.wcservice.model.LoginForm;
 import com.fmning.wcservice.utils.Utils;
 
 @Controller

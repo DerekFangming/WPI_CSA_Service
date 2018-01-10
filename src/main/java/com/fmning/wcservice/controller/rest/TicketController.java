@@ -1,4 +1,4 @@
-package com.fmning.wcservice.controller;
+package com.fmning.wcservice.controller.rest;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;

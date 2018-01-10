@@ -1,4 +1,4 @@
-package com.fmning.wcservice.formObject;
+package com.fmning.wcservice.model;
 
 public class LoginForm {
 	private String username;
