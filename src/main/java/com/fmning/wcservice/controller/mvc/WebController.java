@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fmning.service.domain.Ticket;
 import com.fmning.service.domain.User;
@@ -43,7 +44,7 @@ public class WebController {
 	@Autowired private UserManager userManager;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-    public String helloWorld(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+    public ModelAndView helloWorld(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 		
 		//model.addAttribute("msg", "Your email address has been confirmed");
 		Cookie[] cookies = request.getCookies();
@@ -61,7 +62,7 @@ public class WebController {
 		
 		response.addCookie(cookie);
 		
-		return "index";
+		return new ModelAndView("index");
 	}
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
