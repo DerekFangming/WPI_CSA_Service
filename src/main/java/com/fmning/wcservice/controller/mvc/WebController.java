@@ -43,27 +43,7 @@ public class WebController {
 	@Autowired private PaymentManager paymentManager;
 	@Autowired private UserManager userManager;
 	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView helloWorld(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
-		
-		//model.addAttribute("msg", "Your email address has been confirmed");
-		Cookie[] cookies = request.getCookies();
-		
-		if(cookies != null) {
-			for(Cookie c : cookies){
-				System.out.println("key: " + c.getName() + " values: " + c.getValue());
-			}
-		}else{
-			System.out.println("no cookies");
-		}
-		
-		Cookie cookie = new Cookie("haha", "accessvalue");
-		cookie.setMaxAge(10);
-		
-		response.addCookie(cookie);
-		
-		return new ModelAndView("index");
-	}
+	
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
     public String getList(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
@@ -96,20 +76,6 @@ public class WebController {
 		return "list";
 	}
 	
-	@RequestMapping("/web_login")
-    public String getTicket(@ModelAttribute LoginForm form) {
-		Map<String, Object> respond = new HashMap<String, Object>();
-		try{
-			System.out.println(form.getUsername() + " " + form.getPassword() + " " + form.getRemember());
-			
-			
-			respond.put("ticket", 1);
-			respond.put("error", "");
-		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
-		}
 	
-		return "index";
-	}
 
 }

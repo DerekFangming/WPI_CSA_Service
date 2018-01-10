@@ -37,7 +37,7 @@ import com.fmning.util.Util;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
-public class SgController {
+public class SgMobileController {
 	@Autowired private SgDao sgDao;
 	@Autowired private WcReportDao wcReportDao;
 	@Autowired private WcArticleDao wcArticleDao;

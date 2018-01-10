@@ -18,6 +18,10 @@
     <servlet-name>wcservice</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+  <error-page>
+	<error-code>404</error-code>
+	<location>/WEB-INF/view/errorview/404.jsp</location>
+  </error-page>
   <!--<listener>
   	<listener-class>
   		com.projectning.service.ProjectNingServletContext

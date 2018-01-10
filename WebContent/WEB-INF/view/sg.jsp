@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>WPI CSA - Life</title>
+    <title>WPI CSA - Survival Guide</title>
 
     <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="/resources/css/local/bootstrap.min.css" rel="stylesheet">
@@ -20,13 +20,6 @@
     <!--<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
 	<script src="/resources/css/local/jquery-3.2.1.min.js"></script>
 	
-	<!--<script>
-	$(document).ready(function(){
-	  $("#signinButton").click(function(){
-		  $("#signinIcon").attr("class","fa fa-circle-o-notch fa-spin");
-	  });
-	});
-	</script>-->
 
 </head>
 
@@ -40,11 +33,11 @@
         </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Life</a>
-                    </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="./sg">Survival Guide</a>
+                        <a class="nav-link" href="./">Life</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Survival Guide</a>
                     </li>
                     <c:if test="${loggedIn}">
     					<%@include file="subview/navUserLoggedIn.jsp" %>
@@ -62,64 +55,9 @@
 
         <!-- Jumbotron Header -->
         <header class="jumbotron my-4">
-            <h1 class="display-3">A Warm Welcome!</h1>
-            <p class="lead">This site is created as web version of WPI CSA mobile apps. It has limited features for now comparing with mobile apps.</p>
-			<p class="lead">If you see any errors & bugs, don't forget to report to CSA!</p>
+            <h1 class="display-3">SG!</h1>
         </header>
-		
-		<div class="card top-buffer">
-			<div class="card-header">
-				<h1><a href="https://www.google.com">Some title up here</a></h1>
-			</div>
-			<div class="row">
-				<div class="col">
-					<div class="feed-image">
-						<img class="tall" src="http://placehold.it/400x800" />
-					</div>
-				</div>
-				<div class="col">
-					<p class="lead top-buffer">This site is created as web version of WPI CSA mobile apps. It has limited features for now comparing with mobile apps.</p>
-				</div>
-			</div>
-		</div>
-		
-		
-		<div class="card top-buffer">
-			<div class="card-header">
-				<h1>Some title up here</h1>
-			</div>
-			<div class="row">
-				<div class="col">
-					<div class="feed-image">
-						<img class="tall" src="http://placehold.it/800x400" />
-					</div>
-				</div>
-				<div class="col">
-					<p class="lead">This site is created as web version of WPI CSA mobile apps. It has limited features for now comparing with mobile apps.</p>
-				</div>
-			</div>
-		</div>
-		
-		<div class="card top-buffer">
-			<div class="row">
-				<div class="col">
-					<h1>Some title up here</h1>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<img class = "center-block" src="http://placehold.it/500x300"  />
-				</div>
-				<div class="col">
-					<p class="lead">This site is created as web version of WPI CSA mobile apps. It has limited features for now comparing with mobile apps.</p>
-				</div>
-			</div>
-		</div>
-
-        <!-- Page Features -->
         
-        <!-- /.row -->
-
     </div>
     <!-- /.container -->
 
