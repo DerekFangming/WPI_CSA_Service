@@ -55,12 +55,12 @@
   </bean>
 
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="prefix" value="/WEB-INF/jsp/" />
+    <property name="prefix" value="/WEB-INF/view/" />
     <property name="suffix" value=".jsp" />
     <property name="redirectHttp10Compatible" value="false" />
   </bean>
 
-  <mvc:resources mapping="/resources/**" location="/WEB-INF/jsp/" cache-period="31556926" />
+  <mvc:resources mapping="/resources/**" location="/WEB-INF/view/" cache-period="31556926" />
 
   <mvc:annotation-driven />
 
