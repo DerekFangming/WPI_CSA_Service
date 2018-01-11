@@ -20,13 +20,7 @@
     <!--<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
 	<script src="/resources/css/local/jquery-3.2.1.min.js"></script>
 	
-	<!--<script>
-	$(document).ready(function(){
-	  $("#signinButton").click(function(){
-		  $("#signinIcon").attr("class","fa fa-circle-o-notch fa-spin");
-	  });
-	});
-	</script>-->
+	
 
 </head>
 
@@ -131,6 +125,10 @@
 
     <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js"></script>-->
     <script src="/resources/css/local//bootstrap.bundle.min.js"></script>
+    
+    <c:if test="${!loggedIn}">
+    <script src="/resources/js/formLogin.js"></script>
+    	</c:if>
 
 </body>
 

@@ -69,6 +69,10 @@
 
     <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js"></script>-->
     <script src="/resources/css/local//bootstrap.bundle.min.js"></script>
+    
+    <c:if test="${!loggedIn}">
+    <script src="/resources/js/formLogin.js"></script>
+    	</c:if>
 
 </body>
 

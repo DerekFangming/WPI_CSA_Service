@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade bs-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+<div class="modal fade bs-modal-sm" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <br>
@@ -15,7 +15,7 @@
                         <p><br> Please contact <a href="mailto:csa@wpi.edu">csa@wpi.edu</a> for any questions.</p>
                     </div>
                     <div class="tab-pane fade show active" id="signin">
-                        <form class="form-horizontal" action="/web_login" method="post">
+                        <form id="loginForm" class="form-horizontal">
                             <fieldset>
                                 <!-- Sign In Form -->
                                 <!-- Text input-->
@@ -39,7 +39,7 @@
                                     <label class="control-label" for="rememberme"></label>
                                     <div class="controls">
                                         <label class="checkbox inline" for="rememberme-0">
-											<input type="checkbox" name="remember" id="remember" value="remember">
+											<input type="checkbox" name="remember" id="remember" value="remember" checked>
 											Remember me
 											</label>
                                     </div>
