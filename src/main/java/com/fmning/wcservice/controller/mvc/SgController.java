@@ -28,6 +28,7 @@ public class SgController {
 		}
 		
 		model.addAttribute("loggedIn", loggedIn);
+		model.addAttribute("redirectPage", "sg");
 		
 		return "sg";
 	}

@@ -44,7 +44,9 @@
 											</label>
                                     </div>
                                 </div>
-
+                                
+                                <input type="hidden" name="redirect" value="${redirectPage}"/>
+                                
                                 <!-- Button -->
                                 <div class="control-group">
                                     <label class="control-label" for="signin"></label>
@@ -79,7 +81,7 @@
                                 <div class="control-group">
                                     <label class="control-label" for="password">Password:</label>
                                     <div class="controls">
-                                        <input id="password" name="password" class="form-control" type="password" placeholder="At least 6 characters with letters and numbers" class="input-large" required="">
+                                        <input id="signuppassword" name="signuppassword" class="form-control" type="password" placeholder="At least 6 characters with letters and numbers" class="input-large" required="">
 
                                     </div>
                                 </div>

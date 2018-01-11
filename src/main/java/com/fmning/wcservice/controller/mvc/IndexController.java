@@ -36,6 +36,7 @@ public class IndexController {
 		}
 		
 		model.addAttribute("loggedIn", loggedIn);
+		model.addAttribute("redirectPage", "index");
 		
 		return "index";//new ModelAndView("index");
 	}
@@ -53,7 +54,7 @@ public class IndexController {
 		model.addAttribute("loggedIn", true);
 		model.addAttribute("nameOfUser", "Fangming");
 	
-		return "index";
+		return form.getRedirect();
 	}
 	
 	@RequestMapping("/logout")

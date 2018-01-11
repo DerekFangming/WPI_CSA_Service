@@ -4,6 +4,7 @@ public class LoginForm {
 	private String username;
 	private String password;
 	private String remember;
+	private String redirect;
 	
 	public String getUsername() {
 		return username;
@@ -27,6 +28,14 @@ public class LoginForm {
 
 	public void setRemember(String remember) {
 		this.remember = remember;
+	}
+
+	public String getRedirect() {
+		return redirect;
+	}
+
+	public void setRedirect(String redirect) {
+		this.redirect = redirect;
 	}
 	
 }
