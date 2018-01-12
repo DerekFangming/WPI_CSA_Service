@@ -68,7 +68,7 @@
 			<div class="row">
 				<div class="col">
 					<div class="feed-image">
-						<img class="tall" src="http://placehold.it/400x800" />
+						<img class="tall" src="/Volumes/Data/testImages/50.jpg" />
 					</div>
 				</div>
 				<div class="col">
@@ -120,11 +120,17 @@
     <c:if test="${!loggedIn}">
     <%@include file="subview/formLogin.jsp" %>
     	</c:if>
+    
+    <%@include file="subview/popup.jsp" %>
 
     <%@include file="subview/footer.jsp" %>
 
     <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js"></script>-->
     <script src="/resources/css/local//bootstrap.bundle.min.js"></script>
+    
+    <script>
+       
+    </script>
     
     <c:if test="${!loggedIn}">
     <script src="/resources/js/formLogin.js"></script>

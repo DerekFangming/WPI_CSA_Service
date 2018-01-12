@@ -4,11 +4,18 @@ $('#loginForm').submit(function (e) {
 		url: "/web_login",
 		data: $("#loginForm").serialize(),
 		success: function (data) {
-			$('#loginModal').modal('toggle');
-			$('#loginNav').replaceWith(data);
+			if (data.startsWith("{")) {
+				var obj = $.parseJSON(data);
+				document.getElementById('popupMessage').innerHTML = obj['error'];
+				$('#popupModal').modal('toggle');
+			} else {
+				$('#loginModal').modal('toggle');
+				$('#loginNav').replaceWith(data);
+			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			alert(jqXHR.status);
+			document.getElementById('popupMessage').innerHTML = 'Unknown error occured. Please contact support';
+			$('#popupModal').modal('toggle');
 		}
 	});
 	e.preventDefault();

@@ -64,6 +64,8 @@
     <c:if test="${!loggedIn}">
     <%@include file="subview/formLogin.jsp" %>
     	</c:if>
+    
+    <%@include file="subview/popup.jsp" %>
 
     <%@include file="subview/footer.jsp" %>
 

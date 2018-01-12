@@ -34,23 +34,42 @@ public class IndexController {
 		if(cookies != null) {
 			for(Cookie c : cookies){
 				if (c.getName().equals("access_token")) {
-					System.out.println("Found access token values: " + c.getValue());
-					loggedIn = true;
-					model.addAttribute("nameOfUser", "Fangming");
+					try {
+						User user = userManager.validateAccessToken(c.getValue());
+						String name = userManager.getUserDetail(user.getId()).getName();
+						if (name == null)
+							name = "Unknown";
+						
+						loggedIn = true;
+						model.addAttribute("nameOfUser", name);
+						
+						if (!c.getValue().equals(user.getAuthToken())) {
+							Cookie cookie = new Cookie("access_token", user.getAuthToken());
+							cookie.setMaxAge(63113904);
+							response.addCookie(cookie);
+						}
+					} catch (NotFoundException e) {
+						loggedIn = false;
+						Cookie cookie = new Cookie("access_token", "invalid");
+						cookie.setMaxAge(0);
+						response.addCookie(cookie);
+					}
+					
 				}
 			}
 		}
 		
+		
+		
 		model.addAttribute("loggedIn", loggedIn);
 		model.addAttribute("redirectPage", "index");
 		
-		return "index";//new ModelAndView("index");
+		return "index";
 	}
 	
 	@RequestMapping("/web_login")
     public String loginController(@ModelAttribute LoginForm form, HttpServletResponse response, ModelMap model) {
 		
-		System.out.println(form.getUsername() + " " + form.getPassword() + " " + form.getRemember());
 		String accessToken;
 		String name;
 		try {
@@ -60,7 +79,8 @@ public class IndexController {
 			if (name == null)
 				name = "Unknown";
 		} catch (NotFoundException e) {
-			return "errorview/404";
+			model.addAttribute("errorMessage", e.getMessage());
+			return "errorview/errorMessage";
 		}
 		
 		
@@ -78,7 +98,7 @@ public class IndexController {
 	@RequestMapping("/logout")
     public String logoutController(@ModelAttribute LoginForm form, HttpServletResponse response, ModelMap model) {
 		
-		Cookie cookie = new Cookie("access_token", "the_token_value");
+		Cookie cookie = new Cookie("access_token", "invalid");
 		cookie.setMaxAge(0);
 		
 		response.addCookie(cookie);

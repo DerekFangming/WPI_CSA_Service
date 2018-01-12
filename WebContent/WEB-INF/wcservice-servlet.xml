@@ -60,7 +60,8 @@
     <property name="redirectHttp10Compatible" value="false" />
   </bean>
 
-  <mvc:resources mapping="/resources/**" location="/WEB-INF/view/" cache-period="31556926" />
+  <mvc:resources mapping="/resources/**" location="/WEB-INF/view/" />
+  <mvc:resources mapping="/images/**" location="file:/Volumes/Data/testImages/" cache-period="31556926" />
 
   <mvc:annotation-driven />
 
