@@ -45,18 +45,16 @@ $('#registerForm').submit(function (e) {
 			success: function (data) {
 				if (data.startsWith("{")) {
 					var obj = $.parseJSON(data);
-					document.getElementById('popupTitle').innerHTML = 'Something goes wrong';
-					document.getElementById('popupMessage').innerHTML = obj['error'];
-					$('#popupModal').modal('toggle');
+					showErrorPopup(obj['error']);
 				} else {
 					$('#loginModal').modal('toggle');
 					$('#loginNav').replaceWith(data);
+					showPopup('Verification email sent', 'An email has been sent to your mail box with a link to confirm your email. '
+							+ 'Please click on the link in 24 hours. Please check your junk folder if you cannot see the email.');
 				}
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				document.getElementById('popupTitle').innerHTML = 'Something goes wrong';
-				document.getElementById('popupMessage').innerHTML = 'Unknown error occured. Please contact support';
-				$('#popupModal').modal('toggle');
+				showErrorPopup('Unknown error occured. Please contact support');
 			}
 		});
 	}

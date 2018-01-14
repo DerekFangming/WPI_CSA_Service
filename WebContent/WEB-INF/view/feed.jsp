@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>WPI CSA - Life</title>
+    <title>WPI CSA - Feed</title>
 
     <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="/resources/css/local/bootstrap.min.css" rel="stylesheet">
@@ -37,17 +37,17 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#">Life</a>
+                        <a class="nav-link" href="./">Life</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="./sg">Survival Guide</a>
+                        <a class="nav-link" href="#">Survival Guide</a>
                     </li>
                     <c:if test="${loggedIn}">
-    					<%@include file="subview/navUserLoggedIn.jsp" %>
-    					</c:if>
-    					<c:if test="${!loggedIn}">
-    					<%@include file="subview/navLogin.jsp" %>
-    					</c:if>
+    				<%@include file="subview/navUserLoggedIn.jsp" %>
+    				</c:if>
+    				<c:if test="${!loggedIn}">
+    				<%@include file="subview/navLogin.jsp" %>
+    				</c:if>
                 </ul>
             </div>
         </div>
@@ -58,37 +58,47 @@
 
         <!-- Jumbotron Header -->
         <header class="jumbotron my-4">
-            <h1 class="display-3">A Warm Welcome!</h1>
-            <p class="lead">This site is created as web version of WPI CSA mobile apps. It has limited features for now comparing with mobile apps.</p>
-			<p class="lead">If you see any errors & bugs, don't forget to report to CSA!</p>
+            <center><h1 class="display-4">${feed.title}</h1></center>
         </header>
         
-        <c:forEach items="${feedList}" var="feed">
         <div class="card top-buffer">
 			<div class="card-header">
-				<h1><a href="./feed?id=${feed.id}">${feed.title}</a></h1>
-			</div>
-			<div class="row">
-				<div class="col">
-					<div class="feed-image">
-						<img class="tall" src="./images/${feed.coverImageId}.jpg" />
-					</div>
-				</div>
-				<div class="col">
-					<p class="lead topright-buffer">${feed.body}</p>
-				</div>
+				${feed.body}
 			</div>
 		</div>
-        
-      	</c:forEach>
 		
-
+		<c:if test="${event != null}">
+    	<div class="card top-buffer">
+			<div class="card-header">
+				Event:
+			</div>
+			<div class="card-block">
+    			<h4 class="card-title left-buffer top-buffer">${event.title}</h4>
+    			<p class="card-text left-buffer">Time: <script> parseDate( '${event.startTime}' ); </script> to <script> parseDate( '${event.endTime}' ); </script></p>
+    			<p class="card-text left-buffer">Location: ${event.description}</p>
+    			<c:choose>
+  				<c:when test="${event.fee == -1}">
+  				</c:when>
+  				<c:when test="${event.fee == 0}">
+  				<a href="#" class="btn btn-primary left-buffer">Free - Get ticket</a>
+  				<input type="hidden" id="eventId" value="${event.id}">
+  				</c:when>
+  				<c:otherwise>
+  				<a href="#" class="btn btn-primary left-buffer">$${event.fee} - Pay and get ticket</a>
+  				</c:otherwise>
+				</c:choose>
+    			
+    			<p></p>
+  			</div>
+		</div>
+    	</c:if>
+        
     </div>
     <!-- /.container -->
 
     <c:if test="${!loggedIn}">
     <%@include file="subview/formLogin.jsp" %>
-    </c:if>
+    	</c:if>
     
     <%@include file="subview/popup.jsp" %><!-- This must be placed below all other modals -->
 
@@ -106,5 +116,3 @@
     </c:if>
 
 </body>
-
-</html>

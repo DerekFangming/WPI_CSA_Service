@@ -35,6 +35,7 @@ import com.fmning.service.domain.Event;
 import com.fmning.service.domain.Payment;
 import com.fmning.service.domain.Ticket;
 import com.fmning.service.domain.TicketTemplate;
+import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.EventManager;
 import com.fmning.service.manager.PaymentManager;
@@ -104,7 +105,11 @@ public class PaymentController {
 	public ResponseEntity<Map<String, Object>> getTicket(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int payerId = userManager.validateAccessToken(request).getId();
+			User user = userManager.validateAccessToken(request);
+			if (!user.getEmailConfirmed())
+				throw new IllegalStateException("Please confirm your email before getting ticket");
+			
+			int payerId = user.getId();
 			String type = (String)request.get("type");
 			int id = (int)request.get("id"); 
 			double amount = 0;
@@ -121,6 +126,9 @@ public class PaymentController {
 			
 			if(event.getFee() != amount)
 				throw new IllegalStateException("Payment amount is not correct.");
+			
+			if(event.getFee() == 0 && !user.getUsername().endsWith("@wpi.edu"))
+				throw new IllegalStateException("You can only get free ticket using wpi email account");
 			
 			
 			try{//If the payment is already done, re-provide ticket and bypass validation
