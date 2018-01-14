@@ -52,7 +52,7 @@ public class WebController {
 		
 		try{
 			int hardCodedId = 2;//TODO: Remove this in future ...
-			if(Utils.schedulerEnabled) {
+			if(Utils.prodMode) {
 				hardCodedId = 1;
 			}
 			List<User> userList = paymentManager.getPaidUserByType(PaymentType.EVENT.getName(), hardCodedId);//

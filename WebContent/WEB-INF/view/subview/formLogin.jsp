@@ -58,14 +58,14 @@
                         </form>
                     </div>
                     <div class="tab-pane fade" id="signup">
-                        <form class="form-horizontal">
+                        <form id="registerForm" class="form-horizontal">
                             <fieldset>
                                 <!-- Sign Up Form -->
                                 <!-- Text input-->
                                 <div class="control-group">
                                     <label class="control-label" for="Email">Username:</label>
                                     <div class="controls">
-                                        <input id="Email" name="Email" class="form-control" type="text" placeholder="Your email. Preferably your @wpi.edu email" class="input-large" required="">
+                                        <input id="newUsername" name="newUsername" class="form-control" type="email" placeholder="Your email. Preferably your @wpi.edu email" class="input-large" required="" maxlength="32">
                                     </div>
                                 </div>
 
@@ -73,7 +73,7 @@
                                 <div class="control-group">
                                     <label class="control-label" for="userid">Name:</label>
                                     <div class="controls">
-                                        <input id="userid" name="userid" class="form-control" type="text" placeholder="Your name" class="input-large" required="">
+                                        <input id="newName" name="newName" class="form-control" type="text" placeholder="Your name" class="input-large" required="" maxlength="20">
                                     </div>
                                 </div>
 
@@ -81,7 +81,7 @@
                                 <div class="control-group">
                                     <label class="control-label" for="password">Password:</label>
                                     <div class="controls">
-                                        <input id="signuppassword" name="signuppassword" class="form-control" type="password" placeholder="At least 6 characters with letters and numbers" class="input-large" required="">
+                                        <input id="newPassword" name="newPassword" class="form-control" type="password" placeholder="At least 6 characters with letters and numbers" class="input-large" required="">
 
                                     </div>
                                 </div>
@@ -90,7 +90,7 @@
                                 <div class="control-group">
                                     <label class="control-label" for="reenterpassword">Re-Enter Password:</label>
                                     <div class="controls">
-                                        <input id="reenterpassword" class="form-control" name="reenterpassword" type="password" placeholder="Enter your password again" class="input-large" required="">
+                                        <input id="newConfirm" name="newConfirm" class="form-control" type="password" placeholder="Enter your password again" class="input-large" required="">
                                     </div>
                                 </div>
 

@@ -2,13 +2,14 @@ package com.fmning.wcservice.utils;
 
 public class Utils {
 	
+	/*Test & Prod switch*/
+	public final static boolean prodMode  = false;
+	
 	/*Email parameters*/
-	public final static String emailVerificationPath = "http://wc.fmning.com/email_verification/";//TEST
-	//public final static String emailVerificationPath = "https://wcservice.fmning.com/email_verification/";//PROD
+	public final static String emailVerificationPath = prodMode ? "https://wcservice.fmning.com/email_verification/"
+			: "http://wc.fmning.com/email_verification/";
 	
 	/*Scheduler parameters*/
-	public final static boolean schedulerEnabled = false;//TEST
-	//public final static boolean schedulerEnabled = true;//PROD
 	public final static String dbBackupFolder = "/Users/Cyan/Documents/pg_backup";
 	public final static String dbBackupFilePrefix = "db_backup_";
 	public final static String dbBackupToolLocation = "/Library/PostgreSQL/9.5/bin";
@@ -19,8 +20,7 @@ public class Utils {
 	public final static String credentialFolder = "/Users/Cyan/Documents/pg_backup/credential";
 	
 	/*Ticket parameters*/
-	public final static String ticketPath = "/Volumes/Data/testTickets/";//TEST
-	//public final static String ticketPath = "/Volumes/Data/tickets/";//PROD
+	public final static String ticketPath = prodMode ? "/Volumes/Data/tickets/" : "/Volumes/Data/testTickets/";
 	
 	public static String createVerificationEmail(String veriCode) {
 		String message = "Hi there,";

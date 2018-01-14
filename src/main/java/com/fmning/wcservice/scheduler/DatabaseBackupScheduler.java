@@ -51,7 +51,7 @@ public class DatabaseBackupScheduler {
 
 	@Scheduled(cron = "0 0 1 * * ?")
     public void dbDailyBackup() {
-		if(Utils.schedulerEnabled) {
+		if(Utils.prodMode) {
 			try {
 				Calendar calendar = Calendar.getInstance();
 				int dayOfWeek = calendar.get(Calendar.DAY_OF_MONTH);
@@ -135,7 +135,7 @@ public class DatabaseBackupScheduler {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		
 		//Set up image path
-		if(!Utils.schedulerEnabled) {
+		if(!Utils.prodMode) {
 			Util.imagePath = "/Volumes/Data/testImages/";
 		}
 		

@@ -33,8 +33,9 @@ public class SgController {
 						if (name == null)
 							name = "Unknown";
 						
+						user.setName(name);
 						loggedIn = true;
-						model.addAttribute("nameOfUser", name);
+						model.addAttribute("user", user);
 						
 						if (!c.getValue().equals(user.getAuthToken())) {
 							Cookie cookie = new Cookie("access_token", user.getAuthToken());
