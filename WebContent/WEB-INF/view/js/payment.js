@@ -27,6 +27,12 @@ $('#payButton').on('click', function (e) {
     				if (data['status'] == 'ok'){
     					if (data['ticketStatus'] == 'ok'){
     						window.location="./download_ticket?accessToken=" + accessToken + "&id=" + data['ticketId'];
+    						showPopup('Download started', 'If you are using an iPhone, it should automatically open the ticket. ' +
+    								 'If you are using an Android phone, download a third-party wallet app like WalletPass, and then ' +
+    								 'clicked on the downloaded .pkpass ticket file to add to wallet. If you are downloading from a laptop, ' +
+    								 'you can email the ticket file to your phone. Here is a <a target="_blank" href="https://www.tenorshare.com' +
+    								 '/iphone-tips/top-4-ways-to-view-pkpass-files-on-iphone-android-pc-mac.html">link for all the methods to open a .pkpass file</a>');
+    						
     					} else {
     						showErrorPopup('Transaction is successful. ' + data['ticketStatus'] + "Please contact support");
     					}
@@ -37,10 +43,6 @@ $('#payButton').on('click', function (e) {
     					showErrorPopup('Unknown status. ' + data['status'] + "Please contact support");
     				}
     				
-    				var status = data['status'];
-    				var ticketStatus = data['ticketStatus'];
-    				var ticketId = data['ticketId'];
-    				var ticketStr = data['ticket'];
     			} else {
     				showErrorPopup(data['error']);
     			}
@@ -61,5 +63,9 @@ $('#downloadTicketButton').on('click', function (e) {
     var ticketId = parseInt($("#ticketId").val());
     var accessToken = getAccessToken();
     window.location="./download_ticket?accessToken=" + accessToken + "&id=" + $("#ticketId").val();
-    
+    showPopup('Download started', 'If you are using an iPhone, it should automatically open the ticket. ' +
+			 'If you are using an Android phone, download a third-party wallet app like WalletPass, and then ' +
+			 'clicked on the downloaded .pkpass ticket file to add to wallet. If you are downloading from a laptop, ' +
+			 'you can email the ticket file to your phone. Here is a <a target="_blank" href="https://www.tenorshare.com' +
+			 '/iphone-tips/top-4-ways-to-view-pkpass-files-on-iphone-android-pc-mac.html">link for all the methods to open a .pkpass file</a>');
 });
