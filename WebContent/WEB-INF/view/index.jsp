@@ -12,15 +12,15 @@
 
     <title>WPI CSA - Life</title>
 
-    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet">-->
-    <link href="/resources/css/local/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="/resources/css/local/bootstrap.min.css" rel="stylesheet">-->
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
     <link href="/resources/css/main.css" rel="stylesheet">
 	
-    <!--<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
-	<script src="/resources/css/local/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<!--<script src="/resources/css/local/jquery-3.2.1.min.js"></script>-->
 	
 	<script src="/resources/js/common.js"></script>
 
@@ -69,13 +69,13 @@
 				<h1><a href="./feed?id=${feed.id}">${feed.title}</a></h1>
 			</div>
 			<div class="row">
-				<div class="col">
+				<div class="col-lg-6 col-sm-12">
 					<div class="feed-image">
-						<img class="tall" src="./images/${feed.coverImageId}.jpg" />
+						<img style="height: 100%; width: 100%; object-fit: contain" src="./images/${feed.coverImageId}.jpg" />
 					</div>
 				</div>
-				<div class="col">
-					<p class="lead topright-buffer">${feed.body}</p>
+				<div class="col-lg-6 clm-sm-12">
+					<p class="lead feed-desc">${feed.body}</p>
 				</div>
 			</div>
 		</div>
@@ -94,8 +94,8 @@
 
     <%@include file="subview/footer.jsp" %>
 
-    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js"></script>-->
-    <script src="/resources/css/local//bootstrap.bundle.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js"></script>
+    <!--<script src="/resources/css/local//bootstrap.bundle.min.js"></script>-->
     
     <c:if test="${user == null || (user != null && !user.emailConfirmed)}">
     <script src="/resources/js/verifyEmail.js"></script>

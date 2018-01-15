@@ -16,15 +16,22 @@ body {
 
 .left-buffer { margin-left:20px; }
 
-.topright-buffer { margin-top:20px;  margin-right:20px; height: 300px; overflow: hidden;}
-
-.feed-image {
-  height: 300px;
-  width: 500px;
-  overflow: hidden;
-  position:relative;
+.feed-desc { 
+	padding-top:20px;
+	padding-right:20px;
+	padding-bottom: 20px;
+	padding-left: 20px;
+	height: 284px;
+	overflow: hidden;
 }
 
+.feed-image {
+  max-height: 300px;
+  max-width: 500px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
 
 .feed-image img.tall {
   width: auto;
@@ -37,7 +44,6 @@ body {
     margin: auto;
   width: 100%;
 }​
-
 
 .image-container {
     max-width: 100%;
