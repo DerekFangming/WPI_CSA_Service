@@ -15,7 +15,7 @@
     <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="/resources/css/local/bootstrap.min.css" rel="stylesheet">
     
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
     <link href="/resources/css/main.css" rel="stylesheet">
 	
@@ -42,10 +42,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Survival Guide</a>
                     </li>
-                    <c:if test="${loggedIn}">
+                    <c:if test="${user != null}">
     				<%@include file="subview/navUserLoggedIn.jsp" %>
     				</c:if>
-    				<c:if test="${!loggedIn}">
+    				<c:if test="${user == null}">
     				<%@include file="subview/navLogin.jsp" %>
     				</c:if>
                 </ul>
@@ -80,13 +80,18 @@
   				<c:when test="${event.fee == -1}">
   				</c:when>
   				<c:when test="${event.fee == 0}">
-  				<a href="#" class="btn btn-primary left-buffer">Free - Get ticket</a>
+  				<a id="payButton" href="#" class="btn btn-primary left-buffer"><i id="ticketSpinner" class=""></i>&nbsp;Free - Get ticket</a>
   				<input type="hidden" id="eventId" value="${event.id}">
   				</c:when>
   				<c:otherwise>
   				<a href="#" class="btn btn-primary left-buffer">$${event.fee} - Pay and get ticket</a>
   				</c:otherwise>
 				</c:choose>
+				
+				<c:if test="${user != null}">
+    			<input type="hidden" id="userEmailAddr" value="${user.username}">
+    			<input type="hidden" id="userEmailConfirmed" value="${user.emailConfirmed}">
+    			</c:if>
     			
     			<p></p>
   			</div>
@@ -96,9 +101,11 @@
     </div>
     <!-- /.container -->
 
-    <c:if test="${!loggedIn}">
+    <c:if test="${user == null}">
     <%@include file="subview/formLogin.jsp" %>
-    	</c:if>
+    </c:if>
+    
+    <%@include file="subview/downloadTicket.jsp" %>
     
     <%@include file="subview/popup.jsp" %><!-- This must be placed below all other modals -->
 
@@ -107,12 +114,15 @@
     <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js"></script>-->
     <script src="/resources/css/local//bootstrap.bundle.min.js"></script>
     
-    <c:if test="${!loggedIn || (loggedIn && !user.emailConfirmed)}">
+    <c:if test="${user == null || (user != null && !user.emailConfirmed)}">
     <script src="/resources/js/verifyEmail.js"></script>
     </c:if>
     
-    <c:if test="${!loggedIn}">
+    <c:if test="${user == null}">
+    <input type="hidden" id="refreshAfterLogin" value="true">
     <script src="/resources/js/formLogin.js"></script>
     </c:if>
+    
+    <script src="/resources/js/payment.js"></script>
 
 </body>

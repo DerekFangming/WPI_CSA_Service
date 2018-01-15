@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Oops 404 Error</title>
+    <title>Oops 500 Error</title>
 
     <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="/resources/css/local/bootstrap.min.css" rel="stylesheet">
@@ -35,9 +35,10 @@
 
         <!-- Jumbotron Header -->
         <header class="jumbotron my-4">
-            <center><h1 class="display-3">Oops, page not found</h1></center>
+            <center><h1 class="display-3">Oops, internal error</h1></center>
             <br><br><br>
-            <center><p class="lead">The page you are looking for does not exist. If you believe that this is an error, please report to <a href="mailto:admin@fmning.com">admin@fmning.com</a></p></center>
+            <center><p class="lead">We have a problem here and the error has been logged. </p></center>
+            <center><p class="lead">If this keeps coming up, please report to <a href="mailto:admin@fmning.com">admin@fmning.com</a></p></center>
             <br>
             <center><a class="btn btn-primary" href="./" role="button">Take me back to main page</a></center>
         </header>

@@ -60,6 +60,7 @@
     <property name="redirectHttp10Compatible" value="false" />
   </bean>
 
+  <mvc:resources mapping="/favicon.ico" location="/WEB-INF/favicon.ico" />
   <mvc:resources mapping="/resources/**" location="/WEB-INF/view/" />
   <mvc:resources mapping="/images/**" location="file:/Volumes/Data/testImages/" cache-period="31556926" />
 

@@ -21,7 +21,6 @@ public class SgController {
 	
 	@RequestMapping(value = "/sg", method = RequestMethod.GET)
     public String indexController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
-		boolean loggedIn = false;
 		
 		Cookie[] cookies = request.getCookies();
 		if(cookies != null) {
@@ -34,7 +33,6 @@ public class SgController {
 							name = "Unknown";
 						
 						user.setName(name);
-						loggedIn = true;
 						model.addAttribute("user", user);
 						
 						if (!c.getValue().equals(user.getAuthToken())) {
@@ -43,7 +41,6 @@ public class SgController {
 							response.addCookie(cookie);
 						}
 					} catch (NotFoundException e) {
-						loggedIn = false;
 						Cookie cookie = new Cookie("access_token", "invalid");
 						cookie.setMaxAge(0);
 						response.addCookie(cookie);
@@ -53,7 +50,6 @@ public class SgController {
 			}
 		}
 		
-		model.addAttribute("loggedIn", loggedIn);
 		model.addAttribute("redirectPage", "sg");
 		
 		return "sg";

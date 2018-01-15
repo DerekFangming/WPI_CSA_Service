@@ -8,8 +8,12 @@ $('#loginForm').submit(function (e) {
 				var obj = $.parseJSON(data);
 				showErrorPopup(obj['error']);
 			} else {
-				$('#loginModal').modal('toggle');
-				$('#loginNav').replaceWith(data);
+				if ($('#refreshAfterLogin').length == 0) {
+					$('#loginModal').modal('toggle');
+					$('#loginNav').replaceWith(data);
+				} else {
+					location.reload();
+				}
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -47,10 +51,14 @@ $('#registerForm').submit(function (e) {
 					var obj = $.parseJSON(data);
 					showErrorPopup(obj['error']);
 				} else {
-					$('#loginModal').modal('toggle');
-					$('#loginNav').replaceWith(data);
-					showPopup('Verification email sent', 'An email has been sent to your mail box with a link to confirm your email. '
-							+ 'Please click on the link in 24 hours. Please check your junk folder if you cannot see the email.');
+					if ($('#refreshAfterLogin').length == 0) {
+						$('#loginModal').modal('toggle');
+						$('#loginNav').replaceWith(data);
+						showPopup('Verification email sent', 'An email has been sent to your mail box with a link to confirm your email. '
+								+ 'Please click on the link in 24 hours. Please check your junk folder if you cannot see the email.');
+					} else {
+						location.reload();
+					}
 				}
 			},
 			error: function (jqXHR, textStatus, errorThrown) {

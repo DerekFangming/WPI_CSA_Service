@@ -1,6 +1,7 @@
 package com.fmning.wcservice.controller.rest;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,7 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -146,6 +150,8 @@ public class TicketController {
 			
 			InputStream is = new FileInputStream("/Volumes/Data/testTickets/test.pkpass");
 	        IOUtils.copy(is, response.getOutputStream());
+	        response.setContentType("application/pkpass");
+	        response.setHeader("Content-Disposition", "attachment; filename=\"test.pkpass\"");
 	        response.flushBuffer();
 		} catch (Exception e) {
 			try {
@@ -159,6 +165,24 @@ public class TicketController {
 		}
 
 	}
+	
+	@RequestMapping(value = "/download_ticket", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> downloadTicket(HttpServletRequest request) throws IOException {
+		int userId = userManager.validateAccessToken(request.getParameter("accessToken")).getId();
+		Ticket ticket = ticketManager.getTicketById(Integer.parseInt(request.getParameter("id")));
+		if (ticket.getOwnerId() != userId)
+			throw new IOException();
+		
+		File file = new File(ticket.getLocation());
+		
+		HttpHeaders respHeaders = new HttpHeaders();
+		respHeaders.add("Content-Type", "application/pkpass");
+		respHeaders.setContentDispositionFormData("attachment", "ticket.pkpass");
+		
+		InputStreamResource isr = new InputStreamResource(new FileInputStream(file));
+		return new ResponseEntity<InputStreamResource>(isr, respHeaders, HttpStatus.OK);
+	}
+	
 	
 	@RequestMapping("/get_ticket")
     public ResponseEntity<Map<String, Object>> getTicket(@RequestBody Map<String, Object> request) {

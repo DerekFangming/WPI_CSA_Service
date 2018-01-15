@@ -173,10 +173,14 @@ public class PaymentController {
 						byte[] ticket = createTicket(event, template, payerId);
 						String ticketFile = Utils.ticketPath + "T_" + Integer.toString(payerId);
 						ticketFile += "_" + formatter.format(Instant.now()) + ".pkpass";
-						ticketManager.createTicket(template.getId(), TicketType.PAYMENT.getName(), paymentId,
+						int ticketId = ticketManager.createTicket(template.getId(), TicketType.PAYMENT.getName(), paymentId,
 								ticketFile, payerId);
 						respond.put("ticketStatus", "ok");
-						respond.put("ticket", ticket);
+						if (request.get("web") != null) {
+							respond.put("ticketId", ticketId);
+						} else {
+							respond.put("ticket", ticket);
+						}
 						try{
 							ByteArrayInputStream inputStream = new ByteArrayInputStream(ticket);
 							IOUtils.copy(inputStream, new FileOutputStream(ticketFile));
