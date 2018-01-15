@@ -94,12 +94,7 @@ public class IndexController {
 				name = "Unknown";
 			user.setName(name);
 			
-			String username = user.getUsername();
 			
-			String veriCode = helperManager.getEmailConfirmCode(username);
-			userManager.updateVeriCode(username, veriCode);
-			String message = Utils.createVerificationEmail(veriCode);
-			helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
 			
 		} catch (NotFoundException e) {
 			model.addAttribute("errorMessage", e.getMessage());
@@ -128,6 +123,14 @@ public class IndexController {
 			accessToken = user.getAuthToken();
 			userManager.saveUserDetail(user.getId(), user.getName(), null, Util.nullInt, null, null, null, 
 					null, null, null);
+			
+			String username = form.getNewUsername();
+			
+			String veriCode = helperManager.getEmailConfirmCode(username);
+			userManager.updateVeriCode(username, veriCode);
+			String message = Utils.createVerificationEmail(veriCode);
+			helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+			
 		} catch (IllegalStateException e) {
 			model.addAttribute("errorMessage", e.getMessage());
 			return "errorview/errorMessage";

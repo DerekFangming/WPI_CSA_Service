@@ -1,5 +1,6 @@
 package com.fmning.wcservice.controller.rest;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,11 +72,12 @@ public class TicketController {
             pass.setSerialNumber("123456780003");
             pass.setTeamIdentifier("NK4455562X"); // replace this with your team ID
             pass.setOrganizationName("fmning.com");
-            pass.setDescription("WPI CSA Event");
+            pass.setDescription("WPI CSA Event6");
             pass.setLogoText("WPI CSA");
-            pass.setForegroundColor("#000000");
-            pass.setBackgroundColor("#000000");
-            pass.setLabelColor("#000000");
+            pass.setForegroundColor("#630C0C");
+            pass.setBackgroundColor("#212121");
+            pass.setLabelColor("#2D3681");
+            
 
             PKBarcode barcode = new PKBarcode();
             barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
@@ -174,6 +176,18 @@ public class TicketController {
 			throw new IOException();
 		
 		File file = new File(ticket.getLocation());
+		
+		HttpHeaders respHeaders = new HttpHeaders();
+		respHeaders.add("Content-Type", "application/pkpass");
+		respHeaders.setContentDispositionFormData("attachment", "ticket.pkpass");
+		
+		InputStreamResource isr = new InputStreamResource(new FileInputStream(file));
+		return new ResponseEntity<InputStreamResource>(isr, respHeaders, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/dtt", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> downloadTestTicket(HttpServletRequest request) throws IOException {
+		File file = new File("/Volumes/Data/testTickets/test.pkpass");
 		
 		HttpHeaders respHeaders = new HttpHeaders();
 		respHeaders.add("Content-Type", "application/pkpass");

@@ -3,7 +3,7 @@ package com.fmning.wcservice.utils;
 public class Utils {
 	
 	/*Test & Prod switch*/
-	/*To deploy to prod, also update db connection name and image directory pointing*/
+	/*PROD & TEST Step 1 of 2. Controls db backup job, ticket directory mapping*/
 	public final static boolean prodMode  = false;
 	
 	/*Email parameters*/

@@ -10,7 +10,7 @@
 </head>
 <body>
   <br/>
-  <h2>11.11 Event tickets, total sale count : ${count}</h2>
+  <h2>Dumpling Event tickets, total sale count : ${count}</h2>
 
   <br/>
   <table class="table table-striped table-bordered">

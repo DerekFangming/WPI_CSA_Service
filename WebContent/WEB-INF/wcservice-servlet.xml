@@ -26,10 +26,10 @@
     <property name="dataSource" ref="dataSourceWcService" />
   </bean>
 
-  <!--Bean to load properties file -->
+  <!-- PROD & TEST Step 2 of 2, Updating DB connection and image directory mapping -->
   <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <!--reads config.properties file-->
-    <property name="location" value="classpath:dataSource.properties" />
+    <property name="location" value="classpath:dataSourceTest.properties" />
   </bean>
 
   <bean id="dataSourceWcService" class="com.fmning.service.dao.impl.SdkDataSourceImpl">
@@ -62,7 +62,7 @@
 
   <mvc:resources mapping="/favicon.ico" location="/WEB-INF/favicon.ico" />
   <mvc:resources mapping="/resources/**" location="/WEB-INF/view/" />
-  <mvc:resources mapping="/images/**" location="file:/Volumes/Data/testImages/" cache-period="31556926" />
+  <mvc:resources mapping="/images/**" location="file:/Volumes/Data/${imgDir}/" cache-period="31556926" />
 
   <mvc:annotation-driven />
 

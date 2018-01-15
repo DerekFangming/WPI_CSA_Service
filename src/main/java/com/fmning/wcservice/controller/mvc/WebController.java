@@ -51,10 +51,8 @@ public class WebController {
 		List<User> list = new ArrayList<User>();
 		
 		try{
-			int hardCodedId = 2;//TODO: Remove this in future ...
-			if(Utils.prodMode) {
-				hardCodedId = 1;
-			}
+			int hardCodedId = 4;//TODO: Remove this in future ...
+			
 			List<User> userList = paymentManager.getPaidUserByType(PaymentType.EVENT.getName(), hardCodedId);//
 			for(User u : userList){
 				u.setName(userManager.getUserDisplayedName(u.getId()));

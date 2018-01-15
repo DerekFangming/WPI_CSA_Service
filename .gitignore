@@ -7,3 +7,5 @@ logging.out
 *.cer
 
 *.p12
+
+src/main/resources/dataSourceTest.properties

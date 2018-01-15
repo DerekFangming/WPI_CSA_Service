@@ -58,7 +58,8 @@
 
         <!-- Jumbotron Header -->
         <header class="jumbotron my-4">
-            <h1 class="display-3">SG!</h1>
+            <center><h1 class="display-3">Survival Guide</h1></center>
+            <center><p class="lead">Coming soon</p></center>
         </header>
         
     </div>
