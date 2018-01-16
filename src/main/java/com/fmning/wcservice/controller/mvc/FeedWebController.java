@@ -36,6 +36,7 @@ import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.EventType;
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class FeedWebController {
@@ -111,6 +112,7 @@ public class FeedWebController {
 		
 		
 		model.addAttribute("redirectPage", "feed");
+		model.addAttribute("prodMode", Utils.prodMode);
 		
 		return "feed";
 	}

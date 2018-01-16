@@ -101,8 +101,47 @@ public class PaymentController {
 		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
 	
+	@RequestMapping("/check_payment")
+	public ResponseEntity<Map<String, Object>> checkPaymentStatus(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		
+		try{
+			User user = userManager.validateAccessToken(request);
+			String type = (String)request.get("type");
+			int id = (int)request.get("id");
+			
+			if (!type.equals(PaymentType.EVENT.getName()))
+				throw new IllegalStateException(ErrorMessage.PAYMENT_NOT_SUPPORTED.getMsg());
+			
+			Event event = eventManager.getEventById(id);
+			
+			try {
+				Payment payment = paymentManager.getPaymentByTypeAndPayer(PaymentType.EVENT.getName(),
+						event.getId(), user.getId(), event.getOwnerId());
+				try{
+					Ticket ticket = ticketManager.getTicketByType(TicketType.PAYMENT.getName(), payment.getId());
+					respond.put("error", "");
+					respond.put("status", PaymentStatusType.ALREADY_PAID.getName());
+					respond.put("ticketStatus", "ok");
+					respond.put("ticketId", ticket.getId());
+				} catch (NotFoundException e){
+					throw new IllegalStateException(ErrorMessage.TICKET_INTERNAL_ERROR.getMsg());
+				}
+			} catch (NotFoundException e){
+				respond.put("error", "");
+				respond.put("status", PaymentStatusType.NOT_EXIST.getName());
+			}
+			
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+		
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+		
+	}
+	
 	@RequestMapping("/make_payment")
-	public ResponseEntity<Map<String, Object>> getTicket(@RequestBody Map<String, Object> request) {
+	public ResponseEntity<Map<String, Object>> makePayment(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
 			User user = userManager.validateAccessToken(request);
@@ -137,7 +176,7 @@ public class PaymentController {
 				try{
 					Ticket ticket = ticketManager.getTicketByType(TicketType.PAYMENT.getName(), payment.getId());
 					respond.put("error", "");
-					respond.put("status", "AlreadyPaid");
+					respond.put("status", PaymentStatusType.ALREADY_PAID.getName());
 					respond.put("ticketStatus", "ok");
 					respond.put("ticketId", ticket.getId());
 				} catch (NotFoundException e){
@@ -176,7 +215,7 @@ public class PaymentController {
 						int ticketId = ticketManager.createTicket(template.getId(), TicketType.PAYMENT.getName(), paymentId,
 								ticketFile, payerId);
 						respond.put("ticketStatus", "ok");
-						if (request.get("web") != null) {
+						if (request.get("web") != null) {// For web requests, return the ticket id instead of ticket itself
 							respond.put("ticketId", ticketId);
 						} else {
 							respond.put("ticket", ticket);

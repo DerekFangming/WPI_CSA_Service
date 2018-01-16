@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.UserManager;
+import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class SgController {
@@ -51,6 +52,7 @@ public class SgController {
 		}
 		
 		model.addAttribute("redirectPage", "sg");
+		model.addAttribute("prodMode", Utils.prodMode);
 		
 		return "sg";
 	}

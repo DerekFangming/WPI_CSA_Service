@@ -1,57 +1,57 @@
 create table users (
-    id serial primary key,
-    username varchar(32) NOT NULL,
-    password varchar(32) NOT NULL,
-    auth_token varchar(255),
-    veri_token varchar(255),
-    created_at timestamp without time zone NOT NULL,
-    email_confirmed boolean NOT NULL DEFAULT false,
-    salt varchar(32) NOT NULL,
-    timezone_offset integer NOT NULL DEFAULT 0
+	id serial primary key,
+	username varchar(32) NOT NULL,
+	password varchar(32) NOT NULL,
+	auth_token varchar(255),
+	veri_token varchar(255),
+	created_at timestamp without time zone NOT NULL,
+	email_confirmed boolean NOT NULL DEFAULT false,
+	salt varchar(32) NOT NULL,
+	timezone_offset integer NOT NULL DEFAULT 0
 );
 
 create table images (
-    id serial primary key,
-    location varchar(50) NOT NULL,
-    type varchar(10),
-    type_mapping_id integer,
-    owner_id integer NOT NULL,
-    created_at timestamp without time zone NOT NULL,
+	id serial primary key,
+	location varchar(50) NOT NULL,
+	type varchar(10),
+	type_mapping_id integer,
+	owner_id integer NOT NULL,
+	created_at timestamp without time zone NOT NULL,
 	enabled boolean NOT NULL DEFAULT true,
-    title varchar(50)
+	title varchar(50)
 );
 
 create table relationships (
-    id serial primary key,
-    sender_id integer NOT NULL,
-    receiver_id integer NOT NULL,
-    confirmed boolean NOT NULL DEFAULT false,
-    type varchar(10),
-    created_at timestamp without time zone NOT NULL
+	id serial primary key,
+	sender_id integer NOT NULL,
+	receiver_id integer NOT NULL,
+	confirmed boolean NOT NULL DEFAULT false,
+	type varchar(10),
+	created_at timestamp without time zone NOT NULL
 );
 
 create table user_details (
-    id serial primary key,
-    user_id integer NOT NULL,
-    name varchar(20),
-    nickname varchar(10),
-    age integer,
-    gender varchar(1),
-    location varchar(10),
-    whats_up varchar(200),
+	id serial primary key,
+	user_id integer NOT NULL,
+	name varchar(20),
+	nickname varchar(10),
+	age integer,
+	gender varchar(1),
+	location varchar(10),
+	whats_up varchar(200),
 	birthday varchar(8),
 	year varchar(4),
 	major varchar(10)
 );
 
 create table feeds (
-    id serial primary key,
-    title varchar(100),
-    type varchar(10),
-    body text,
-    owner_id integer NOT NULL,
-    enabled boolean NOT NULL DEFAULT true,
-    created_at timestamp without time zone NOT NULL
+	id serial primary key,
+	title varchar(100),
+	type varchar(10),
+	body text,
+	owner_id integer NOT NULL,
+	enabled boolean NOT NULL DEFAULT true,
+	created_at timestamp without time zone NOT NULL
 );
 
 create table comments (
@@ -65,7 +65,7 @@ create table comments (
 	created_at timestamp without time zone NOT NULL
 );
 
-create table sg(
+create table sg (
 	id serial primary key,
 	menu_id integer not null,
 	title varchar(1000),
@@ -73,7 +73,7 @@ create table sg(
 	created_at timestamp without time zone
 );
 
-create table wc_reports(
+create table wc_reports (
 	id serial primary key,
 	user_id integer,
 	menu_id integer not null,
@@ -101,8 +101,8 @@ create table wc_articles (
 );
 
 create table events (
-    id serial primary key,
-    type varchar(10),
+	id serial primary key,
+	type varchar(10),
 	mapping_id integer,
 	title varchar(100),
 	description varchar(1000),
@@ -117,8 +117,6 @@ create table events (
 	message varchar(100),
 	ticket_balance integer not null default 0
 );
-
--- not on prod yet
 
 create table ticket_templates (
 	id serial primary key,
@@ -155,4 +153,5 @@ create table payments (
 	created_at timestamp without time zone not null
 );
 
--- Update scripts
+
+-- not on prod yet
