@@ -101,7 +101,7 @@ public class PaymentController {
 		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
 	
-	@RequestMapping("/check_payment")
+	@RequestMapping("/check_payment_status")
 	public ResponseEntity<Map<String, Object>> checkPaymentStatus(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		
@@ -118,15 +118,21 @@ public class PaymentController {
 			try {
 				Payment payment = paymentManager.getPaymentByTypeAndPayer(PaymentType.EVENT.getName(),
 						event.getId(), user.getId(), event.getOwnerId());
-				try{
-					Ticket ticket = ticketManager.getTicketByType(TicketType.PAYMENT.getName(), payment.getId());
+				if (payment.getStatus().equals(PaymentStatusType.DONE.getName())) {
+					try{
+						Ticket ticket = ticketManager.getTicketByType(TicketType.PAYMENT.getName(), payment.getId());
+						respond.put("error", "");
+						respond.put("status", PaymentStatusType.ALREADY_PAID.getName());
+						respond.put("ticketStatus", "ok");
+						respond.put("ticketId", ticket.getId());
+					} catch (NotFoundException e){
+						throw new IllegalStateException(ErrorMessage.TICKET_INTERNAL_ERROR.getMsg());
+					}
+				} else {
 					respond.put("error", "");
-					respond.put("status", PaymentStatusType.ALREADY_PAID.getName());
-					respond.put("ticketStatus", "ok");
-					respond.put("ticketId", ticket.getId());
-				} catch (NotFoundException e){
-					throw new IllegalStateException(ErrorMessage.TICKET_INTERNAL_ERROR.getMsg());
+					respond.put("status", payment.getStatus());// Should only be Rejected
 				}
+				
 			} catch (NotFoundException e){
 				respond.put("error", "");
 				respond.put("status", PaymentStatusType.NOT_EXIST.getName());
