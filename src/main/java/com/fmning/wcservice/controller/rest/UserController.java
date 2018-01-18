@@ -32,6 +32,7 @@ public class UserController {
 	/*
 	 * Register and login
 	 */
+	//This will be deprecated soon
 	@RequestMapping("/register_for_salt")
     public ResponseEntity<Map<String, Object>> registerForSalt(@RequestBody Map<String, Object> request) {
 		String salt = "";
@@ -48,8 +49,9 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
+	//This will be deprecated soon
 	@RequestMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<Map<String, Object>> register1(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
 			String username = (String)request.get("username");
@@ -79,6 +81,7 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
+	//This will be deprecated soon
 	@RequestMapping("/login_for_salt")
     public ResponseEntity<Map<String, Object>> loginForSalt(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
@@ -93,20 +96,89 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
-	@RequestMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, Object> request) {
+	//This will be deprecated soon
+		@RequestMapping("/login")
+	    public ResponseEntity<Map<String, Object>> login1(@RequestBody Map<String, Object> request) {
+			Map<String, Object> respond = new HashMap<String, Object>();
+			try{
+				String username = (String)request.get("username");
+				String password = (String)request.get("password");
+
+				
+				User user = userManager.login(username, password);
+				
+				respond.put("userId", user.getId());//TODO really need this id?
+				respond.put("username", username);
+				respond.put("accessToken", user.getAccessToken());
+				//respond.put("expire", exp.toString());
+				respond.put("emailConfirmed",user.getEmailConfirmed());
+				try{
+					UserDetail detail = userManager.getUserDetail(user.getId());
+					
+					respond.put("name", Util.nullToEmptyString(detail.getName()));
+					respond.put("birthday", Util.nullToEmptyString(detail.getBirthday()));
+					respond.put("year", Util.nullToEmptyString(detail.getYear()));
+					respond.put("major", Util.nullToEmptyString(detail.getMajor()));
+				}catch(NotFoundException e){}
+				
+				try{
+					int avatarId = imageManager.getTypeUniqueImage("Avatar", user.getId()).getId();
+					respond.put("avatarId", avatarId);
+				}catch(Exception e){}
+				
+				respond.put("error", "");
+			}catch(Exception e){
+				respond = Util.createErrorRespondFromException(e);
+			}
+			
+			return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+		}
+	
+	@RequestMapping("/register1")
+    public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
 			String username = (String)request.get("username");
 			String password = (String)request.get("password");
-
+			User user = userManager.webRegister(username, password);
 			
-			User user = userManager.login(username, password);
+			String veriCode = helperManager.getEmailConfirmCode(username);
+			userManager.updateVeriCode(username, veriCode);
+			String message = Utils.createVerificationEmail(veriCode);
+			helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
 			
-			respond.put("userId", user.getId());//TODO really need this id?
+			Instant exp = Instant.now().plus(Duration.ofDays(Util.tokenTimeout));
+			//Convert to ISO8601 formatted string such as 2013-06-25T16:22:52.966Z
+			String accessToken = helperManager.createAccessToken(username, exp);
+			userManager.updateAccessToken(username, accessToken);
+			
 			respond.put("username", username);
-			respond.put("accessToken", user.getAuthToken());
-			//respond.put("expire", exp.toString());
+			respond.put("accessToken", accessToken);
+			respond.put("expire", exp.toString());
+			respond.put("emailConfirmed",false);
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+	
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	@RequestMapping("/login1")
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			User user;
+			if (request.containsKey("accessToken")) {
+				user = userManager.validateAccessToken((String)request.get("accessToken"));
+			} else if (request.containsKey("username") && request.containsKey("password")) {
+				user = userManager.webLogin((String)request.get("username"), (String)request.get("password"));
+			} else {
+				throw new NullPointerException();
+			}
+
+			respond.put("username", user.getUsername());
+			respond.put("accessToken", user.getAccessToken());
 			respond.put("emailConfirmed",user.getEmailConfirmed());
 			try{
 				UserDetail detail = userManager.getUserDetail(user.getId());
@@ -129,6 +201,8 @@ public class UserController {
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
+	
+	
 	
 	
 	/*
@@ -193,7 +267,7 @@ public class UserController {
 			String username = user.getUsername();
 			
 			userManager.changePassword(username, oldPwd, newPwd);
-			respond.put("accessToken", user.getAuthToken());
+			respond.put("accessToken", user.getAccessToken());
 			respond.put("error", "");
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);

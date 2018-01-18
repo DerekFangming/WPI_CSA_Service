@@ -50,8 +50,8 @@ public class IndexController {
 						user.setName(name);
 						model.addAttribute("user", user);
 						
-						if (!c.getValue().equals(user.getAuthToken())) {
-							Cookie cookie = new Cookie("access_token", user.getAuthToken());
+						if (!c.getValue().equals(user.getAccessToken())) {
+							Cookie cookie = new Cookie("access_token", user.getAccessToken());
 							cookie.setMaxAge(63113904);
 							response.addCookie(cookie);
 						}
@@ -89,7 +89,7 @@ public class IndexController {
 		User user;
 		try {
 			user = userManager.webLogin(form.getUsername(), form.getPassword());
-			accessToken = user.getAuthToken();
+			accessToken = user.getAccessToken();
 			String name = userManager.getUserDetail(user.getId()).getName();
 			if (name == null)
 				name = "Unknown";
@@ -121,7 +121,7 @@ public class IndexController {
 		try {
 			user = userManager.webRegister(form.getNewUsername(), form.getNewPassword());
 			user.setName(form.getNewName());
-			accessToken = user.getAuthToken();
+			accessToken = user.getAccessToken();
 			userManager.saveUserDetail(user.getId(), user.getName(), null, Util.nullInt, null, null, null, 
 					null, null, null);
 			

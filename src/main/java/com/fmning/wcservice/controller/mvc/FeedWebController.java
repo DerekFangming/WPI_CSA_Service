@@ -61,8 +61,8 @@ public class FeedWebController {
 						user.setName(name);
 						model.addAttribute("user", user);
 						
-						if (!c.getValue().equals(user.getAuthToken())) {
-							Cookie cookie = new Cookie("access_token", user.getAuthToken());
+						if (!c.getValue().equals(user.getAccessToken())) {
+							Cookie cookie = new Cookie("access_token", user.getAccessToken());
 							cookie.setMaxAge(63113904);
 							response.addCookie(cookie);
 						}

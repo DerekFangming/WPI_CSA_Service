@@ -2,7 +2,7 @@ create table users (
 	id serial primary key,
 	username varchar(32) NOT NULL,
 	password varchar(32) NOT NULL,
-	auth_token varchar(255),
+	access_token varchar(255),
 	veri_token varchar(255),
 	created_at timestamp without time zone NOT NULL,
 	email_confirmed boolean NOT NULL DEFAULT false,
@@ -155,3 +155,5 @@ create table payments (
 
 
 -- not on prod yet
+
+ALTER TABLE users RENAME auth_token TO access_token;
