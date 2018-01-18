@@ -80,7 +80,8 @@
 			<div class="card-block">
     			<h4 class="card-title left-buffer top-buffer">${event.title}</h4>
     			<p class="card-text left-buffer">Time: <script> parseDate( '${event.startTime}' ); </script> to <script> parseDate( '${event.endTime}' ); </script></p>
-    			<p class="card-text left-buffer">Location: ${event.description}</p>
+    			<p class="card-text left-buffer">Location: ${event.location}</p>
+    			<p class="card-text left-buffer">Description: ${event.description}</p>
     			<c:choose>
   				<c:when test="${event.fee == -1}">
   				</c:when>
