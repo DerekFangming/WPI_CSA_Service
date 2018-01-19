@@ -34,6 +34,7 @@ import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.Utils;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
@@ -174,6 +175,9 @@ public class SgMobileController {
 			sgReport.setCreatedAt(Instant.now());
 			wcReportDao.persist(sgReport);
 			String emailList = "fning@wpi.edu,sxie@wpi.edu,ysong5@wpi.edu";
+			if (!Utils.prodMode) {
+				emailList = "fning@wpi.edu";
+			}
 			String emailContent = "Sender: ";
 			emailContent += email == null ? "Anonymity" : email;
 			emailContent += "\nReport: " + report;

@@ -1,5 +1,10 @@
 $('#payButton').on('click', function (e) {
     e.preventDefault();
+    alert(1);
+    var a = $("#ticketFee").val();
+    alert(a);
+    var b = parseFloat(a);
+    alert(b);
     
     var eventId = parseInt($('#eventId').val());
     
@@ -9,6 +14,10 @@ $('#payButton').on('click', function (e) {
     	showErrorPopup('To get free ticket, you have to login using @wpi email');
     } else if ($('#userEmailConfirmed').val() != 'true') {
     	showErrorPopup('Please verify your email first');
+    } else if (parseFloat($("#ticketFee").val()) > 0) {
+    	alert(1);
+    } else if (parseFloat($("#ticketFee").val()) == 0) {
+    	alert(2);
     } else {
     	$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
     	$("#payButton").toggleClass("disabled");

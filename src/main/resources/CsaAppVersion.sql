@@ -51,3 +51,10 @@ VALUES ('1.03.001', 'OK', '', '', '');
 UPDATE WC_APP_VERSIONS SET STATUS = 'AU', TITLE = 'App Update', MESSAGE = 'A new version is available in app store. Please update to the new version. This current version will not be supported.'
 WHERE APP_VERSION in ('1.02.001');
 
+-- start of version 1.10
+
+INSERT INTO WC_APP_VERSIONS (APP_VERSION, STATUS, TITLE, MESSAGE, UPDATES)
+VALUES ('1.10.001', 'OK', '', '', '');
+
+UPDATE WC_APP_VERSIONS SET STATUS = 'AU', TITLE = 'Mandatory app Update', MESSAGE = 'A new version is available in app store. You must update to the new version and your current version will not be able to login.'
+WHERE APP_VERSION in ('1.03.001');

@@ -90,9 +90,10 @@
   				<input type="hidden" id="eventId" value="${event.id}">
   				</c:when>
   				<c:otherwise>
-  				<a href="#" class="btn btn-primary left-buffer">$${event.fee} - Pay and get ticket</a>
+  				<a id="payButton" href="#" class="btn btn-primary left-buffer">$${event.fee} - Pay and get ticket</a>
   				</c:otherwise>
 				</c:choose>
+    			<input type="hidden" id="ticketFee" value="${event.fee}">
 				
 				<c:if test="${user != null}">
     			<input type="hidden" id="userEmailAddr" value="${user.username}">
