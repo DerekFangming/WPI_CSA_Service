@@ -144,8 +144,8 @@ public class FeedController {
     public ResponseEntity<Map<String, Object>> creatFeed(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int userId = userManager.validateAccessToken(request).getId();
-			//int userId = 1;
+			User user = userManager.validateAccessToken(request);
+			int userId = user.getId();
 			
 			String title = (String)request.get("title");
 			String type = (String)request.get("type");
@@ -183,6 +183,9 @@ public class FeedController {
 			}
 			
 			respond.put("error", "");
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}

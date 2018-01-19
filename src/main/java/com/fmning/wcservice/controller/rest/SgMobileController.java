@@ -27,6 +27,7 @@ import com.fmning.service.dao.impl.QueryType;
 import com.fmning.service.dao.impl.RelationalOpType;
 import com.fmning.service.dao.impl.ResultsOrderType;
 import com.fmning.service.domain.Sg;
+import com.fmning.service.domain.User;
 import com.fmning.service.domain.WcAppVersion;
 import com.fmning.service.domain.WcArticle;
 import com.fmning.service.domain.WcReport;
@@ -160,12 +161,21 @@ public class SgMobileController {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
 			int menuId = (int)request.get("menuId");
-			int userId = request.get("userId") == null ? Util.nullInt : (int)request.get("userId");
+			String accessToken = (String)request.get("accessToken");
 			String email = (String)request.get("email");
 			String report = (String)request.get("report");
+			int userId = Util.nullInt;
 			
-			if (email == null || report == null) throw new IllegalStateException("Need a valid email or report");
-			if (email.length()>50 || report.length()>500) throw new IllegalStateException("Input too long");
+			if (email.length() > 50 || report.length() > 500)
+				throw new IllegalStateException("Input too long");
+			
+			if (accessToken != null) {
+				try {
+					User user = userManager.validateAccessToken(accessToken);
+					userId = user.getId();
+					email = user.getUsername();
+				} catch (Exception e) {}
+			}
 			
 			WcReport sgReport = new WcReport();
 			sgReport.setUserId(userId);
@@ -197,7 +207,8 @@ public class SgMobileController {
     public ResponseEntity<Map<String, Object>> addSgArticle(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int userId = userManager.validateAccessToken(request).getId();
+			User user = userManager.validateAccessToken(request);
+			int userId = user.getId();
 			int menuId = (int)request.get("menuId");
 			String title = (String)request.get("title");
 			String article = (String)request.get("article");
@@ -212,6 +223,9 @@ public class SgMobileController {
 			sgArticle.setCreatedAt(Instant.now());
 			wcArticleDao.persist(sgArticle);
 			respond.put("error", "");
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 		}catch(IllegalStateException e){
 			respond.put("error", e.getMessage());
 		}catch(Exception e){

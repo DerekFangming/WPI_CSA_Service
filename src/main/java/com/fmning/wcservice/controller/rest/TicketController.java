@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.Ticket;
+import com.fmning.service.domain.User;
 import com.fmning.service.manager.TicketManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
@@ -202,7 +203,8 @@ public class TicketController {
     public ResponseEntity<Map<String, Object>> getTicket(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int userId = userManager.validateAccessToken(request).getId();
+			User user = userManager.validateAccessToken(request);
+			int userId = user.getId();
 			Ticket ticket = ticketManager.getTicketById((int)request.get("id"));
 			if (ticket.getOwnerId() != userId)
 				throw new IllegalStateException(ErrorMessage.TICKET_NOT_OWNED.getMsg());
@@ -211,6 +213,9 @@ public class TicketController {
 			
 			respond.put("ticket", IOUtils.toByteArray(is));
 			respond.put("error", "");
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}

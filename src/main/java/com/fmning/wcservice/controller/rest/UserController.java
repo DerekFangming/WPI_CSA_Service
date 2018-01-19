@@ -1,7 +1,5 @@
 package com.fmning.wcservice.controller.rest;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,62 +30,21 @@ public class UserController {
 	/*
 	 * Register and login
 	 */
-	//This will be deprecated soon
-	@RequestMapping("/register_for_salt1")
-    public ResponseEntity<Map<String, Object>> registerForSalt(@RequestBody Map<String, Object> request) {
-		String salt = "";
-		Map<String, Object> respond = new HashMap<String, Object>();
-		try{
-			salt = userManager.registerForSalt((String)request.get("username"), 
-					(int)request.get("offset"));
-			respond.put("salt", salt);
-			respond.put("error", "");
-		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
-		}
 	
-		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
-	}
 	
-	//This will be deprecated soon
-	@RequestMapping("/register1")
-    public ResponseEntity<Map<String, Object>> register1(@RequestBody Map<String, Object> request) {
+	//This will be deprecated after migration
+	@RequestMapping("/login_migration")
+    public ResponseEntity<Map<String, Object>> login1(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
 			String username = (String)request.get("username");
 			String password = (String)request.get("password");
-			userManager.register(username, password);
+
 			
-			String veriCode = helperManager.getEmailConfirmCode(username);
-			userManager.updateVeriCode(username, veriCode);
-			String message = Utils.createVerificationEmail(veriCode);
-			helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+			User user = userManager.loginMigrate(username, password);
 			
-			Instant exp = Instant.now().plus(Duration.ofDays(7));
-			//Convert to ISO8601 formatted string such as 2013-06-25T16:22:52.966Z
-			String accessToken = helperManager.createAccessToken(username, exp);
-			userManager.updateAccessToken(username, accessToken);
+			respond.put("accessToken", user.getAccessToken());
 			
-			respond.put("userId", userManager.getUserId(username));//TODO really need this id?
-			respond.put("username", username);
-			respond.put("accessToken", accessToken);
-			respond.put("expire", exp.toString());
-			respond.put("emailConfirmed",false);
-			respond.put("error", "");
-		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
-		}
-	
-		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
-	}
-	
-	//This will be deprecated soon
-	@RequestMapping("/login_for_salt1")
-    public ResponseEntity<Map<String, Object>> loginForSalt(@RequestBody Map<String, Object> request) {
-		Map<String, Object> respond = new HashMap<String, Object>();
-		try{
-			String username = (String)request.get("username");
-			respond.put("salt", userManager.loginForSalt(username));
 			respond.put("error", "");
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
@@ -95,27 +52,6 @@ public class UserController {
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
-	
-	//This will be deprecated soon
-		@RequestMapping("/login_migration")
-	    public ResponseEntity<Map<String, Object>> login1(@RequestBody Map<String, Object> request) {
-			Map<String, Object> respond = new HashMap<String, Object>();
-			try{
-				String username = (String)request.get("username");
-				String password = (String)request.get("password");
-
-				
-				User user = userManager.login(username, password);
-				
-				respond.put("accessToken", user.getAccessToken());
-				
-				respond.put("error", "");
-			}catch(Exception e){
-				respond = Util.createErrorRespondFromException(e);
-			}
-			
-			return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
-		}
 	
 	@RequestMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, Object> request) {
@@ -197,7 +133,7 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> getUserDetail(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			userManager.validateAccessToken(request);
+			User user = userManager.validateAccessToken(request);
 			
 			UserDetail detail = userManager.getUserDetail((int)request.get("userId"));
 			
@@ -206,7 +142,9 @@ public class UserController {
 			respond.put("year", Util.nullToEmptyString(detail.getYear()));
 			respond.put("major", Util.nullToEmptyString(detail.getMajor()));
 			respond.put("error", "");
-			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}
@@ -218,7 +156,8 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> saveCurrentUserDetail(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int userId = userManager.validateAccessToken(request).getId();
+			User user = userManager.validateAccessToken(request);
+			int userId = user.getId();
 
 			userManager.saveUserDetail(userId, (String)request.get("name"), null, Util.nullInt, null, null, null, 
 					(String)request.get("birthday"), (String)request.get("year"), (String)request.get("major"));
@@ -228,7 +167,9 @@ public class UserController {
 				int imgId = imageManager.saveTypeUniqueImage(base64, "Avatar", Util.nullInt, userId, null);
 				respond.put("imageId", imgId);
 			}
-			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 			respond.put("error", "");
 			
 		}catch(Exception e){

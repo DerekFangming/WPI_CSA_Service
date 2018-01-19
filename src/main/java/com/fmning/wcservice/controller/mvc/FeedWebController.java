@@ -48,32 +48,24 @@ public class FeedWebController {
 	@RequestMapping(value = "/feed", method = RequestMethod.GET)
     public String indexController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 		
-		Cookie[] cookies = request.getCookies();
-		if(cookies != null) {
-			for(Cookie c : cookies){
-				if (c.getName().equals("access_token")) {
-					try {
-						User user = userManager.validateAccessToken(c.getValue());
-						String name = userManager.getUserDetail(user.getId()).getName();
-						if (name == null)
-							name = "Unknown";
-						
-						user.setName(name);
-						model.addAttribute("user", user);
-						
-						if (!c.getValue().equals(user.getAccessToken())) {
-							Cookie cookie = new Cookie("access_token", user.getAccessToken());
-							cookie.setMaxAge(63113904);
-							response.addCookie(cookie);
-						}
-					} catch (NotFoundException e) {
-						Cookie cookie = new Cookie("access_token", "invalid");
-						cookie.setMaxAge(0);
-						response.addCookie(cookie);
-					}
-					
-				}
+		Cookie cookie = null;
+		try {
+			User user = userManager.validateAccessToken(request);
+			String name = userManager.getUserDetail(user.getId()).getName();
+			if (name == null){name = "Unknown";}
+			user.setName(name);
+			model.addAttribute("user", user);
+			if (user.isTokenUpdated()) {
+				cookie = new Cookie("accessToken", user.getAccessToken());
+				cookie.setMaxAge(63113904);
 			}
+		} catch (NotFoundException e) {
+			cookie = new Cookie("accessToken", "invalid");
+			cookie.setMaxAge(0);
+		}
+		
+		if (cookie != null) {
+			response.addCookie(cookie);
 		}
 		
 		String feedId = request.getParameter("id");
@@ -94,8 +86,8 @@ public class FeedWebController {
 	        	Document doc = db.parse(is);
 	        	Element e = (Element)(doc.getElementsByTagName("img").item(0));
 	        	String src = e.getAttribute("src");
-	        	String newTag = "<div class=\"image-container\"><img style=\"height: 100%; width: 100%; object-fit: contain\" src=\"./images/"
-	        	+ src.replace("WCImage_", "") + ".jpg\"></div>";
+	        	String newTag = "<br><div class=\"image-container\"><img style=\"height: 100%; width: 100%; object-fit: contain\" src=\"./images/"
+	        	+ src.replace("WCImage_", "") + ".jpg\"></div><br>";
 	        	newBody = newBody.replace(s, newTag);
         	} catch (Exception e) {
         		continue;

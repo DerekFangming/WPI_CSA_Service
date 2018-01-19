@@ -34,7 +34,7 @@ body {
 }
 
 .feed-image img.tall {
-  width: auto;
+	width: auto;
     height: auto;
     position: absolute;  
     top: 0;  
@@ -42,14 +42,14 @@ body {
     left: 0;  
     right: 0;  
     margin: auto;
-  width: 100%;
+	width: 100%;
 }​
 
 .image-container {
     max-width: 100%;
     max-height: 100%;
-  display: flex;
-  justify-content: center;
+	display: flex;
+	justify-content: center;
 }
 
 

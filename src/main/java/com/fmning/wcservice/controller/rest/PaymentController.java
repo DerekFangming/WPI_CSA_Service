@@ -78,21 +78,6 @@ public class PaymentController {
 			  "0806df90cf0bd867727c42077e6b41bd"
 			);
 	
-	@RequestMapping("/pay1")
-	public ResponseEntity<String> test1(@RequestBody Map<String, Object> request) {
-		double[] arr = { 23.59004,
-			    35.7,
-			    3.0,
-			    9
-			};
-
-			for ( double dub : arr ) {
-			  System.out.println( String.format( "%.2f", dub ) );
-			}
-		return new ResponseEntity<String>("", HttpStatus.OK);
-	}
-	
-	
 	@RequestMapping("/pay")
 	public ResponseEntity<String> test(@RequestBody Map<String, Object> request) {
 		
@@ -151,6 +136,10 @@ public class PaymentController {
 			} catch (NotFoundException e){
 				respond.put("error", "");
 				respond.put("status", PaymentStatusType.NOT_EXIST.getName());
+			}
+			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
 			}
 			
 		}catch(Exception e){
@@ -293,8 +282,9 @@ public class PaymentController {
 				}
 			}
 			
-			
-			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 			
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);

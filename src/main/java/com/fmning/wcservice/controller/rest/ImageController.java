@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.Image;
+import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
@@ -37,7 +38,7 @@ public class ImageController {
     public ResponseEntity<Map<String, Object>> downloadImageById(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			userManager.validateAccessToken(request);
+			User user = userManager.validateAccessToken(request);
 			int imageId = (int)request.get("imageId");
 			
 			Image image = imageManager.getImageById(imageId);
@@ -46,6 +47,9 @@ public class ImageController {
 			respond.put("createdAt", image.getCreatedAt().toString());
 			respond.put("image", image.getImageData());
 			respond.put("title", image.getTitle());
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}
@@ -56,12 +60,16 @@ public class ImageController {
     public ResponseEntity<Map<String, Object>> deleteImage(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int id = userManager.validateAccessToken(request).getId();
+			User user = userManager.validateAccessToken(request);
+			int userId = user.getId();
 			
 			int imageId = (int)request.get("imageId");
-			imageManager.softDeleteImage(imageId, id);
+			imageManager.softDeleteImage(imageId, userId);
 			
 			respond.put("error", "");
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}
@@ -73,13 +81,16 @@ public class ImageController {
 	public ResponseEntity<Map<String, Object>> getImageIds(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			userManager.validateAccessToken(request);
+			User user = userManager.validateAccessToken(request);
 			
 			int userId = (int)request.get("userId");
 			
 			respond.put("idList", imageManager.getImageIdListByType((String)request.get("type"), userId));
 			
 			respond.put("error", "");
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}
@@ -90,7 +101,7 @@ public class ImageController {
 	public ResponseEntity<Map<String, Object>> getAvatar(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			userManager.validateAccessToken(request);
+			User user = userManager.validateAccessToken(request);
 			
 			int userId = (Integer)request.get("userId");
 			String imgType = (String)request.get("imgType");
@@ -105,6 +116,9 @@ public class ImageController {
 			respond.put("image", avatar.getImageData());
 			
 			respond.put("error", "");
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}
@@ -116,7 +130,8 @@ public class ImageController {
     public ResponseEntity<Map<String, Object>> uploadImage(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			int id = userManager.validateAccessToken(request).getId();
+			User user = userManager.validateAccessToken(request);
+			int userId = user.getId();
 			
 			String title = (String)request.get("title");
 			String type = (String)request.get("type");
@@ -130,10 +145,13 @@ public class ImageController {
 			if(base64 == null)
 				throw new IllegalStateException(ErrorMessage.INCORRECT_PARAM.getMsg());
 			
-			int imgId = imageManager.saveTypeUniqueImage(base64, type, typeMappingId, id, title);
+			int imgId = imageManager.saveTypeUniqueImage(base64, type, typeMappingId, userId, title);
 			
 			respond.put("imageId", imgId);
 			respond.put("error", "");
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}

@@ -13,7 +13,7 @@ function parseDate(date) {
 }
 
 function getAccessToken() {
-	var nameEQ = "access_token=";
+	var nameEQ = "accessToken=";
     var ca = document.cookie.split(';');
     var accessToken = "";
     for(var i=0;i < ca.length;i++) {

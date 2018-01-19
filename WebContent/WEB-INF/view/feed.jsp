@@ -45,7 +45,7 @@
                         <a class="nav-link" href="./">Life</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Survival Guide</a>
+                        <a class="nav-link" href="./sg">Survival Guide</a>
                     </li>
                     <c:if test="${user != null}">
     				<%@include file="subview/navUserLoggedIn.jsp" %>

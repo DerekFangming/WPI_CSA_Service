@@ -46,6 +46,9 @@ public class EmailController {
 			helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
 			
 			respond.put("error", "");
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
 		}catch(Exception e){
 			respond = Util.createErrorRespondFromException(e);
 		}

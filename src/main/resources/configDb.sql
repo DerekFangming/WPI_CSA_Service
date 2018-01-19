@@ -7,7 +7,7 @@ create table users (
 	created_at timestamp without time zone NOT NULL,
 	email_confirmed boolean NOT NULL DEFAULT false,
 	salt varchar(32) NOT NULL,
-	timezone_offset integer NOT NULL DEFAULT 0
+	role_id integer NOT NULL DEFAULT 99
 );
 
 create table images (
@@ -154,6 +154,10 @@ create table payments (
 );
 
 
--- not on prod yet
+-- Needs to be run on Prod    Also run app version script!
 
 ALTER TABLE users RENAME auth_token TO access_token;
+ALTER TABLE users ALTER COLUMN timezone_offset SET DEFAULT 99;
+ALTER TABLE users RENAME timezone_offset to role_id;
+
+
