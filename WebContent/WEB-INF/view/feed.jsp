@@ -92,7 +92,8 @@
   				<input type="hidden" id="eventId" value="${event.id}">
   				</c:when>
   				<c:otherwise>
-  				<a id="payButton" href="#" class="btn btn-primary left-buffer">$${event.fee} - Pay and get ticket</a>
+  				<a id="payButton" href="#" class="btn btn-primary left-buffer"><i id="ticketSpinner" class=""></i>&nbsp;$${event.fee} - Pay and get ticket</a>
+  				<input type="hidden" id="eventId" value="${event.id}">
   				</c:otherwise>
 				</c:choose>
     			<input type="hidden" id="ticketFee" value="${event.fee}">

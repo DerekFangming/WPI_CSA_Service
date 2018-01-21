@@ -8,19 +8,57 @@ $('#payButton').on('click', function (e) {
     } else if ($('#userEmailConfirmed').val() != 'true') {
     	showErrorPopup('Please verify your email first');
     } else if (fee > 0) {
-    	$('#paymentModal').modal('toggle');
-    	var button = document.querySelector('#submitPaymentButton');
-    	braintree.dropin.create({authorization: 'sandbox_bk8pdqf3_wnbj3bx4nwmtyz77',
-    		container: '#dropinContainer'}, function (createErr, instance) {
-    		button.addEventListener('click', function () {
-    			instance.requestPaymentMethod(function (err, payload) {
-    				alert(err);
-    				alert(payload.nonce);
-	    			
-    				// Submit payload.nonce to your server
-    			});
-    		});
+    	$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
+    	$("#payButton").toggleClass("disabled");
+    	var accessToken = getAccessToken();
+        var eventId = parseInt($('#eventId').val());
+    	
+    	$.ajax({
+    		type: "POST",
+    		url: "./check_payment_status",
+    		data: JSON.stringify({accessToken : accessToken, type : 'Event', id : eventId}),
+            contentType: "application/json",
+            dataType: "json",
+    		success: function (data) {
+    			$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
+    	    	$("#payButton").toggleClass("disabled");
+    	    	if (data['error'] != "" ) {
+    	    		showErrorPopup(data['error']);
+    	    	} else if (data['status'] == "AlreadyPaid") {
+    	    		$("#ticketId").val(data['ticketId']);
+    				$('#downloadTicketModal').modal('toggle');
+    	    	} else if (data['status'] == "NotExist" || data['status'] == "Rejected") {
+    	    		$('#paymentModal').modal('toggle');
+    	        	var button = document.querySelector('#submitPaymentButton');
+    	        	braintree.dropin.create({
+    	        		authorization: 'sandbox_bk8pdqf3_wnbj3bx4nwmtyz77',
+    	        		container: '#dropinContainer',
+    	        		paypal: {
+    	        			flow: 'vault'
+    	        		}
+    	        	}, function (createErr, instance) {
+    	        		button.addEventListener('click', function () {
+    	        			instance.requestPaymentMethod(function (err, payload) {
+    	        				if (err != null) {
+    	        					showErrorPopup(err == 'DropinError: No payment method is available.' ? 'Please select a payment method' : err);
+    	        				} else {
+    	        					makePaymentRequest(fee, payload.type, payload.nonce)
+    	        				}
+    	        			});
+    	        		});
+    	        	});
+    	    	} else {
+    				showErrorPopup('Unknown status. ' + data['status'] + "Please contact support");
+    			}
+    		},
+    		error: function (jqXHR, textStatus, errorThrown) {
+    			$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
+    	    	$("#payButton").toggleClass("disabled");
+    			showErrorPopup('Unknown error occured. Please contact support');
+    		}
     	});
+    	
+    	
     } else if (fee == 0) {
     	if (!$('#userEmailAddr').val().toLowerCase().endsWith("@wpi.edu")) {
         	showErrorPopup('To get free ticket, you have to login using @wpi email');

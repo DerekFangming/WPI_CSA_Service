@@ -10,8 +10,8 @@
             <div class="modal-body" id="dropinContainer" >
             </div>
             <div class="modal-footer">
-            	<button id="submitPaymentButton" type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+            	<button id="submitPaymentButton" type="button" class="btn btn-primary" data-dismiss="modal">Pay</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>
         </div>
 
