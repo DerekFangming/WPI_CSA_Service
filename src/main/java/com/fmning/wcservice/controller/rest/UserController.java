@@ -62,8 +62,11 @@ public class UserController {
 			User user = userManager.webRegister(username, password);
 			
 			String message = Utils.createVerificationEmail(user.getVeriToken());
-			System.out.println(message);
-			helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+			if (Utils.prodMode) {
+				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+			} else {
+				System.out.println(message);
+			}
 			
 			userManager.saveUserDetail(user.getId(), (String)request.get("name"), null, Util.nullInt, null, null, null, 
 					(String)request.get("birthday"), (String)request.get("year"), (String)request.get("major"));

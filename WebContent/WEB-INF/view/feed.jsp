@@ -22,6 +22,8 @@
     <script src="/resources/css/local/jquery-3.2.1.min.js"></script>
 	</c:otherwise>
 	</c:choose>
+	
+	<script src="https://js.braintreegateway.com/web/dropin/1.9.2/js/dropin.min.js"></script>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
@@ -111,6 +113,8 @@
     <c:if test="${user == null}">
     <%@include file="subview/formLogin.jsp" %>
     </c:if>
+    
+    <%@include file="subview/payment.jsp" %>
     
     <%@include file="subview/downloadTicket.jsp" %>
     

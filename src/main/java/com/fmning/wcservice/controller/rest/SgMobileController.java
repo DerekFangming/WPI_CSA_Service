@@ -185,14 +185,15 @@ public class SgMobileController {
 			sgReport.setCreatedAt(Instant.now());
 			wcReportDao.persist(sgReport);
 			String emailList = "fning@wpi.edu,sxie@wpi.edu,ysong5@wpi.edu";
-			if (!Utils.prodMode) {
-				emailList = "fning@wpi.edu";
-			}
 			String emailContent = "Sender: ";
 			emailContent += email == null ? "Anonymity" : email;
 			emailContent += "\nReport: " + report;
 			emailContent += "\n\n\n\n\nPlease reply this email to unsubscribe";
-			helperManager.sendEmail("admin@fmning.com", emailList, "WPI CSA app user report", emailContent);
+			if (Utils.prodMode) {
+				helperManager.sendEmail("admin@fmning.com", emailList, "WPI CSA app user report", emailContent);
+			} else {
+				System.out.println(emailContent);
+			}
 			respond.put("error", "");
 		}catch(IllegalStateException e){
 			respond.put("error", e.getMessage());

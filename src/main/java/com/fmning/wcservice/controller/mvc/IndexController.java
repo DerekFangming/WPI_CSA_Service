@@ -123,7 +123,11 @@ public class IndexController {
 			String veriCode = helperManager.getEmailConfirmCode(username);
 			userManager.updateVeriCode(username, veriCode);
 			String message = Utils.createVerificationEmail(veriCode);
-			helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+			if (Utils.prodMode){
+				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+			} else {
+				System.out.println(message);
+			}
 			
 		} catch (IllegalStateException e) {
 			model.addAttribute("errorMessage", e.getMessage());

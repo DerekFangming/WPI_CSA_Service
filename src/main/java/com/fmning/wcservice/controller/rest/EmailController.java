@@ -43,7 +43,11 @@ public class EmailController {
 			String veriCode = helperManager.getEmailConfirmCode(username);
 			userManager.updateVeriCode(username, veriCode);
 			String message = Utils.createVerificationEmail(veriCode);
-			helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+			if (Utils.prodMode) {
+				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+			} else {
+				System.out.println(message);
+			}
 			
 			respond.put("error", "");
 			if (user.isTokenUpdated()) {
@@ -76,7 +80,11 @@ public class EmailController {
 				veriCode = helperManager.getEmailConfirmCode(username);
 				userManager.updateVeriCode(username, veriCode);
 				String message = Utils.createVerificationEmail(veriCode);
-				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				if (Utils.prodMode) {
+					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				} else {
+					System.out.println(message);
+				}
 				respond = "resend";
 			}
 		}catch(IllegalStateException e){
