@@ -14,7 +14,7 @@
     
 	<c:choose>
 	<c:when test="${prodMode}">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	</c:when>
 	<c:otherwise>
@@ -35,7 +35,7 @@
 
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
         <div class="container">
             <a class="navbar-brand" href="./">WPI CSA</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,19 +80,19 @@
 				Event:
 			</div>
 			<div class="card-block">
-    			<h4 class="card-title left-buffer top-buffer">${event.title}</h4>
-    			<p class="card-text left-buffer">Time: <script> parseDate( '${event.startTime}' ); </script> to <script> parseDate( '${event.endTime}' ); </script></p>
-    			<p class="card-text left-buffer">Location: ${event.location}</p>
-    			<p class="card-text left-buffer">Description: ${event.description}</p>
+    			<h4 class="card-title">${event.title}</h4>
+    			<p class="card-text">Time: <script> parseDate( '${event.startTime}' ); </script> to <script> parseDate( '${event.endTime}' ); </script></p>
+    			<p class="card-text">Location: ${event.location}</p>
+    			<p class="card-text">Description: ${event.description}</p>
     			<c:choose>
   				<c:when test="${event.fee == -1}">
   				</c:when>
   				<c:when test="${event.fee == 0}">
-  				<a id="payButton" href="#" class="btn btn-primary left-buffer"><i id="ticketSpinner" class=""></i>&nbsp;Free - Get ticket</a>
+  				<a id="payButton" href="#" class="btn btn-primary"><i id="ticketSpinner" class=""></i>&nbsp;Free - Get ticket</a>
   				<input type="hidden" id="eventId" value="${event.id}">
   				</c:when>
   				<c:otherwise>
-  				<a id="payButton" href="#" class="btn btn-primary left-buffer"><i id="ticketSpinner" class=""></i>&nbsp;$${event.fee} - Pay and get ticket</a>
+  				<a id="payButton" href="#" class="btn btn-primary"><i id="ticketSpinner" class=""></i>&nbsp;$${event.fee} - Pay and get ticket</a>
   				<input type="hidden" id="eventId" value="${event.id}">
   				</c:otherwise>
 				</c:choose>

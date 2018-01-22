@@ -1,5 +1,7 @@
 package com.fmning.wcservice.controller.mvc;
 
+import java.util.List;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,15 +12,19 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fmning.service.domain.SurvivalGuide;
 import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.SGManager;
 import com.fmning.service.manager.UserManager;
+import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class SgController {
 	
 	@Autowired private UserManager userManager;
+	@Autowired private SGManager sgManager;
 	
 	@RequestMapping(value = "/sg", method = RequestMethod.GET)
     public String indexController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
@@ -46,7 +52,46 @@ public class SgController {
 		model.addAttribute("redirectPage", "sg");
 		model.addAttribute("prodMode", Utils.prodMode);
 		
+		model.addAttribute("menuList", createMenu(Util.nullInt, ""));
+		
+		
 		return "sg";
+	}
+	
+	private String createMenu(int parentId, String prefix) {
+		String content = "";
+		List<SurvivalGuide> currentList = sgManager.getChildArticles(parentId);
+		if (currentList.size() > 0) {
+			if (parentId == Util.nullInt) {
+				content = "<div class=\"card\">\n";
+				String collapseId = Integer.toString(parentId);
+				content += "<div class=\"card-header\"><a data-toggle=\"collapse\" href=\"#collapse"
+						+ collapseId + "\">Survival Guide</a></div>\n";
+				content += "<div id=\"collapse" + collapseId + "\" class=\"card-collapse collapse"
+						+ (parentId == Util.nullInt ? " show" : "") + "\">\n";
+			}
+			
+			
+			for (SurvivalGuide sg : currentList) {
+				String childContent = createMenu(sg.getId(), prefix + "&emsp;");
+				if (childContent.equals("")) {
+					content += "<div class=\"card-block sg-menu\">" + prefix + sg.getTitle() + "</div>\n";
+				} else {
+					String collapseId = Integer.toString(sg.getId());
+					content += "<div class=\"card-header\"><a data-toggle=\"collapse\" href=\"#collapse"
+							+ collapseId + "\">" + prefix + sg.getTitle() + "</a></div>\n";
+					content += "<div id=\"collapse" + collapseId + "\" class=\"card-collapse collapse\">\n";
+					content += childContent;
+					content += "</div>\n";
+				}
+			}
+			
+			if (parentId == Util.nullInt) {
+				content += "</div>\n</div>";
+			}
+		}
+		
+		return content;
 	}
 	
 }

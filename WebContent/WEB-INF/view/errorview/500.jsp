@@ -11,7 +11,7 @@
 
     <title>Oops 500 Error</title>
 
-    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="/resources/css/local/bootstrap.min.css" rel="stylesheet">
 
     <link href="/resources/css/main.css" rel="stylesheet">

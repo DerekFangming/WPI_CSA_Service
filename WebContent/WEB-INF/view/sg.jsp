@@ -14,7 +14,7 @@
 	
     <c:choose>
 	<c:when test="${prodMode}">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	</c:when>
 	<c:otherwise>
@@ -33,7 +33,7 @@
 
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
         <div class="container">
             <a class="navbar-brand" href="./">WPI CSA</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,13 +61,27 @@
     <!-- Page Content -->
     <div class="container">
 
-        <!-- Jumbotron Header -->
+        <!-- Jumbotron Header
         <header class="jumbotron my-4">
             <center><h1 class="display-3">Survival Guide</h1></center>
             <center><p class="lead">Coming soon</p></center>
-        </header>
+        </header>-->
+        
+        <div class="row top-buffer ">
+	    		<div class="col-lg-6 col-sm-12">
+	    			<div class="sg-height">
+				${menuList}
+				</div>
+			</div>
+			<div class="col-lg-6 clm-sm-12">
+				<p class="lead feed-desc">Something</p>
+			</div>
+	    </div>
         
     </div>
+    
+    
+    
     <!-- /.container -->
 
     <c:if test="${user == null}">
