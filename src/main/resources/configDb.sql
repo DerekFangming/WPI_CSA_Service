@@ -65,14 +65,6 @@ create table comments (
 	created_at timestamp without time zone NOT NULL
 );
 
-create table sg (
-	id serial primary key,
-	menu_id integer not null,
-	title varchar(1000),
-	content varchar(25000),
-	created_at timestamp without time zone
-);
-
 create table wc_reports (
 	id serial primary key,
 	user_id integer,
@@ -161,4 +153,15 @@ ALTER TABLE users ALTER COLUMN timezone_offset SET DEFAULT 99;
 ALTER TABLE users RENAME timezone_offset to role_id;
 ALTER TABLE payments ALTER COLUMN method Type VARCHAR(20);
 
+drop table sg;
+
+create table survival_guides (
+	id serial primary key,
+	title varchar(30) not null,
+	content text,
+	parent_id integer,
+	position integer not null,
+	created_at timestamp without time zone not null default now(),
+	owner_id integer not null default 0
+);
 

@@ -108,6 +108,8 @@
     <c:if test="${user == null}">
     <script src="/resources/js/formLogin.js"></script>
     </c:if>
+    
+    <script src="/resources/js/sg.js"></script>
 
 </body>
 

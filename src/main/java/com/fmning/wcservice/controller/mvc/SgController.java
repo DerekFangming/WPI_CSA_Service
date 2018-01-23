@@ -1,12 +1,16 @@
 package com.fmning.wcservice.controller.mvc;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +30,10 @@ public class SgController {
 	@Autowired private UserManager userManager;
 	@Autowired private SGManager sgManager;
 	
+	private String generatedMenu;
+	
 	@RequestMapping(value = "/sg", method = RequestMethod.GET)
-    public String indexController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+    public String sgController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 		
 		Cookie cookie = null;
 		try {
@@ -52,13 +58,37 @@ public class SgController {
 		model.addAttribute("redirectPage", "sg");
 		model.addAttribute("prodMode", Utils.prodMode);
 		
-		model.addAttribute("menuList", createMenu(Util.nullInt, ""));
+		if (generatedMenu == null) {
+			generatedMenu = generateMenu(Util.nullInt, "");
+			model.addAttribute("menuList", generatedMenu);
+		} else {
+			model.addAttribute("menuList", generatedMenu);
+		}
+		
 		
 		
 		return "sg";
 	}
 	
-	private String createMenu(int parentId, String prefix) {
+	@RequestMapping(value = "/get_sg_article", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Object>> getSg(HttpServletRequest request) {
+		
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			SurvivalGuide sg = sgManager.getArticleById(Integer.parseInt(request.getParameter("id")));
+			respond.put("title", sg.getTitle());
+			respond.put("content", sg.getContent());
+			respond.put("createdAt", sg.getCreatedAt().toString());
+			respond.put("ownerId", sg.getOwnerId());
+			respond.put("ownerName", userManager.getUserDisplayedName(sg.getOwnerId()));
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	private String generateMenu(int parentId, String prefix) {
 		String content = "";
 		List<SurvivalGuide> currentList = sgManager.getChildArticles(parentId);
 		if (currentList.size() > 0) {
@@ -73,9 +103,11 @@ public class SgController {
 			
 			
 			for (SurvivalGuide sg : currentList) {
-				String childContent = createMenu(sg.getId(), prefix + "&emsp;");
+				String childContent = generateMenu(sg.getId(), prefix + "&emsp;");
 				if (childContent.equals("")) {
-					content += "<div class=\"card-block sg-menu\">" + prefix + sg.getTitle() + "</div>\n";
+					String jsFunc = "openSG(" + Integer.toString(sg.getId()) + ");";
+					content += "<div class=\"card-block sg-menu\"><a onclick=\"" + jsFunc + "\" href=\"#\">"
+							+ prefix + sg.getTitle() + "</a></div>\n";
 				} else {
 					String collapseId = Integer.toString(sg.getId());
 					content += "<div class=\"card-header\"><a data-toggle=\"collapse\" href=\"#collapse"
