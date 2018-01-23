@@ -52,14 +52,40 @@ body {
 	justify-content: center;
 }
 
-.sg-height {
-    max-height: 760px;
+.sg-menu {
+    height: 760px;
     overflow-y: auto; 
+    margin-bottom:20px;
+    border-left:1px solid #DFDFDF;
 }
 
-.sg-menu {
+.sg-menu-item {
 	height: 50px;
 	line-height: 10px;
 	border-bottom:1pt solid #DFDFDF;
+}
+
+.sg-title {
+	height: 80px;
+}
+
+.sg-body{
+	height: 660px;
+    overflow-y: auto;
+}
+
+.sg-itDiv {
+	margin-left: auto;
+  	margin-right: auto;
+}
+
+.sg-itImage {
+	height: 150px;
+	width: 150px;
+	float: left;
+}
+
+.sg-itText {
+	float: left;
 }
 

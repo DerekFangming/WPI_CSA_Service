@@ -165,3 +165,4 @@ create table survival_guides (
 	owner_id integer not null default 0
 );
 
+update survival_guides set owner_id = 25;

@@ -36,9 +36,9 @@
     <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
         <div class="container">
             <a class="navbar-brand" href="./">WPI CSA</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          		<span class="navbar-toggler-icon"></span>
+        		</button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
@@ -67,14 +67,22 @@
             <center><p class="lead">Coming soon</p></center>
         </header>-->
         
-        <div class="row top-buffer ">
+        <div class="row top-buffer">
 	    		<div class="col-lg-6 col-sm-12">
-	    			<div class="sg-height">
+	    			<div class="sg-menu">
 				${menuList}
 				</div>
 			</div>
 			<div class="col-lg-6 clm-sm-12">
-				<p class="lead feed-desc">Something</p>
+				<div class="card sg-title">
+					<div class="card-header sg-title">
+					<h1 class="lead"><big><big id="sgTitle"></big></big></h1>
+					<p><small class="text-muted" id="sgSubTitle">Last updated 3 mins ago</small></p>
+					</div>
+				</div>
+				<div class="card top-buffer sg-body">
+					<div class="card-block" id="sgContent"></div>
+				</div>
 			</div>
 	    </div>
         

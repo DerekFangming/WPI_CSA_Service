@@ -12,6 +12,10 @@ function parseDate(date) {
 	document.write((new Date(date)).toLocaleString());
 }
 
+function parseDateStr(date) {
+	return (new Date(date)).toLocaleString();
+}
+
 function getAccessToken() {
 	var nameEQ = "accessToken=";
     var ca = document.cookie.split(';');
