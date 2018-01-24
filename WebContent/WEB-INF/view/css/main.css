@@ -33,18 +33,6 @@ body {
   justify-content: center;
 }
 
-.feed-image img.tall {
-	width: auto;
-    height: auto;
-    position: absolute;  
-    top: 0;  
-    bottom: 0;  
-    left: 0;  
-    right: 0;  
-    margin: auto;
-	width: 100%;
-}​
-
 .image-container {
     max-width: 100%;
     max-height: 100%;
@@ -74,18 +62,20 @@ body {
     overflow-y: auto;
 }
 
-.sg-itDiv {
-	margin-left: auto;
-  	margin-right: auto;
+.sg-itImageContainer {
+	max-height: 150px;
+	max-width: 150px;
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
 }
 
-.sg-itImage {
-	height: 150px;
-	width: 150px;
-	float: left;
+.img-fitwidth {
+	height: 100%;
+	width: 100%;
+	object-fit: contain;
 }
 
-.sg-itText {
-	float: left;
+.nav-container {
+  margin-right:none;
 }
-

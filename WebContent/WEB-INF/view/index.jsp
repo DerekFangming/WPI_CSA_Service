@@ -76,7 +76,7 @@
 			<div class="row">
 				<div class="col-lg-6 col-sm-12">
 					<div class="feed-image">
-						<img style="height: 100%; width: 100%; object-fit: contain" src="./images/${feed.coverImageId}.jpg" />
+						<img class="img-fitwidth" src="./images/${feed.coverImageId}.jpg" />
 					</div>
 				</div>
 				<div class="col-lg-6 clm-sm-12">

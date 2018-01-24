@@ -68,12 +68,12 @@
         </header>-->
         
         <div class="row top-buffer">
-	    		<div class="col-lg-6 col-sm-12">
+	    		<div class="col-lg-4 col-sm-12">
 	    			<div class="sg-menu">
 				${menuList}
 				</div>
 			</div>
-			<div class="col-lg-6 clm-sm-12">
+			<div class="col-lg-8 clm-sm-12">
 				<div class="card sg-title">
 					<div class="card-header sg-title">
 					<h1 class="lead"><big><big id="sgTitle"></big></big></h1>

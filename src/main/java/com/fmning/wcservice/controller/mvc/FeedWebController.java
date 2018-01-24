@@ -86,7 +86,7 @@ public class FeedWebController {
 	        	Document doc = db.parse(is);
 	        	Element e = (Element)(doc.getElementsByTagName("img").item(0));
 	        	String src = e.getAttribute("src");
-	        	String newTag = "<br><div class=\"image-container\"><img style=\"height: 100%; width: 100%; object-fit: contain\" src=\"./images/"
+	        	String newTag = "<br><div class=\"image-container\"><img class=\"img-fitwidth\" src=\"./images/"
 	        	+ src.replace("WCImage_", "") + ".jpg\"></div><br>";
 	        	newBody = newBody.replace(s, newTag);
         	} catch (Exception e) {
