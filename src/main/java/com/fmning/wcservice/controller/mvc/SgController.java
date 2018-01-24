@@ -106,7 +106,7 @@ public class SgController {
 				String childContent = generateMenu(sg.getId(), prefix + "&emsp;");
 				if (childContent.equals("")) {
 					String jsFunc = "openSG(" + Integer.toString(sg.getId()) + ");";
-					content += "<div class=\"card-block sg-menu-item\"><a onclick=\"" + jsFunc + "\" href=\"#\">"
+					content += "<div class=\"card-body sg-menu-item\"><a onclick=\"" + jsFunc + "\" href=\"#\">"
 							+ prefix + sg.getTitle() + "</a></div>\n";
 				} else {
 					String collapseId = Integer.toString(sg.getId());

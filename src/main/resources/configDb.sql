@@ -166,3 +166,43 @@ create table survival_guides (
 );
 
 update survival_guides set owner_id = 25;
+
+--finish updating SG images and then add triggers!
+
+create table user_detail_hists (
+	id integer,
+	user_id integer NOT NULL,
+	name varchar(20),
+	nickname varchar(10),
+	age integer,
+	gender varchar(1),
+	location varchar(10),
+	whats_up varchar(200),
+	birthday varchar(8),
+	year varchar(4),
+	major varchar(10),
+	action varchar(1) not null default 'U',
+	action_date timestamp without time zone not null default now()
+);
+
+CREATE OR REPLACE FUNCTION user_detail_func()
+  RETURNS trigger AS
+$$
+BEGIN
+  
+ INSERT INTO user_detail_hists
+ VALUES(OLD.id,OLD.user_id,OLD.name,OLD.nickname, OLD.age, OLD.gender,OLD.location,OLD.whats_up,OLD.birthday,OLD.year,OLD.major,substring(TG_OP,1,1), NOW());
+ IF TG_OP = 'UPDATE' THEN
+   RETURN NEW;
+ ELSE
+   RETURN OLD;
+ END IF;
+END;
+$$
+LANGUAGE 'plpgsql';
+
+CREATE TRIGGER user_detail_trigger
+  BEFORE UPDATE OR DELETE
+  ON user_details
+  FOR EACH ROW
+  EXECUTE PROCEDURE user_detail_func();
