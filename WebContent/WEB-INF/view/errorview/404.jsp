@@ -22,7 +22,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="./">WPI CSA</a>
+            <a class="navbar-brand" href="http://csa.fmning.com">WPI CSA</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -39,7 +39,7 @@
             <br><br><br>
             <center><p class="lead">The page you are looking for does not exist. If you believe that this is an error, please report to <a href="mailto:admin@fmning.com">admin@fmning.com</a></p></center>
             <br>
-            <center><a class="btn btn-primary" href="./" role="button">Take me back to main page</a></center>
+            <center><a class="btn btn-primary" href="http://csa.fmning.com" role="button">Take me back to main page</a></center>
         </header>
         
     </div>

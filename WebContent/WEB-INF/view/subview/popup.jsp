@@ -1,5 +1,5 @@
 <div class="modal fade" id="popupModal" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
 
         <!-- Modal content-->
         <div class="modal-content">

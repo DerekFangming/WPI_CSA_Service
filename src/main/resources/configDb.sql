@@ -169,4 +169,5 @@ update survival_guides set owner_id = 25;
 
 --finish updating SG images and then add triggers!
 
-update users set id = 1 where user_id = 25;
+update users set role_id = 10;
+update users set role_id = 1 where user_id = 25;

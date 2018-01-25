@@ -76,3 +76,12 @@ body {
 	object-fit: contain;
 }
 
+.card-body-bottom-line {
+	border-bottom:1px solid #DFDFDF;
+}
+
+.no-wrap {
+	overflow:hidden;
+	white-space:nowrap;
+}
+
