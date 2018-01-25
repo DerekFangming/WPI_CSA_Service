@@ -31,6 +31,8 @@
     <!--reads config.properties file-->
     <property name="location" value="classpath:dataSourceTest.properties" />
   </bean>
+  
+  <context:property-placeholder location="classpath:dataSourceTest.properties"/>
 
   <bean id="dataSourceWcService" class="com.fmning.service.dao.impl.SdkDataSourceImpl">
     <property name="driverClassName" value="org.postgresql.Driver" />

@@ -10,6 +10,7 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -40,7 +41,7 @@ import com.google.api.services.drive.model.FileList;
 @Component
 public class DatabaseBackupScheduler {
 	
-	private String backupScriptPath;
+	public static String backupScriptPath;
 	
 	private HttpTransport httpTransport;
 	private FileDataStoreFactory dataStoreFactory;
@@ -76,7 +77,8 @@ public class DatabaseBackupScheduler {
 				
 				if (errors.length() > 0){
 					String report = "Error during backup of the database:\n\n";
-					sendScheduleErrorReportEmail(report + errors);
+					helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
+							"WPI CSA scheduler error report", report + errors);
 				} else {
 					try {
 						httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -117,60 +119,18 @@ public class DatabaseBackupScheduler {
 						
 					} catch (Exception e) {
 						String report = "Error during google drive backup of the database:\n\n";
-						sendScheduleErrorReportEmail(report + e.getMessage());
+						helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
+								"WPI CSA scheduler error report", report + e.getMessage());
 					}
 				}
 				
 			} catch (IOException | InterruptedException e) {
 				String report = "Error during backup of the database:\n\n";
-				sendScheduleErrorReportEmail(report + e.getMessage());
+				helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
+						"WPI CSA scheduler error report", report + e.getMessage());
 			}
 		}
         
     }
 
-	@PostConstruct
-    public void runOnceOnlyOnStartup() {
-		//Set up time zone
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-		
-		//Set up image path
-		if(!Utils.prodMode) {
-			Util.imagePath = "/Volumes/Data/testImages/";
-		}
-		
-		ClassLoader classLoader = getClass().getClassLoader();
-		backupScriptPath = classLoader.getResource("dbBackup.sh").getFile();
-        
-		try {
-			Process process = Runtime.getRuntime().exec("chmod 777 " + backupScriptPath);
-			
-			BufferedReader in = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-			String errors = "";
-			String line;
-			while ((line = in.readLine()) != null) {
-			    errors += line + "\n";
-			}
-			
-			int exitValue = process.waitFor();
-			if (exitValue != 0)
-				errors += "Execution of script failed!";
-			
-			if (errors.length() > 0){
-				String report = "Error during startup of the service:\n\n";
-				sendScheduleErrorReportEmail(report + errors);
-			}
-			
-		} catch (IOException | InterruptedException e) {
-			String report = "Error during startup of the service:\n\n";
-			sendScheduleErrorReportEmail(report + e.getMessage());
-		}
-
-    }
-	
-	private void sendScheduleErrorReportEmail(String report){
-		String emailList = "fning@wpi.edu,sxie@wpi.edu";
-		helperManager.sendEmail("admin@fmning.com", emailList, 
-				"WPI CSA scheduler error report", report);
-	}
 }
