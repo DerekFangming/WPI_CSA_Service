@@ -27,9 +27,9 @@
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="/resources/css/main.css" rel="stylesheet">
+    <link href="/resources/css/main.css?v=1" rel="stylesheet">
 	
-	<script src="/resources/js/common.js"></script>
+	<script src="/resources/js/common.js?v=1"></script>
 
 </head>
 
@@ -84,9 +84,9 @@
     			<p class="card-text">Time: <script> parseDate( '${event.startTime}' ); </script> to <script> parseDate( '${event.endTime}' ); </script></p>
     			<p class="card-text">Location: ${event.location}</p>
     			<p class="card-text">Description: ${event.description}</p>
-    			<c:choose>
-  				<c:when test="${event.fee == -1}">
-  				</c:when>
+    			
+    			<c:if test="${event.active}">
+		    	<c:choose>
   				<c:when test="${event.fee == 0}">
   				<a id="payButton" href="#" class="btn btn-primary"><i id="ticketSpinner" class=""></i>&nbsp;Free - Get ticket</a>
   				<input type="hidden" id="eventId" value="${event.id}">
@@ -95,10 +95,13 @@
   				<a id="payButton" href="#" class="btn btn-primary"><i id="ticketSpinner" class=""></i>&nbsp;$${event.fee} - Pay and get ticket</a>
   				<input type="hidden" id="eventId" value="${event.id}">
   				</c:otherwise>
-				</c:choose>
+			</c:choose>
     			<input type="hidden" id="ticketFee" value="${event.fee}">
+		    	</c:if>
+    			
+    			
 				
-				<c:if test="${user != null}">
+			<c:if test="${user != null}">
     			<input type="hidden" id="userEmailAddr" value="${user.username}">
     			<input type="hidden" id="userEmailConfirmed" value="${user.emailConfirmed}">
     			</c:if>
@@ -133,15 +136,15 @@
 	</c:choose>
     
     <c:if test="${user == null || (user != null && !user.emailConfirmed)}">
-    <script src="/resources/js/verifyEmail.js"></script>
+    <script src="/resources/js/verifyEmail.js?v=1"></script>
     </c:if>
     
     <c:if test="${user == null}">
     <input type="hidden" id="refreshAfterLogin" value="true">
-    <script src="/resources/js/formLogin.js"></script>
+    <script src="/resources/js/formLogin.js?v=1"></script>
     </c:if>
     
-    <script src="/resources/js/payment.js"></script>
+    <script src="/resources/js/payment.js?v=1"></script>
 
 </body>
 

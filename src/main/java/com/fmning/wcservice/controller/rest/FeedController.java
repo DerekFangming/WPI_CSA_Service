@@ -125,6 +125,7 @@ public class FeedController {
 				values.put("location", event.getLocation());
 				values.put("ownerId",event.getOwnerId());
 				values.put("createdAt",event.getCreatedAt().toString());
+				values.put("active", event.getActive());
 				if(event.getFee() != Util.nullInt) {
 					values.put("fee", event.getFee());
 				}

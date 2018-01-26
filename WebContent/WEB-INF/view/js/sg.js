@@ -26,7 +26,7 @@ function processContent(content) {
 	var parser = new DOMParser();
 	var doc = parser.parseFromString(content, "text/html");
 	
-	//Background div processing
+	//Background color processing
 	var divList = doc.getElementsByTagName('div');
 	if (divList.length > 0) {
 		var bgColor = divList[0].getAttribute('color');
@@ -39,7 +39,7 @@ function processContent(content) {
 		for (var i=imgList.length - 1; i > -1; i--) {
 			var imgDiv = document.createElement('div');
 			imgDiv.setAttribute('class', 'row top-buffer');
-			var imgInner = '<dic class="col"><img src="./images/53.jpg" class="img-fitwidth"></div>';
+			var imgInner = '<dic class="col"><img src="./images/53.jpg" class="aspect-fill"></div>';
 			imgDiv.innerHTML = imgInner;
 			imgList[i].parentNode.replaceChild(imgDiv, imgList[i]);
 		}
@@ -51,7 +51,7 @@ function processContent(content) {
 		for (var i=imgtxtList.length - 1; i > -1; i--) {
 			var imgtxtDiv = document.createElement('div');
 			imgtxtDiv.setAttribute('class', 'row top-buffer');
-			var imgtxtInner = '<div class="col imgtxt-img-container"><img class="fit-width" src="./images/61.jpg"></div><div class="col col-center">';
+			var imgtxtInner = '<div class="col imgtxt-img-container"><img class="fit-width" src="./images/999.jpg"></div><div class="col col-center">';
 			imgtxtInner += '<div class="card-body">' + imgtxtList[i].innerHTML + '</div></div>';
 			imgtxtDiv.innerHTML = imgtxtInner;
 			imgtxtList[i].parentNode.replaceChild(imgtxtDiv, imgtxtList[i]);

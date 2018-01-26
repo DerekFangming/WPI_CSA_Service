@@ -50,13 +50,10 @@ body {
 
 .imgtxt-img-container {
 	max-width: 200px;
+	min-width: 200px;
 }
 
-.img-fitwidth {
-	height: 100%;
-	width: 100%;
-	object-fit: contain;
-}
+
 
 .card-body-bottom-line {
 	border-bottom:1px solid #DFDFDF;
@@ -66,8 +63,8 @@ body {
 	min-width: 18rem;
 }
 
-.object-fit-container {
-  height: 200px;
+.event-img-container {
+	height: 250px;
 }
 
 .aspect-fill {
@@ -81,5 +78,3 @@ body {
 	width: 100%;
 	object-fit: contain;
 }
-
-

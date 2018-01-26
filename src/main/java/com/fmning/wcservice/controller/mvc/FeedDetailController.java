@@ -39,7 +39,7 @@ import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
 
 @Controller
-public class FeedWebController {
+public class FeedDetailController {
 	
 	@Autowired private UserManager userManager;
 	@Autowired private FeedManager feedManager;
@@ -79,19 +79,19 @@ public class FeedWebController {
         }
         String newBody = feed.getBody();
         for (String s : matchs) {
-        	try{
-	        	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-	        	DocumentBuilder db = dbf.newDocumentBuilder();
-	        	InputSource is = new InputSource(new StringReader(s));
-	        	Document doc = db.parse(is);
-	        	Element e = (Element)(doc.getElementsByTagName("img").item(0));
-	        	String src = e.getAttribute("src");
-	        	String newTag = "<div class=\"feed-img-container\"><img class=\"aspect-fill\" src=\"./images/"
-	        	+ src.replace("WCImage_", "") + ".jpg\"></div>";
-	        	newBody = newBody.replace(s, newTag);
-        	} catch (Exception e) {
-        		continue;
-        	}
+	        	try{
+		        	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		        	DocumentBuilder db = dbf.newDocumentBuilder();
+		        	InputSource is = new InputSource(new StringReader(s));
+		        	Document doc = db.parse(is);
+		        	Element e = (Element)(doc.getElementsByTagName("img").item(0));
+		        	String src = e.getAttribute("src");
+		        	String newTag = "<div class=\"feed-img-container\"><img class=\"aspect-fill\" src=\"./images/"
+		        	+ src.replace("WCImage_", "") + ".jpg\"></div>";
+		        	newBody = newBody.replace(s, newTag);
+	        	} catch (Exception e) {
+	        		continue;
+	        	}
         }
         feed.setBody(newBody);
 		

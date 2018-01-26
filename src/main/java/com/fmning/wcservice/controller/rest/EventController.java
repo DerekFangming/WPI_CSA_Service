@@ -9,17 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.Event;
+import com.fmning.service.domain.User;
 import com.fmning.service.manager.EventManager;
+import com.fmning.service.manager.UserManager;
+import com.fmning.util.ErrorMessage;
 import com.fmning.util.EventType;
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.UserRole;
 
 @Controller
 public class EventController {
 	
+	@Autowired private UserManager userManager;
 	@Autowired private EventManager eventManager;
 
 	@RequestMapping(value = "/get_event", method = RequestMethod.GET) //Either by actual id or by mapping id
@@ -51,6 +57,35 @@ public class EventController {
 			respond = Util.createErrorRespondFromException(e);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
-		
 	}
+	
+	
+	@RequestMapping("/update_event_status")
+	public ResponseEntity<Map<String, Object>> updateEventStatus(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			User user = userManager.validateAccessToken(request);
+			
+			int id = (int)request.get("id");
+			boolean newStatus = (boolean)request.get("status");
+			Event event = eventManager.getEventById(id);
+			
+			if (event.getOwnerId() != user.getId() &&  !UserRole.isAdmin(user.getRoleId())) {
+				throw new IllegalStateException(ErrorMessage.CHANGE_STATUS_NOT_ALLOWED.getMsg());
+			}
+			
+			//message will get ignored if new status is enable
+			eventManager.setStatus(id, newStatus, ErrorMessage.TICKET_SOLD_OUT.getMsg());
+			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
+			respond.put("error", "");
+			
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
 }

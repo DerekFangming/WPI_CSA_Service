@@ -25,9 +25,9 @@
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="/resources/css/main.css" rel="stylesheet">
+    <link href="/resources/css/main.css?v=1" rel="stylesheet">
 	
-	<script src="/resources/js/common.js"></script>
+	<script src="/resources/js/common.js?v=1"></script>
 
 </head>
 
@@ -68,19 +68,19 @@
 			<p class="lead">If you see any errors & bugs, don't forget to report to CSA!</p>
         </header>
         
-        <c:forEach items="${feedList}" var="feed">
+        <c:forEach items="${feedList}" var="fm">
         <div class="card top-buffer">
 			<div class="card-header">
-				<h1><a href="./feed?id=${feed.id}">${feed.title}</a></h1>
+				<h1><a href="./feed?id=${fm.feed.id}">${fm.feed.title}</a></h1>
 			</div>
 			<div class="row">
 				<div class="col-lg-6 col-sm-12">
 					<div class="life-img-container">
-						<img class="aspect-fill" src="./images/${feed.coverImageId}.jpg" />
+						<img class="aspect-fill" src="./images/${fm.coverImageId}.jpg" />
 					</div>
 				</div>
 				<div class="col-lg-6 clm-sm-12">
-					<div class="card-body life-desc">${feed.body}</div>
+					<div class="card-body life-desc">${fm.feed.body}</div>
 				</div>
 			</div>
 		</div>
@@ -109,11 +109,11 @@
 	</c:choose>
     
     <c:if test="${user == null || (user != null && !user.emailConfirmed)}">
-    <script src="/resources/js/verifyEmail.js"></script>
+    <script src="/resources/js/verifyEmail.js?v=1"></script>
     </c:if>
     
     <c:if test="${user == null}">
-    <script src="/resources/js/formLogin.js"></script>
+    <script src="/resources/js/formLogin.js?v=1"></script>
     </c:if>
 
 </body>

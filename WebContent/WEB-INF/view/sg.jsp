@@ -25,9 +25,9 @@
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="/resources/css/main.css" rel="stylesheet">
+    <link href="/resources/css/main.css?v=1" rel="stylesheet">
 	
-	<script src="/resources/js/common.js"></script>
+	<script src="/resources/js/common.js?v=1"></script>
 
 </head>
 
@@ -110,14 +110,14 @@
 	</c:choose>
     
     <c:if test="${user == null || (user != null && !user.emailConfirmed)}">
-    <script src="/resources/js/verifyEmail.js"></script>
+    <script src="/resources/js/verifyEmail.js?v=1"></script>
     </c:if>
     
     <c:if test="${user == null}">
-    <script src="/resources/js/formLogin.js"></script>
+    <script src="/resources/js/formLogin.js?v=1"></script>
     </c:if>
     
-    <script src="/resources/js/sg.js"></script>
+    <script src="/resources/js/sg.js?v=1"></script>
 
 </body>
 

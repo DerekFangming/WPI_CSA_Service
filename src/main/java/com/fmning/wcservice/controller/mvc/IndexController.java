@@ -1,6 +1,7 @@
 package com.fmning.wcservice.controller.mvc;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -22,6 +23,7 @@ import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.Util;
+import com.fmning.wcservice.model.FeedModel;
 import com.fmning.wcservice.model.LoginForm;
 import com.fmning.wcservice.model.RegisterForm;
 import com.fmning.wcservice.utils.Utils;
@@ -57,18 +59,7 @@ public class IndexController {
 			response.addCookie(cookie);
 		}
 		
-		
-		List<Feed> feedList = feedManager.getRecentFeedByDate(Instant.now(), 10);
-		
-		for(Feed m : feedList){
-			m.setBody(m.getBody().replaceAll("\\<[^>]*>",""));
-			try {
-				int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
-				m.setCoverImageId(imgId);
-			}catch(Exception e) {}
-		}
-		
-		model.addAttribute("feedList", feedList);
+		model.addAttribute("feedList", getFeedList());
 		model.addAttribute("redirectPage", "index");
 		model.addAttribute("prodMode", Utils.prodMode);
 		
@@ -155,20 +146,30 @@ public class IndexController {
 		
 		model.addAttribute("redirectPage", "index");
 		
-		List<Feed> feedList = feedManager.getRecentFeedByDate(Instant.now(), 10);
 		
-		for(Feed m : feedList){
-			m.setBody(m.getBody().replaceAll("\\<[^>]*>",""));
-			try {
-				int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
-				m.setCoverImageId(imgId);
-			}catch(Exception e) {}
-		}
-		
-		model.addAttribute("feedList", feedList);
+		model.addAttribute("feedList", getFeedList());
 		model.addAttribute("prodMode", Utils.prodMode);
 	
 		return "index";
+	}
+	
+	private List<FeedModel> getFeedList() {
+		List<Feed> feedList = feedManager.getRecentFeedByDate(Instant.now(), 10);
+		List<FeedModel> feedModelList = new ArrayList<>();
+		
+		for(Feed m : feedList){
+			FeedModel fm = new FeedModel();
+			m.setBody(m.getBody().replaceAll("\\<[^>]*>",""));
+			fm.setFeed(m);
+			
+			try {
+				int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
+				fm.setCoverImageId(imgId);
+			}catch(Exception e) {}
+			
+			feedModelList.add(fm);
+		}
+		return feedModelList;
 	}
 
 }

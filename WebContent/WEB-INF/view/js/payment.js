@@ -11,7 +11,7 @@ $('#payButton').on('click', function (e) {
     	$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
     	$("#payButton").toggleClass("disabled");
     	var accessToken = getAccessToken();
-        var eventId = parseInt($('#eventId').val());
+    var eventId = parseInt($('#eventId').val());
     	
     	$.ajax({
     		type: "POST",

@@ -170,4 +170,7 @@ update survival_guides set owner_id = 25;
 --finish updating SG images and then add triggers!
 
 update users set role_id = 10;
-update users set role_id = 1 where user_id = 25;
+update users set role_id = 1 where user_id = 25; -- careful  which is the right one
+
+update events set active = false;  --Test make payment on all three environments
+update events set fee = 0 where fee is null; 
