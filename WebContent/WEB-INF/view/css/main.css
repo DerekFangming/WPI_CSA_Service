@@ -2,38 +2,21 @@ body {
   padding-top: 54px;
 }
 
-@media (min-width: 992px) {
-  body {
-    padding-top: 56px;
-  }
-}
-
-.card {
-  height: 100%;
-}
 
 .top-buffer { margin-top:20px; }
 
 .left-buffer { margin-left:20px; }
 
-.feed-desc { 
-	padding-top:20px;
-	padding-right:20px;
-	padding-bottom: 20px;
-	padding-left: 20px;
-	height: 284px;
+.life-desc {
+	max-height: 284px;
 	overflow: hidden;
 }
 
-.feed-image {
-  max-height: 300px;
-  max-width: 500px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
+.life-img-container {
+	height: 300px;
 }
 
-.image-container {
+.feed-img-container {
     max-width: 100%;
     max-height: 100%;
 	display: flex;
@@ -43,8 +26,6 @@ body {
 .sg-menu {
     height: 760px;
     overflow-y: auto; 
-    margin-bottom:20px;
-    border-left:1px solid #DFDFDF;
 }
 
 .sg-menu-item {
@@ -80,8 +61,17 @@ body {
 	border-bottom:1px solid #DFDFDF;
 }
 
-.no-wrap {
-	overflow:hidden;
-	white-space:nowrap;
+.card-event {
+	min-width: 18rem;
+}
+
+.object-fit-container {
+  height: 200px;
+}
+
+.aspect-fill {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 

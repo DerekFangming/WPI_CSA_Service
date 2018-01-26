@@ -65,56 +65,83 @@
     <div class="container">
 
         	<div class="row top-buffer">
-        		<div class="col-md-3">
-	        		<div class="card" style="width: 18rem;">
-				    <img class="card-img-top" src="../../images/53.jpg" alt="Card image cap">
-				    <div class="card-body card-body-bottom-line">
-				        <h5 class="card-title">Dragon night 2018</h5>
-				        <p class="card-text">Status: Selling</p>
-				        <p class="card-text">Ticket told: 35</p>
-				        <p class="card-text">Ticket remaining: 25</p>
-				    </div>
-				    <div class="card-body card-body-bottom-line text-center">
-				        <button href="#" type="button" class="btn btn-primary" data-toggle="tooltip-list">
-							<i class="fa fa-users"></i>&nbsp;Participant list
-						</button>
-				    </div>
-				    <div class="card-body card-body-bottom-line input-group">
-				    		<input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-				    		<span class="input-group-btn">
-				        <button href="#" type="button" class="btn btn-primary" data-toggle="tooltip-remain">
-							<i class="fa fa-users"></i>&nbsp;Set remaining #
-						</button>
-						</span>
-				    </div>
-				    <ul class="list-group list-group-flush">
-				        
-				        <li class="list-group-item">Dapibus ac facilisis in</li>
-				        <li class="list-group-item">Vestibulum at eros</li>
-				    </ul>
+        		<div class="col">
+	        		<div class="card card-event">
+					    <img class="card-img-top" src="../../images/53.jpg" alt="Card image cap">
+					    <div class="card-body card-body-bottom-line">
+					        <h5 class="card-title">Dragon night 2018</h5>
+					        <p class="card-text">Status: Selling</p>
+					        <p class="card-text">Ticket told: 35</p>
+					        <p class="card-text">Ticket remaining: 25</p>
+					    </div>
+					    <div class="card-body card-body-bottom-line text-center">
+					    	<button href="#" type="button" class="btn btn-primary" data-toggle="tooltip-edit">
+								<i class="fa fa-pencil-square-o"></i>&nbsp;Edit
+							</button>
+					        <button href="#" type="button" class="btn btn-primary" data-toggle="tooltip-list">
+								<i class="fa fa-list-ul"></i>&nbsp;View  Participants
+							</button>
+					    </div>
+					    <div class="card-body card-body-bottom-line input-group">
+					    		<input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+					    		<span class="input-group-btn">
+					        <button href="#" type="button" class="btn btn-primary" data-toggle="tooltip-remain">
+								<i class="fa fa-ticket"></i>&nbsp;Set  Remaining
+							</button>
+							</span>
+					    </div>
+					    <div class="card-body card-body-bottom-line text-center">
+					        <button href="#" type="button" class="btn btn-danger" data-toggle="tooltip-soldout">
+								<i class="fa fa-lock"></i>&nbsp;Mark  as  Sold  Out
+							</button>
+					    </div>
 				    
-				</div>
-        		</div>
-        	</div>
-        
-        <!--<c:forEach items="${feedList}" var="feed">
-        <div class="card top-buffer">
-			<div class="card-header">
-				<h1><a href="./feed?id=${feed.id}">${feed.title}</a></h1>
-			</div>
-			<div class="row">
-				<div class="col-lg-6 col-sm-12">
-					<div class="feed-image">
-						<img class="img-fitwidth" src="./images/${feed.coverImageId}.jpg" />
 					</div>
-				</div>
-				<div class="col-lg-6 clm-sm-12">
-					<p class="lead feed-desc">${feed.body}</p>
-				</div>
-			</div>
-		</div>
+        		</div>
+        		
+        		
+        		
+        		<div class="col">
+	        		<div class="card card-event">
+	        			<div class="card-img-top object-fit-container">
+					    <img class="object-fit-cover" src="../../images/63.jpg" alt="Card image cap">
+					    </div>
+					    <div class="card-body card-body-bottom-line">
+					        <h5 class="card-title">Dragon night 2018</h5>
+					        <p class="card-text">Status: Selling</p>
+					        <p class="card-text">Ticket told: 35</p>
+					        <p class="card-text">Ticket remaining: 25</p>
+					    </div>
+					    
+				    
+					</div>
+        		</div>
+        		
+        		<div class="col">
+	        		<div class="card card-event">
+					    <img class="card-img-top" src="../../images/53.jpg" alt="Card image cap">
+					    <div class="card-body card-body-bottom-line fit">
+					        <h5 class="card-title">Dragon night 2018</h5>
+					        <p class="card-text">Status: Selling</p>
+					        <p class="card-text">Ticket told: 35</p>
+					        <p class="card-text">Ticket remaining: 25</p>
+					    </div>
+					    
+				    
+					</div>
+        		</div>
+        		
+        		
+        		
+        		
+        		
+        		
+        		
+        	</div>
+        	
+        	<div style="height:110px"></div>
         
-      	</c:forEach>-->
+
 		
 
     </div>
@@ -136,13 +163,21 @@
 	
 	<script>
         $(function () {
+            $('[data-toggle="tooltip-edit"]').tooltip({
+			    placement: "bottom",
+			    title: "Edit the title, location or time of the event."
+			});
             $('[data-toggle="tooltip-list"]').tooltip({
 			    placement: "bottom",
-			    title: "View who has registerred for this event."
+			    title: "View who has registered for this event."
 			});
 			$('[data-toggle="tooltip-remain"]').tooltip({
 			    placement: "bottom",
-			    title: "Set the remaining ticket count that can be sold electronically. If set to 0, user will see message saying Ticket Sold Out when they try to buy ticket."
+			    title: "Set the remaining ticket count that can be sold electronically. If set to 0, the button will still be there but user will see message saying Ticket Sold Out when they try to click."
+			});
+			$('[data-toggle="tooltip-soldout"]').tooltip({
+			    placement: "bottom",
+			    title: "Mark the ticket as sold out. This will remove the get ticket button regardless of ticket remaining counts."
 			});
         });
     </script>

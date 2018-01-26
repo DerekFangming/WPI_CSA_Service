@@ -75,12 +75,12 @@
 			</div>
 			<div class="row">
 				<div class="col-lg-6 col-sm-12">
-					<div class="feed-image">
-						<img class="img-fitwidth" src="./images/${feed.coverImageId}.jpg" />
+					<div class="life-img-container">
+						<img class="aspect-fill" src="./images/${feed.coverImageId}.jpg" />
 					</div>
 				</div>
 				<div class="col-lg-6 clm-sm-12">
-					<p class="lead feed-desc">${feed.body}</p>
+					<div class="card-body life-desc">${feed.body}</div>
 				</div>
 			</div>
 		</div>
