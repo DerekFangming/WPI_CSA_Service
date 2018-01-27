@@ -52,7 +52,7 @@
 					    	${user.name}
 				        </a>
 				        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						    <a class="dropdown-item" href="../../"><i class="fa fa-chevron-circle-left" style="color:green"></i>&nbsp;Back to main site</a>
+						    <a class="dropdown-item" href="../../"><i class="fa fa-chevron-circle-left"></i>&nbsp;Back to main site</a>
 						    <a class="dropdown-item" href="../../logout"><i class="fa fa-sign-out"></i>&nbsp;Log out</a>
 						</div>
 					</li>
@@ -67,29 +67,29 @@
         	<div class="row">
         		
         		<c:forEach items="${eventList}" var="em">
-	        <div class="col top-buffer">
+	        <div class="col-lg-4 col-md-6 col-sm-12 top-buffer">
 	        		<div class="card card-event">
 	        			<div class="card-img-top event-img-container">
 					    <img class="aspect-fill" src="../../images/${em.coverImageId}.jpg">
 				    </div>
 				    <div class="card-body card-body-bottom-line">
-				        <h5 class="card-title">${em.event.title}</h5>
+				        <h5 id="titleLbl${em.event.id}" class="card-title">${em.event.title}</h5>
 				        <p id="statusLbl${em.event.id}" class="card-text">Status: ${em.event.active ? "Selling" : "Sold out"}</p>
-				        <p class="card-text">Ticket: Sold ${em.registedUserCount}, remaining ${em.event.ticketBalance}</p>
+				        <p id="balanceLbl${em.event.id}" class="card-text">Ticket:  Sold ${em.registedUserCount}, remaining ${em.event.ticketBalance}</p>
 				    </div>
 					<div class="card-body card-body-bottom-line text-center">
-					    	<button onclick="editEvent(${em.event.id});" type="button" class="btn btn-primary" data-toggle="tooltip-edit">
+					    	<button onclick="openEvent(${em.event.id});" type="button" class="btn btn-primary" data-toggle="tooltip-edit">
 							<i class="fa fa-pencil-square-o"></i>&nbsp;Edit
 						</button>
-				        <button href="#" type="button" class="btn btn-primary" data-toggle="tooltip-list">
+				        <button onclick="openPartiList(${em.event.id});" type="button" class="btn btn-primary" data-toggle="tooltip-list">
 							<i class="fa fa-list-ul"></i>&nbsp;View  Participants
 						</button>
 					    </div>
 					    <div class="card-body card-body-bottom-line input-group">
-					    		<input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-					    		<span class="input-group-btn">
-					        <button href="#" type="button" class="btn btn-primary" data-toggle="tooltip-remain">
-								<i class="fa fa-ticket"></i>&nbsp;Set  Remaining
+				    		<input id="balanceIn${em.event.id}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+				    		<span class="input-group-btn">
+					        <button id="balanceBtn${em.event.id}" onclick="setBalance(${em.event.id});" type="button" class="btn btn-primary" data-toggle="tooltip-remain">
+								<i class="fa fa-ticket"></i>&nbsp;Set  Ticket  Balance
 							</button>
 							</span>
 					    </div>
@@ -123,6 +123,7 @@
     </div>
     <!-- /.container -->
 
+	<%@include file="subview/adminEventPopup.jsp" %>
     
     <%@include file="subview/popup.jsp" %><!-- This must be placed below all other modals -->
 

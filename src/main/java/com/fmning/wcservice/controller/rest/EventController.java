@@ -1,6 +1,11 @@
 package com.fmning.wcservice.controller.rest;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,12 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.Event;
+import com.fmning.service.domain.Payment;
 import com.fmning.service.domain.User;
 import com.fmning.service.manager.EventManager;
+import com.fmning.service.manager.PaymentManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
 import com.fmning.util.EventType;
+import com.fmning.util.PaymentType;
 import com.fmning.util.Util;
+import com.fmning.wcservice.model.PartiListModel;
 import com.fmning.wcservice.utils.UserRole;
 
 @Controller
@@ -27,6 +36,7 @@ public class EventController {
 	
 	@Autowired private UserManager userManager;
 	@Autowired private EventManager eventManager;
+	@Autowired private PaymentManager paymentManager;
 
 	@RequestMapping(value = "/get_event", method = RequestMethod.GET) //Either by actual id or by mapping id
     public ResponseEntity<Map<String, Object>> getEvent(HttpServletRequest request) {
@@ -76,6 +86,123 @@ public class EventController {
 			
 			//message will get ignored if new status is enable
 			eventManager.setStatus(id, newStatus, ErrorMessage.TICKET_SOLD_OUT.getMsg());
+			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
+			respond.put("error", "");
+			
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	@RequestMapping("/update_event_balance")
+	public ResponseEntity<Map<String, Object>> updateEventBalance(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			User user = userManager.validateAccessToken(request);
+			
+			int id = (int)request.get("id");
+			int balance = (int)request.get("balance");
+			
+			if (balance < 0 || balance > 500){ 
+				throw new IllegalStateException(ErrorMessage.TICKET_BALANCE_RANGE_ERROR.getMsg());
+			}
+			
+			Event event = eventManager.getEventById(id);
+			
+			if (event.getOwnerId() != user.getId() &&  !UserRole.isAdmin(user.getRoleId())) {
+				throw new IllegalStateException(ErrorMessage.CHANGE_BALANCE_NOT_ALLOWED.getMsg());
+			}
+			
+			eventManager.setBalance(id, balance);
+			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
+			respond.put("error", "");
+			
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	@RequestMapping("/update_event_details")
+	public ResponseEntity<Map<String, Object>> updateEventDetails(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			User user = userManager.validateAccessToken(request);
+			
+			int id = (int)request.get("id");
+			
+			Event event = eventManager.getEventById(id);
+			
+			if (event.getOwnerId() != user.getId() &&  !UserRole.isAdmin(user.getRoleId())) {
+				throw new IllegalStateException(ErrorMessage.CHANGE_EVENT_NOT_ALLOWED.getMsg());
+			}
+			
+			String title = (String)request.get("title");
+			String startTime = (String)request.get("startTime");
+			String endTime = (String)request.get("endTime");
+			String location = (String)request.get("location");
+			
+			eventManager.updateEventDetails(id, title, null, startTime == null ? null : Instant.parse(startTime),
+					endTime == null ? null :Instant.parse(endTime), location, Util.nullInt);
+			
+			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
+			respond.put("error", "");
+			
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	@RequestMapping("/getPartiList")
+	public ResponseEntity<Map<String, Object>> getPartiList(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			User user = userManager.validateAccessToken(request);
+			
+			int id = (int)request.get("id");
+			
+			Event event = eventManager.getEventById(id);
+			
+			if (event.getOwnerId() != user.getId() &&  !UserRole.isAdmin(user.getRoleId())) {
+				throw new IllegalStateException(ErrorMessage.VIEW_PARTICIPANTS_NOT_ALLOWED.getMsg());
+			}
+			
+			String title = (String)request.get("title");
+			String startTime = (String)request.get("startTime");
+			String endTime = (String)request.get("endTime");
+			String location = (String)request.get("location");
+			
+			List<Payment> paymentList = paymentManager.getSuccessfulPaymentsByType(PaymentType.EVENT.getName(), id);
+			List<PartiListModel> partiList = new ArrayList<>();
+			
+			for (Payment p : paymentList) {
+				PartiListModel pm = new PartiListModel();
+				User payer = userManager.getUserById(p.getPayerId());
+				pm.setEmail(payer.getUsername());
+				pm.setName(userManager.getUserDisplayedName(payer.getId()));
+				partiList.add(pm);
+			}
+			
+			
+			Collections.sort(partiList, new Comparator<PartiListModel>() {
+		        @Override
+		        public int compare(PartiListModel o1, PartiListModel o2) {
+		            return o1.getName().compareTo(o2.getName());
+		        }
+		    });
+			
+			respond.put("partiList", partiList);
 			
 			if (user.isTokenUpdated()) {
 				respond.put("accessToken", user.getAccessToken());

@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div class="modal fade bs-modal-sm" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
+    <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
             <br>
             <ul id="myTab" class="nav nav-tabs">

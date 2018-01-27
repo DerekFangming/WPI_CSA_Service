@@ -8,7 +8,7 @@
     	<a class="dropdown-item" href="#"><i class="fa fa-check" style="color:green"></i>&nbsp;Email verified</a>
     	</c:if>
     	<c:if test="${user.emailConfirmed && user.roleId < 5}">
-    	<a class="dropdown-item" href="./admin/event"><i class="fa fa-wrench" style="color:red"></i>&nbsp;Admin portal</a>
+    	<a class="dropdown-item" href="./admin/event"><i class="fa fa-cog"></i>&nbsp;Admin portal</a>
     	</c:if>
     	<c:if test="${!user.emailConfirmed}">
     	<div><a class="dropdown-item" href="#"><i class="fa fa-times" style="color:red"></i>&nbsp;Email not verified. Re-send</a></div>

@@ -15,8 +15,6 @@ function openSG(id) {
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
-	    	$("#payButton").toggleClass("disabled");
 			showErrorPopup('Unknown error occured. Please contact support');
 		}
 	});
@@ -51,7 +49,7 @@ function processContent(content) {
 		for (var i=imgtxtList.length - 1; i > -1; i--) {
 			var imgtxtDiv = document.createElement('div');
 			imgtxtDiv.setAttribute('class', 'row top-buffer');
-			var imgtxtInner = '<div class="col imgtxt-img-container"><img class="fit-width" src="./images/999.jpg"></div><div class="col col-center">';
+			var imgtxtInner = '<div class="col imgtxt-img-container"><img class="fit-width" src="./images/53.jpg"></div><div class="col col-center">';
 			imgtxtInner += '<div class="card-body">' + imgtxtList[i].innerHTML + '</div></div>';
 			imgtxtDiv.innerHTML = imgtxtInner;
 			imgtxtList[i].parentNode.replaceChild(imgtxtDiv, imgtxtList[i]);

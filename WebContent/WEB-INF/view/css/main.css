@@ -2,6 +2,12 @@ body {
   padding-top: 54px;
 }
 
+@media (min-width: 768px) {
+	.modal-xl {
+		width: 90%;
+		max-width:1200px;
+	}
+}
 
 .top-buffer { margin-top:20px; }
 
@@ -44,13 +50,13 @@ body {
 }
 
 .col-center {
-    display: flex;
-   align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .imgtxt-img-container {
-	max-width: 200px;
-	min-width: 200px;
+	max-width: 300px;
+	min-width: 300px;
 }
 
 
