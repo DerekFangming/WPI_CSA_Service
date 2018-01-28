@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -164,7 +165,7 @@ public class EventController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
-	@RequestMapping("/getPartiList")
+	@RequestMapping("/get_parti_list")
 	public ResponseEntity<Map<String, Object>> getPartiList(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
@@ -178,10 +179,6 @@ public class EventController {
 				throw new IllegalStateException(ErrorMessage.VIEW_PARTICIPANTS_NOT_ALLOWED.getMsg());
 			}
 			
-			String title = (String)request.get("title");
-			String startTime = (String)request.get("startTime");
-			String endTime = (String)request.get("endTime");
-			String location = (String)request.get("location");
 			
 			List<Payment> paymentList = paymentManager.getSuccessfulPaymentsByType(PaymentType.EVENT.getName(), id);
 			List<PartiListModel> partiList = new ArrayList<>();
@@ -190,7 +187,8 @@ public class EventController {
 				PartiListModel pm = new PartiListModel();
 				User payer = userManager.getUserById(p.getPayerId());
 				pm.setEmail(payer.getUsername());
-				pm.setName(userManager.getUserDisplayedName(payer.getId()));
+				pm.setName(StringUtils.capitalize(userManager.getUserDisplayedName(payer.getId())));
+				pm.setRegiTime(p.getCreatedAt().toString());
 				partiList.add(pm);
 			}
 			

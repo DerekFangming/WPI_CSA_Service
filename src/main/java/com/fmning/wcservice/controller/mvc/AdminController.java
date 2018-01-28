@@ -69,7 +69,7 @@ public class AdminController {
 		}
 		
 		List<Event> eventList = eventManager.getRecentEventByDate(Instant.now(), 10);
-		List<EventModel> eventModelList = new ArrayList<>();;
+		List<EventModel> eventModelList = new ArrayList<>();
 		
 		for (Event e : eventList) {
 			EventModel em = new EventModel();
@@ -90,4 +90,48 @@ public class AdminController {
 		model.addAttribute("prodMode", Utils.prodMode);
 		return "adminEvent";
 	}
+	
+	
+	@RequestMapping(value = "/admin/user", method = RequestMethod.GET)
+    public String adminUserController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+		
+		Cookie cookie = null;
+		try {
+			User user = userManager.validateAccessToken(request);
+			if (!user.getEmailConfirmed()) {
+				model.addAttribute("errorMessage", ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+			}
+			if (user.getRoleId() == 10) {
+				return "errorview/403";
+			}
+			
+			String name = userManager.getUserDetail(user.getId()).getName();
+			if (name == null){name = "Unknown";}
+			user.setName(name);
+			model.addAttribute("currentUser", user);
+			if (user.isTokenUpdated()) {
+				cookie = new Cookie("accessToken", user.getAccessToken());
+				cookie.setMaxAge(63113904);
+				cookie.setPath("/");
+			}
+		} catch (NotFoundException e) {
+			model.addAttribute("errorMessage", ErrorMessage.NO_USER_LOGGED_IN.getMsg());
+			return "errorview/403";
+		}
+		
+		if (cookie != null) {
+			response.addCookie(cookie);
+		}
+		
+		List<User> userList = userManager.getAllUsers();
+		
+		for (User u : userList) {
+			u.setName(userManager.getUserDisplayedName(u.getId()));
+		}
+		
+		model.addAttribute("userList", userList);
+		model.addAttribute("prodMode", Utils.prodMode);
+		return "adminUser";
+	}
+	
 }

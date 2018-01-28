@@ -135,8 +135,41 @@ function toggleStatus(id, newStatus) {
 }
 
 function openPartiList(id) {
+	var accessToken = getAccessToken();
 	$('#partiListModal').modal('toggle');
+	$.ajax({
+		type: "POST",
+		url: "../../get_parti_list",
+		data: JSON.stringify({accessToken : accessToken, id : id}),
+        contentType: "application/json",
+        dataType: "json",
+		success: function (data) {
+			$("#partiLoading").html('');
+			if (data['error'] != "" ) {
+	    		showErrorPopup(data['error']);
+	    	} else {
+	    		var partiList = data['partiList'];
+	    		var partiHtml = '<thead><tr><th>Name</th><th>Email</th><th>Registered at</th></tr></thead><tbody>';
+	    		for (var i = 0; i < partiList.length; i++) {
+	    			partiHtml += '<tr><td>' + partiList[i].name + '</td>';
+	    			partiHtml += '<td>' + partiList[i].email + '</td><td>' + parseDateStr(partiList[i].regiTime) + '</td></tr> \n';
+	    		}
+	    		$("#partiTable").html(partiHtml + '</tbody>');
+	    		$('#partiTable').DataTable();
+			}
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			$("#statusBtn" + id).prop('disabled', false);
+			showErrorPopup('Unknown error occured. Please contact support');
+		}
+	});
 	
 }
-	
-	
+
+
+$('#partiListModal').on('hidden.bs.modal', function () {
+	$("#partiTable").html('');
+	$("#partiTable").DataTable().destroy();
+	$("#partiLoading").html('<i class="fa fa-refresh fa-5x fa-spin" style="color:black"></i>');
+})
+

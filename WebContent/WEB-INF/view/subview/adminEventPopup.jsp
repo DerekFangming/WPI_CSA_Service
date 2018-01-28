@@ -48,25 +48,19 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-            	<table class="table table-striped table-bordered">
-				    <thead class="thead-default">
+            	<table id="partiTable" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+				    <thead>
 				        <tr>
 				            <th>Name</th>
 				            <th>Email</th>
 				            <th>Registered at</th>
 				        </tr>
 				    </thead>
-				    <tbody>
-				        <tr>
-			                <th>${user.name}</th>
-			                <th>${user.username}</th>
-			            </tr>
-			            <tr>
-			                <th>${user.name}</th>
-			                <th>${user.username}</th>
-			            </tr>
+				    <tbody id="partiList">
 				    </tbody>
 				</table>
+				<div id="partiLoading" class="col" align="center">
+				</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

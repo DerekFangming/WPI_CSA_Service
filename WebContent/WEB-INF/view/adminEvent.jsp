@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>WPI CSA - Life</title>
+    <title>WPI CSA - Admin Portal</title>
 	
     <c:choose>
 	<c:when test="${prodMode}">
@@ -24,10 +24,14 @@
 	</c:choose>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 
     <link href="/resources/css/main.css?v=1" rel="stylesheet">
 	
 	<script src="/resources/js/common.js?v=1"></script>
+	
+	
 
 </head>
 
@@ -164,6 +168,10 @@
     </script>
     
     <script src="/resources/js/adminEvent.js?v=1"></script>
+    
+    
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
 
 </body>
 

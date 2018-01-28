@@ -5,7 +5,7 @@ import java.time.Instant;
 public class PartiListModel {
 	private String name;
 	private String email;
-	private Instant regiTime;
+	private String regiTime;
 
 	public String getName() {
 		return name;
@@ -23,11 +23,11 @@ public class PartiListModel {
 		this.email = email;
 	}
 
-	public Instant getRegiTime() {
+	public String getRegiTime() {
 		return regiTime;
 	}
 
-	public void setRegiTime(Instant regiTime) {
+	public void setRegiTime(String regiTime) {
 		this.regiTime = regiTime;
 	}
 

@@ -9,6 +9,10 @@ body {
 	}
 }
 
+.tooltip {
+    z-index: 0 !important;
+}
+
 .top-buffer { margin-top:20px; }
 
 .left-buffer { margin-left:20px; }
@@ -59,8 +63,6 @@ body {
 	min-width: 300px;
 }
 
-
-
 .card-body-bottom-line {
 	border-bottom:1px solid #DFDFDF;
 }
@@ -71,6 +73,12 @@ body {
 
 .event-img-container {
 	height: 250px;
+}
+
+.admin-user-img-container {
+	width: 150px;
+	height: 150px;
+	margin: 0 auto;
 }
 
 .aspect-fill {

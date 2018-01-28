@@ -20,7 +20,9 @@ import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.UserManager;
+import com.fmning.util.ErrorMessage;
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.UserRole;
 import com.fmning.wcservice.utils.Utils;
 
 @Controller
@@ -34,11 +36,32 @@ public class EmailController {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
 			User user = userManager.validateAccessToken(request);
-			if(user.getEmailConfirmed()) {
-				throw new IllegalStateException("Your email is already confirmed. Please restart the app or log out and log back in again.");
+			String username = user.getUsername();
+			
+			try{
+				int requestedUserId = (int)request.get("requestedUserId");
+				if (!UserRole.isAdmin(user.getRoleId())) {
+					throw new IllegalStateException(ErrorMessage.NO_PERMISSION.getMsg());
+				} else if (!user.getEmailConfirmed()) {
+					throw new IllegalStateException(ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+				} else {
+					try {
+						User requestedUser = userManager.getUserById(requestedUserId);
+						if(requestedUser.getEmailConfirmed()) {
+							throw new IllegalStateException(ErrorMessage.REQUESTED_USER_EMAIL_VERIFIED.getMsg());
+						} else {
+							username = requestedUser.getUsername();
+						}
+					} catch (NotFoundException e) {
+						throw new IllegalStateException(ErrorMessage.USER_NOT_FOUND.getMsg());
+					}
+				}
+			}catch(NullPointerException e){
+				if(user.getEmailConfirmed()) {
+					throw new IllegalStateException(ErrorMessage.EMAIL_ALREADY_VERIFIED.getMsg());
+				}
 			}
 			
-			String username = user.getUsername();
 			
 			String veriCode = helperManager.getEmailConfirmCode(username);
 			userManager.updateVeriCode(username, veriCode);
