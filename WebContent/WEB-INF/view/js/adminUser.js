@@ -59,8 +59,8 @@ $("#sendResetPasswordBtn").click(function(){
         	$("#sendResetPasswordBtn").prop('disabled', false);
 			if (data['error'] == "" ) {
 				showPopup('Done', 'Password reset email sent for ' + $('#userDispName').text());
-			} else if (data['error'] == 'You have to confirm your email before changing password.') {
-				showErrorPopup('The user has to confirm his email first before resetting password. You can resend email confirmation by the button above.');
+			} else if (data['error'].startsWith('You have to confirm your email before changing password.')) {
+				showErrorPopup('The user has to confirm his email first before resetting password. The account confirmation email has been sent.');
 			} else {
 				showErrorPopup(data['error']);
 			}

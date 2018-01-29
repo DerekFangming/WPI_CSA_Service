@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -68,15 +69,12 @@ public class PaymentController {
 	@Autowired private EventManager eventManager;
 	@Autowired private TicketManager ticketManager;
 	
+	
+	
 	private static DateTimeFormatter formatter =
 			  DateTimeFormatter.ofPattern("yyMMddHHmmss").withZone(ZoneId.systemDefault());
 	
-	private static BraintreeGateway gateway = new BraintreeGateway(
-			  Environment.SANDBOX,
-			  "wnbj3bx4nwmtyz77",
-			  "2x688s4dpnpxf2dd",
-			  "0806df90cf0bd867727c42077e6b41bd"
-			);
+	
 	
 	@RequestMapping("/pay")
 	public ResponseEntity<String> test(@RequestBody Map<String, Object> request) {
@@ -88,7 +86,7 @@ public class PaymentController {
 			      .submitForSettlement(true)
 			      .done();
 
-		Result<Transaction> result = gateway.transaction().sale(paymentRequest);
+		Result<Transaction> result = Utils.gateway.transaction().sale(paymentRequest);
 		
 		if (result.isSuccess()) {
 			System.out.println("scuessfull");
@@ -227,7 +225,7 @@ public class PaymentController {
 						    .submitForSettlement(true)
 						    .done();
 
-					Result<Transaction> result = gateway.transaction().sale(paymentRequest);
+					Result<Transaction> result = Utils.gateway.transaction().sale(paymentRequest);
 					String status;
 					String message = null;
 					if (result.isSuccess()) {

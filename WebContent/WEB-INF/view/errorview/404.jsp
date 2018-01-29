@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import = "java.util.ResourceBundle" %>
+<% ResourceBundle resource = ResourceBundle.getBundle("dataSource");
+  String BScss=resource.getString("BScss"); %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 
@@ -11,8 +14,7 @@
 
     <title>Oops 404 Error</title>
 
-    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">-->
-    <link href="/resources/css/local/bootstrap.min.css" rel="stylesheet">
+    <link href="<%=BScss %>" rel="stylesheet">
 
     <link href="/resources/css/main.css" rel="stylesheet">
 	

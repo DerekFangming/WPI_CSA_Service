@@ -8,4 +8,4 @@ logging.out
 
 *.p12
 
-src/main/resources/dataSourceTest.properties
+src/main/resources/dataSourceAll.properties

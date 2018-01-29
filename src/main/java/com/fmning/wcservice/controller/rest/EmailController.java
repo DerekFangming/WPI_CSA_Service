@@ -142,14 +142,23 @@ public class EmailController {
 			
 			User user = userManager.getUserByUsername(username);
 			
-			if (!user.getEmailConfirmed())
+			if (!user.getEmailConfirmed()) {
+				String veriCode = helperManager.getEmailConfirmCode(username);
+				userManager.updateVeriCode(username, veriCode);
+				String message = Utils.createVerificationEmail(veriCode);
+				if (Utils.prodMode) {
+					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				} else {
+					System.out.println(message);
+				}
 				throw new NotFoundException(ErrorMessage.CHANGE_PWD_BUT_NOT_VERIFIED.getMsg());
+			}
 			
 			String veriCode = helperManager.getChangePasswordCode(username);
 			userManager.updateVeriCode(username, veriCode);
 			String message = Utils.createChangePwdEmail(veriCode);
 			if (Utils.prodMode) {
-				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
 			} else {
 				System.out.println(message);
 			}
@@ -183,7 +192,7 @@ public class EmailController {
 				userManager.updateVeriCode(username, veriCode);
 				String message = Utils.createChangePwdEmail(veriCode);
 				if (Utils.prodMode) {
-					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+					helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
 				} else {
 					System.out.println(message);
 				}
@@ -208,7 +217,7 @@ public class EmailController {
 			response.addCookie(cookie);
 		} else if (respond.equals("resend")) {
 			model.addAttribute("changePwd", false);
-			model.addAttribute("msg", "Yourreset email code has expired and a new password reset email has been sent to your inbox.");
+			model.addAttribute("msg", "Your reset password code has expired and a new password reset email has been sent to your inbox.");
 		} else {
 			model.addAttribute("changePwd", false);
 			model.addAttribute("msg", respond + "<br>Please email <a href=\"mailto:admin@fmning.com?Subject=" + 

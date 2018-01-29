@@ -61,7 +61,6 @@ public class IndexController {
 		
 		model.addAttribute("feedList", getFeedList());
 		model.addAttribute("redirectPage", "index");
-		model.addAttribute("prodMode", Utils.prodMode);
 		
 		return "index";
 	}
@@ -148,7 +147,6 @@ public class IndexController {
 		
 		
 		model.addAttribute("feedList", getFeedList());
-		model.addAttribute("prodMode", Utils.prodMode);
 	
 		return "index";
 	}

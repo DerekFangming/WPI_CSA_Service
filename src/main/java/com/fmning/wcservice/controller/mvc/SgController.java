@@ -56,7 +56,6 @@ public class SgController {
 		}
 		
 		model.addAttribute("redirectPage", "sg");
-		model.addAttribute("prodMode", Utils.prodMode);
 		
 		if (generatedMenu == null) {
 			generatedMenu = generateMenu(Util.nullInt, "");

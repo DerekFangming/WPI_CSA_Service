@@ -104,7 +104,6 @@ public class FeedDetailController {
 		
 		
 		model.addAttribute("redirectPage", "feed");
-		model.addAttribute("prodMode", Utils.prodMode);
 		
 		return "feed";
 	}

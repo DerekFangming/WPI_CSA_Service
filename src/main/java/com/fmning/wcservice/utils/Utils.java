@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.braintreegateway.BraintreeGateway;
+import com.braintreegateway.Environment;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.util.Util;
 import com.fmning.wcservice.scheduler.DatabaseBackupScheduler;
@@ -19,14 +21,11 @@ import com.fmning.wcservice.scheduler.DatabaseBackupScheduler;
 public class Utils {
 	
 	/*Test & Prod switch*/
-	/*PROD & TEST Step 1 of 2. Controls db backup job, ticket directory mapping*/
-	public static final boolean prodMode  = false;//TODO: Change this after 1.10 major update
+	public static boolean prodMode  = false;
 	
 	/*Email parameters*/
-	public static final String emailVerificationPath = prodMode ? "https://wcservice.fmning.com/email_verification/"
-			: "http://wc.fmning.com/email_verification/";
-	public static final String emailChangePwdPath = prodMode ? "https://wcservice.fmning.com/reset_password/"
-			: "http://wc.fmning.com/reset_password/";
+	public static String emailVerificationPath = "";
+	public static String emailChangePwdPath = "";
 	
 	/*Scheduler parameters*/
 	public final static String dbBackupFolder = "/Users/Cyan/Documents/pg_backup";
@@ -35,14 +34,14 @@ public class Utils {
 	public final static String dbName = "WcServiceProd";
 	public final static String dbUsername = "postgres";
 	
+	/*Braintree service*/
+	public static BraintreeGateway gateway;
+	
 	/*Google drive uploader parameters*/
 	public final static String credentialFolder = "/Users/Cyan/Documents/pg_backup/credential";
 	
 	/*Ticket parameters*/
-	public static final String ticketPath = prodMode ? "/Volumes/Data/tickets/" : "/Volumes/Data/testTickets/";
-	
-	@Value("${dsName}")
-	private String datasourceName;
+	public static String ticketPath = "";
 	
 	@Autowired private HelperManager helperManager;
 	
@@ -72,14 +71,39 @@ public class Utils {
 		return message;
 	}
 	
+	@Value("${prodMode}") private boolean prodModeProp;
+	@Value("${emailVerificationPath}") private String emailVerificationPathProp;
+	@Value("${emailChangePwdPath}") private String emailChangePwdPathProp;
+	@Value("${ticketPath}") private String ticketPathProp;
+
+	@Value("${env}") private String env;
+	@Value("${merchantId}") private String merchantId;
+	@Value("${publicKey}") private String publicKey;
+	@Value("${privateKey}") private String privateKey;
+	
 	@PostConstruct
     public void runOnceOnlyOnStartup() {
 		//Set up time zone
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		
+		//Set up parameters from properties file
+		prodMode = prodModeProp;
+		emailVerificationPath = emailVerificationPathProp;
+		emailChangePwdPath = emailChangePwdPathProp;
+		ticketPath = ticketPathProp;
+		
+		Environment btEnv = env.equals("sandbox") ? Environment.SANDBOX : Environment.PRODUCTION;
+		
+		gateway = new BraintreeGateway(
+				  Environment.SANDBOX,
+				  merchantId,
+				  publicKey,
+				  privateKey
+				);
+		
+		
 		//Set up image path
-		if(datasourceName.equals("dataSourceTest")) {
-			//prodMode = false;//TODO: Read in this way
+		if(!prodMode) {
 			Util.imagePath = "/Volumes/Data/testImages/";
 		}
 		

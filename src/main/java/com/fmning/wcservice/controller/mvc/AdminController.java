@@ -86,8 +86,6 @@ public class AdminController {
 		
 		model.addAttribute("eventList", eventModelList);
 		
-
-		model.addAttribute("prodMode", Utils.prodMode);
 		return "adminEvent";
 	}
 	
@@ -130,7 +128,6 @@ public class AdminController {
 		}
 		
 		model.addAttribute("userList", userList);
-		model.addAttribute("prodMode", Utils.prodMode);
 		return "adminUser";
 	}
 	

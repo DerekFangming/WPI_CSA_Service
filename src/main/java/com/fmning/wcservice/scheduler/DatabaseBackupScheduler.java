@@ -50,6 +50,7 @@ public class DatabaseBackupScheduler {
 	
 	@Autowired private HelperManager helperManager;
 
+	//@Scheduled(cron = "*/5 * * * * *") //Every 5 seconds, for testing only
 	@Scheduled(cron = "0 0 1 * * ?")
     public void dbDailyBackup() {
 		if(Utils.prodMode) {
@@ -129,6 +130,8 @@ public class DatabaseBackupScheduler {
 				helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
 						"WPI CSA scheduler error report", report + e.getMessage());
 			}
+		} else {
+			System.out.println("Scheduler tested, working");
 		}
         
     }

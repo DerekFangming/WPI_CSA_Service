@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import = "java.util.ResourceBundle" %>
+<% ResourceBundle resource = ResourceBundle.getBundle("dataSource");
+  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs"); %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -12,16 +15,8 @@
 
     <title>WPI CSA - Feed</title>
     
-	<c:choose>
-	<c:when test="${prodMode}">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-	</c:when>
-	<c:otherwise>
-    <link href="/resources/css/local/bootstrap.min.css" rel="stylesheet">
-    <script src="/resources/css/local/jquery-3.2.1.min.js"></script>
-	</c:otherwise>
-	</c:choose>
+	<link href="<%=BScss %>" rel="stylesheet">
+	<script src="<%=JQjs %>"></script>
 	
 	<script src="https://js.braintreegateway.com/web/dropin/1.9.2/js/dropin.min.js"></script>
     
@@ -126,14 +121,7 @@
 
     <%@include file="subview/footer.jsp" %>
 
-	<c:choose>
-	<c:when test="${prodMode}">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
-	</c:when>
-	<c:otherwise>
-    <script src="/resources/css/local/bootstrap.bundle.min.js"></script>
-	</c:otherwise>
-	</c:choose>
+	<script src="<%=BSjs %>"></script>
     
     <c:if test="${user == null || (user != null && !user.emailConfirmed)}">
     <script src="/resources/js/verifyEmail.js?v=1"></script>
