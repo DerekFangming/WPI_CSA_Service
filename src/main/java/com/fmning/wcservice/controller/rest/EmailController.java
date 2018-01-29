@@ -5,7 +5,9 @@ import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -94,7 +96,7 @@ public class EmailController {
 		try{
 			Map<String, Object> result = helperManager.decodeJWT(veriCode);
 			String username = (String)result.get("username");
-			userManager.checkVeriCode(username, veriCode);
+			userManager.checkVeriCode(username, veriCode, (String)result.get("action"));
 			Instant expTime = Instant.parse((String) result.get("expire"));
 			if(expTime.compareTo(Instant.now()) > 0){
 				userManager.confirmEmail(username);
@@ -130,8 +132,91 @@ public class EmailController {
 		return "emailConfirm";
 	}
 	
+	@RequestMapping("/send_change_pwd_email")
+    public ResponseEntity<Map<String, Object>> sendEmailChangePwd(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			String username = (String)request.get("email");
+			if (username == null)
+				throw new NotFoundException(ErrorMessage.USER_NOT_FOUND.getMsg());
+			
+			User user = userManager.getUserByUsername(username);
+			
+			if (!user.getEmailConfirmed())
+				throw new NotFoundException(ErrorMessage.CHANGE_PWD_BUT_NOT_VERIFIED.getMsg());
+			
+			String veriCode = helperManager.getChangePasswordCode(username);
+			userManager.updateVeriCode(username, veriCode);
+			String message = Utils.createChangePwdEmail(veriCode);
+			if (Utils.prodMode) {
+				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+			} else {
+				System.out.println(message);
+			}
+			
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
 	
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+		
+	}
 	
+	@RequestMapping(value = "/reset_password/*", method = RequestMethod.GET)
+    public String resetPassword(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+		String veriCode = request.getRequestURI().split("/reset_password/")[1];
+		veriCode = veriCode.replace("=", ".");
+		String respond = "";
+		String username= "";
+		
+		try{
+			Map<String, Object> result = helperManager.decodeJWT(veriCode);
+			username = (String)result.get("username");
+			userManager.checkVeriCode(username, veriCode, (String)result.get("action"));
+			Instant expTime = Instant.parse((String) result.get("expire"));
+			if(expTime.compareTo(Instant.now()) > 0){
+				//userManager.updateVeriCode(username, ""); do another round of validation when user update password
+				respond = "success";
+			}else{
+				veriCode = helperManager.getChangePasswordCode(username);
+				userManager.updateVeriCode(username, veriCode);
+				String message = Utils.createChangePwdEmail(veriCode);
+				if (Utils.prodMode) {
+					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				} else {
+					System.out.println(message);
+				}
+				respond = "resend";
+			}
+		}catch(IllegalStateException e){
+			respond = "The token is not in correct form. Please copy and paste the url in browser and try again.";
+		}catch(DateTimeParseException e){
+			respond = "Expiration date format incorrect";
+		}catch(NotFoundException e){
+			respond = e.getMessage();
+		}
+		
+		if (respond.equals("success")) {
+			User user = userManager.getUserByUsername(username);
+			model.addAttribute("veriToken", veriCode);
+			model.addAttribute("changePwd", true);
+			
+			Cookie cookie = new Cookie("accessToken", user.getAccessToken());
+			cookie.setMaxAge(63113904);
+			cookie.setPath("/");
+			response.addCookie(cookie);
+		} else if (respond.equals("resend")) {
+			model.addAttribute("changePwd", false);
+			model.addAttribute("msg", "Yourreset email code has expired and a new password reset email has been sent to your inbox.");
+		} else {
+			model.addAttribute("changePwd", false);
+			model.addAttribute("msg", respond + "<br>Please email <a href=\"mailto:admin@fmning.com?Subject=" + 
+						respond.replace(" ", "%20") + "\" target=\"_top\">admin@fmning.com</a> for support");
+		}
+		
+		return "resetPassword";
+	}
 	
 
 }

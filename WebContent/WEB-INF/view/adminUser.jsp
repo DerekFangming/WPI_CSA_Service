@@ -125,7 +125,9 @@
 				        <p class="card-text"><i class="fa fa-envelope"></i> <span id="userUsername">Email</span></p>
 				        <p class="card-text"><i class="fa fa-calendar"></i> <span id="userCreated">Member since</span></p>
 				        <input type="hidden" id="selectedUserId" value="0">
-				        <button id="resendEmailBtn" class="btn btn-primary">Resend confirm account email</button>
+				        <button id="resendEmailConfirmBtn" class="btn btn-primary">Re-send confirm account email</button>
+				        <br><br>
+				        <button id="sendResetPasswordBtn" class="btn btn-primary">Send password reset email</button>
 				    </div>
 				</div>
 			</div>

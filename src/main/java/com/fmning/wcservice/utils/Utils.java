@@ -25,6 +25,8 @@ public class Utils {
 	/*Email parameters*/
 	public static final String emailVerificationPath = prodMode ? "https://wcservice.fmning.com/email_verification/"
 			: "http://wc.fmning.com/email_verification/";
+	public static final String emailChangePwdPath = prodMode ? "https://wcservice.fmning.com/reset_password/"
+			: "http://wc.fmning.com/reset_password/";
 	
 	/*Scheduler parameters*/
 	public final static String dbBackupFolder = "/Users/Cyan/Documents/pg_backup";
@@ -50,7 +52,20 @@ public class Utils {
 		message += "Thank you for creating an account at fmning.com domain. Please click on the following link to confirm your email address.";
 		message += "\n\n";
 		message += emailVerificationPath;
-		message += veriCode;
+		message += veriCode.replace(".", "=");
+		message += "\n\n";
+		message += "Thank you.";
+		message += "\n";
+		return message;
+	}
+	
+	public static String createChangePwdEmail(String veriCode) {
+		String message = "Hi there,";
+		message += "\n";
+		message += "Here is the link to reset your password. It will expire in one day. Please report to CSA if you didn't make this request.";
+		message += "\n\n";
+		message += emailChangePwdPath;
+		message += veriCode.replace(".", "=");
 		message += "\n\n";
 		message += "Thank you.";
 		message += "\n";

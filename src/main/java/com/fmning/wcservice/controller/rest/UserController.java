@@ -1,5 +1,6 @@
 package com.fmning.wcservice.controller.rest;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -194,10 +195,23 @@ public class UserController {
 			String oldPwd = (String)request.get("oldPwd");
 			String newPwd = (String)request.get("newPwd");
 			
-			if (!Util.MD5(oldPwd + user.getSalt()).equals(user.getPassword()))
-				throw new IllegalStateException(ErrorMessage.INCORRECT_PASSWORD.getMsg());
+			if (oldPwd != null) {//Changing password with previous password
 			
-			userManager.changePassword(user.getId(), newPwd);
+				if (!Util.MD5(oldPwd + user.getSalt()).equals(user.getPassword()))
+					throw new IllegalStateException(ErrorMessage.INCORRECT_PASSWORD.getMsg());
+				
+				userManager.changePassword(user.getId(), newPwd);
+			} else {//Changing password with verification code
+				String veriCode = (String)request.get("veriToken");
+				if (user.getVeriToken().equals(veriCode)) {
+					userManager.changePassword(user.getId(), newPwd);
+					userManager.updateVeriCode(user.getUsername(), "");
+				} else {
+					throw new NotFoundException(ErrorMessage.INVALID_VERIFICATION_CODE.getMsg());
+				}
+				
+			}
+			
 			if (user.isTokenUpdated()) {
 				respond.put("accessToken", user.getAccessToken());
 			}
