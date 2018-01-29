@@ -69,3 +69,25 @@ $('#registerForm').submit(function (e) {
 	
 	e.preventDefault();
 });
+
+$('#forgetForm').submit(function (e) {
+	$('#loginModal').modal('toggle');
+	$.ajax({
+		type: "POST",
+		url: "./send_change_pwd_email",
+		contentType: "application/json",
+        dataType: "json",
+		data: JSON.stringify({email : $('#forgetEmail').val()}),
+		success: function (data) {
+			if (data['error'] != "" ) {
+	    		showErrorPopup(data['error']);
+	    	} else {
+	    		showPopup('Done', 'An email with password reset link has been sent to your inbox. Please check junk and trash folder if you can\'t find it.');
+	    	}
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			showErrorPopup('Unknown error occured. Please contact support');
+		}
+	});
+	e.preventDefault();
+});

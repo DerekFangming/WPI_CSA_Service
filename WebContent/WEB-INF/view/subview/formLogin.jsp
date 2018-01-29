@@ -6,6 +6,7 @@
             <ul id="myTab" class="nav nav-tabs">
                 <li class="nav-item"><a class="nav-link active" href="#signin" data-toggle="tab">Sign In</a></li>
                 <li class="nav-item"><a class="nav-link" href="#signup" data-toggle="tab">Register</a></li>
+                <li class="nav-item"><a class="nav-link" href="#forget" data-toggle="tab">Fotget password</a></li>
                 <li class="nav-item"><a class="nav-link" href="#why" data-toggle="tab">Why?</a></li>
             </ul>
             <div class="modal-body">
@@ -99,6 +100,28 @@
                                     <label class="control-label" for="confirmsignup"></label>
                                     <div class="controls">
                                         <button id="confirmsignup" name="confirmsignup" class="btn btn-success">Sign Up</button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="forget">
+                        <form id="forgetForm" class="form-horizontal">
+                            <fieldset>
+                                <!-- Forget Form -->
+                                <!-- Text input-->
+                                <div class="control-group">
+                                    <label class="control-label" for="userid">Enter your username:</label>
+                                    <div class="controls">
+                                        <input required="" id="forgetEmail" name="email" type="text" class="form-control" placeholder="Your username \ email" class="input-medium" required="">
+                                    </div>
+                                </div>
+                                
+                                <!-- Button -->
+                                <div class="control-group">
+                                    <label class="control-label" for="forget"></label>
+                                    <div class="controls">
+                                        <button id="forgetButton" name="fotget" class="btn btn-success">Submit</button>
                                     </div>
                                 </div>
                             </fieldset>
