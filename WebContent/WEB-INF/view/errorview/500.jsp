@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import = "java.util.ResourceBundle" %>
+<% ResourceBundle resource = ResourceBundle.getBundle("dataSource");
+	String BScss=resource.getString("BScss"); String rootDir=resource.getString("rootDir"); %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 
@@ -11,8 +14,7 @@
 
     <title>Oops 500 Error</title>
 
-    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">-->
-    <link href="/resources/css/local/bootstrap.min.css" rel="stylesheet">
+    <link href="<%=BScss %>" rel="stylesheet">
 
     <link href="/resources/css/main.css" rel="stylesheet">
 	
@@ -22,7 +24,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="http://csa.fmning.com">WPI CSA</a>
+            <a class="navbar-brand" href="<%=rootDir %>">WPI CSA</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -40,7 +42,7 @@
             <center><p class="lead">We have a problem here and the error has been logged. </p></center>
             <center><p class="lead">If this keeps coming up, please report to <a href="mailto:admin@fmning.com">admin@fmning.com</a></p></center>
             <br>
-            <center><a class="btn btn-primary" href="http://csa.fmning.com" role="button">Take me back to main page</a></center>
+            <center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to main page</a></center>
         </header>
         
     </div>

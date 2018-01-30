@@ -95,7 +95,7 @@ public class Utils {
 		Environment btEnv = env.equals("sandbox") ? Environment.SANDBOX : Environment.PRODUCTION;
 		
 		gateway = new BraintreeGateway(
-				  Environment.SANDBOX,
+				  btEnv,
 				  merchantId,
 				  publicKey,
 				  privateKey

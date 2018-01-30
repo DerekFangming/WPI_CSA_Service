@@ -85,6 +85,7 @@ public class AdminController {
 		}
 		
 		model.addAttribute("eventList", eventModelList);
+		model.addAttribute("extraPath", "./..");
 		
 		return "adminEvent";
 	}
@@ -128,6 +129,7 @@ public class AdminController {
 		}
 		
 		model.addAttribute("userList", userList);
+		model.addAttribute("extraPath", "./..");
 		return "adminUser";
 	}
 	

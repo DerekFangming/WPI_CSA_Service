@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import = "java.util.ResourceBundle" %>
 <% ResourceBundle resource = ResourceBundle.getBundle("dataSource");
-  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs"); %>
+  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs"); String rootDir=resource.getString("rootDir"); %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -69,7 +69,7 @@
             <br><br><br>
             <center><p class="lead">${msg}</p></center>
             <br>
-            <center><a class="btn btn-primary" href="http://csa.fmning.com" role="button">Take me back to main page</a></center>
+            <center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to main page</a></center>
         </header>
 		</c:otherwise>
 		</c:choose>
@@ -113,7 +113,7 @@
 					if (data['error'] == "" ) {
 						showPopup('Done', 'Your password change is done. You will be redirected in 5 seconds.');
 						window.setTimeout(function(){
-							window.location.href = "http://wc.fmning.com";
+							window.location.href = "<%=rootDir %>";
 						}, 5000);
 
 					} else {

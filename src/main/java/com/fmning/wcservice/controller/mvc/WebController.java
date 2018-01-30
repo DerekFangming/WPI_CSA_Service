@@ -74,6 +74,18 @@ public class WebController {
 		return "list";
 	}
 	
+	@RequestMapping(value = "/terms", method = RequestMethod.GET)
+    public String terms() {
+		
+		return "terms";
+	}
+	
+	@RequestMapping(value = "/privacy", method = RequestMethod.GET)
+    public String privacy() {
+		
+		return "privacy";
+	}
+	
 	
 
 }
