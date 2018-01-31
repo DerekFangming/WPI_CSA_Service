@@ -120,24 +120,27 @@
 				        <p class="card-text"><i class="fa fa-envelope"></i> <span id="userUsername">Email</span></p>
 				        <p class="card-text"><i class="fa fa-calendar"></i> <span id="userCreated">Member since</span></p>
 				        <input type="hidden" id="selectedUserId" value="0">
-				        <button id="resendEmailConfirmBtn" class="btn btn-primary">Re-send confirm account email</button>
+				        <input type="hidden" id="selectedUserRole" value="0">
+				        <button id="resendEmailConfirmBtn" class="btn btn-primary" data-toggle="tooltip-email">Re-send confirm account email</button>
 				        <br><br>
-				        <button id="sendResetPasswordBtn" class="btn btn-primary">Send password reset email</button>
+				        <button id="sendResetPasswordBtn" class="btn btn-primary" data-toggle="tooltip-pwd">Send password reset email</button>
 				        
 				        <div class="top-buffer card-body-bottom-line"></div>
-				        
+				        <input type="hidden" id="currentUserID" value="${currentUser.id}">
+				        <input type="hidden" id="currentUserRoleID" value="${currentUser.roleId}">
+				        <input type="hidden" id="selectedUserRole" value="0">
 				        <div class="dropdown top-buffer">
 							<button class="btn btn-primary dropdown-toggle" type="button" id="currentRole" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								User Role
 							</button>
-						    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						    <div class="dropdown-menu" aria-labelledby="currentRole">
 						    		<c:if test="${currentUser.roleId == 1}">
-		    						<a class="dropdown-item">System Admin</a>
+		    						<a class="dropdown-item" href="#" onclick="selectRole(1);">System Admin</a>
 		    						</c:if>
-						        <a class="dropdown-item">Site Admin</a>
-						        <a class="dropdown-item">User</a>
+						        <a class="dropdown-item" href="#" onclick="selectRole(2);">Site Admin</a>
+						        <a class="dropdown-item" href="#" onclick="selectRole(3);">User</a>
 						    </div>
-						    <button id="setUserRoleBtn" class="btn btn-primary">Save user role</button>
+						    <button id="setUserRoleBtn" class="btn btn-primary" style="margin-left:20px" data-toggle="tooltip-role">Save user role</button>
 						</div>
 						
 						
@@ -159,9 +162,17 @@
 	
 	<script>
         $(function () {
-            $('[data-toggle="tooltip-edit"]').tooltip({
+            $('[data-toggle="tooltip-email"]').tooltip({
 			    placement: "bottom",
-			    title: "Edit the title, location or time of the event."
+			    title: "Send an email to the selected user to confirm email address."
+			});
+            $('[data-toggle="tooltip-pwd"]').tooltip({
+			    placement: "bottom",
+			    title: "Send an email to the selected user to reset password. Note that user has to confirm email first before resetting password."
+			});
+            $('[data-toggle="tooltip-role"]').tooltip({
+			    placement: "bottom",
+			    title: "Update the role of the selected user. Admins will have access to this portal. An email will be sent to the user if role changed."
 			});
         });
     </script>

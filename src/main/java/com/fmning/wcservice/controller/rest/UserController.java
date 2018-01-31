@@ -19,6 +19,7 @@ import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.UserRole;
 import com.fmning.wcservice.utils.Utils;
 
 @Controller
@@ -222,6 +223,52 @@ public class UserController {
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
+	
+	
+	@RequestMapping("/update_user_role")
+    public ResponseEntity<Map<String, Object>> updateUserRole(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			User user = userManager.validateAccessToken(request);
+			
+			if (!user.getEmailConfirmed()) {
+				throw new IllegalStateException(ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+			}
+			
+			if(!UserRole.isAdmin(user.getRoleId())) {
+				throw new IllegalStateException(ErrorMessage.NO_PERMISSION.getMsg());
+			}
+			
+			int roleId = (int)request.get("roleId");
+			
+			User requestedUser = userManager.getUserById((int)request.get("requestedUserId"));
+			
+			if (requestedUser.getId() == user.getId()) {
+				throw new IllegalStateException("You cannot update your own role");
+			}
+			
+			if (requestedUser.getRoleId() < user.getRoleId()) {
+				throw new IllegalStateException(ErrorMessage.NO_PERMISSION.getMsg());
+			}
+			
+			if (roleId < user.getRoleId()) {
+				throw new IllegalStateException("You cannot set a role that is higher than your current role");
+			}
+			
+			userManager.setUserRole(requestedUser.getId(), roleId);
+			//send email
+			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = Util.createErrorRespondFromException(e);
+		}
+		
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
 	
 
 }

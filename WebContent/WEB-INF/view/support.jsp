@@ -17,6 +17,7 @@
     
 	<link href="<%=BScss %>" rel="stylesheet">
 	<script src="<%=JQjs %>"></script>
+	
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 	
@@ -30,48 +31,35 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="../">WPI CSA</a>
+            <a class="navbar-brand" href="./">WPI CSA</a>
         </div>
     </nav>
 
     <!-- Page Content -->
     <div class="container">
     
-    	<c:choose>
-		<c:when test="${changePwd}">
-		<div style="height:50px"></div>
+		<div style="height:35px"></div>
 		<div class="card top-buffer" style="width:500px;margin:0 auto;">
 		    <div class="card-header">
-		        Reset password
+		        Report Problem
 		    </div>
 		    <div class="card-body">
 				<form>
 				    <div class="form-group">
-				        <label for="recipient-name" class="col-form-label">Password:</label>
-				        <input type="password" class="form-control" id="newPassword" placeholder="At least 6 characters with letters and numbers">
+				        <label for="recipient-name" class="col-form-label">Email:</label>
+				        <input type="text" class="form-control" id="email" placeholder="Endter your email address">
 				    </div>
 				    <div class="form-group">
-				        <label for="message-text" class="col-form-label">Reenter password:</label>
-				        <input type="password" class="form-control" id="confirmPassword" placeholder="Enter your password again">
+				        <label for="message-text" class="col-form-label">Message:</label>
+				        <textarea class="form-control" style="min-height:300px;" placeholder="What can we help you?"></textarea>
 				    </div>
 				    <input type="hidden" id="veriToken" value="${veriToken}">
 				</form>
-				<button id="resetPwdBtn" class="btn btn-primary">Submit</button>
+				<button id="submitBtn" class="btn btn-primary">Submit</button>
 		    </div>
 		</div>
 	    
-		</c:when>
-		<c:otherwise>
-	    <header class="jumbotron my-4">
-            <center><h1 class="display-4">Something goes wrong</h1></center>
-            <br><br><br>
-            <center><p class="lead">${msg}</p></center>
-            <br>
-            <center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to main page</a></center>
-        </header>
-		</c:otherwise>
-		</c:choose>
-
+		
         
         
     </div>
@@ -85,7 +73,14 @@
 	<script src="<%=BSjs %>"></script>
 	
 	<script>
-	$("#resetPwdBtn").click(function(){
+	$("#submitBtn").click(function(){
+		showPopup('Done', 'We got your report and will get back to you ASAP. You will be redirected in 5 seconds.');
+		window.setTimeout(function(){
+			window.location.href = "<%=rootDir %>";
+		}, 5000);
+		
+		
+		
 	    var accessToken = getAccessToken();
 	    var passwordRegex = /([0-9].*[a-zA-Z])|([a-zA-Z].*[0-9])/;
 	    var password = $("#newPassword").val().trim();

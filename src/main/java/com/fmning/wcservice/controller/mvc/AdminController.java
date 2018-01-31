@@ -27,6 +27,7 @@ import com.fmning.util.ImageType;
 import com.fmning.util.PaymentType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.model.EventModel;
+import com.fmning.wcservice.utils.UserRole;
 import com.fmning.wcservice.utils.Utils;
 
 @Controller
@@ -45,8 +46,9 @@ public class AdminController {
 			User user = userManager.validateAccessToken(request);
 			if (!user.getEmailConfirmed()) {
 				model.addAttribute("errorMessage", ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+				return "errorview/403";
 			}
-			if (user.getRoleId() == 10) {
+			if (!UserRole.isAdmin(user.getRoleId())) {
 				return "errorview/403";
 			}
 			
@@ -99,8 +101,9 @@ public class AdminController {
 			User user = userManager.validateAccessToken(request);
 			if (!user.getEmailConfirmed()) {
 				model.addAttribute("errorMessage", ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+				return "errorview/403";
 			}
-			if (user.getRoleId() == 10) {
+			if (!UserRole.isAdmin(user.getRoleId())) {
 				return "errorview/403";
 			}
 			

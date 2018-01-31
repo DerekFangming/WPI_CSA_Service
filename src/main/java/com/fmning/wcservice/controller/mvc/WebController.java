@@ -86,6 +86,10 @@ public class WebController {
 		return "privacy";
 	}
 	
-	
+	@RequestMapping(value = "/support", method = RequestMethod.GET)
+    public String support() {
+		
+		return "support";
+	}
 
 }
