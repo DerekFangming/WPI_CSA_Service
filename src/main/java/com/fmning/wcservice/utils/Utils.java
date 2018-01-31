@@ -71,6 +71,26 @@ public class Utils {
 		return message;
 	}
 	
+	public static String createRoleChangeEmail(int roleId) {
+		String message = "Hi there,";
+		message += "\n";
+		message += "The role of your account is changed to " + UserRole.getRoleName(roleId) + ". Please report to CSA if you believe this is not correct.";
+		
+		if (UserRole.isAdmin(roleId)) {
+			message += "\n\n";
+			message += "Here is the demo about how to access Admin Portal and manager events and users.\n";
+			message += "SOME HTTP PATH HERE";
+		} else {
+			message += "\n\n";
+			message += "You will no longer have access to Admin Portal.\n";
+		}
+		
+		message += "\n\n";
+		message += "Thank you.";
+		message += "\n";
+		return message;
+	}
+	
 	@Value("${prodMode}") private boolean prodModeProp;
 	@Value("${emailVerificationPath}") private String emailVerificationPathProp;
 	@Value("${emailChangePwdPath}") private String emailChangePwdPathProp;

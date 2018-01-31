@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import = "java.util.ResourceBundle" %>
 <% ResourceBundle resource = ResourceBundle.getBundle("dataSource");
-  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs"); %>
+  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs");
+  String DTcss=resource.getString("DTcss");String DTJjs=resource.getString("DTJjs");String DTBjs=resource.getString("DTBjs"); %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -20,7 +21,7 @@
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     
-    <link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="<%=DTcss %>" rel="stylesheet">
 
     <link href="/resources/css/main.css?v=1" rel="stylesheet">
 	
@@ -120,7 +121,7 @@
 				        <p class="card-text"><i class="fa fa-envelope"></i> <span id="userUsername">Email</span></p>
 				        <p class="card-text"><i class="fa fa-calendar"></i> <span id="userCreated">Member since</span></p>
 				        <input type="hidden" id="selectedUserId" value="0">
-				        <input type="hidden" id="selectedUserRole" value="0">
+				        <input type="hidden" id="selectedUserRoleId" value="0">
 				        <button id="resendEmailConfirmBtn" class="btn btn-primary" data-toggle="tooltip-email">Re-send confirm account email</button>
 				        <br><br>
 				        <button id="sendResetPasswordBtn" class="btn btn-primary" data-toggle="tooltip-pwd">Send password reset email</button>
@@ -128,7 +129,6 @@
 				        <div class="top-buffer card-body-bottom-line"></div>
 				        <input type="hidden" id="currentUserID" value="${currentUser.id}">
 				        <input type="hidden" id="currentUserRoleID" value="${currentUser.roleId}">
-				        <input type="hidden" id="selectedUserRole" value="0">
 				        <div class="dropdown top-buffer">
 							<button class="btn btn-primary dropdown-toggle" type="button" id="currentRole" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								User Role
@@ -180,8 +180,8 @@
     <script src="/resources/js/adminUser.js?v=1"></script>
     
     
-    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script src="<%=DTJjs %>"></script>
+    <script src="<%=DTBjs %>"></script>
 
 </body>
 

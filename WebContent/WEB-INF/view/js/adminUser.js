@@ -10,7 +10,7 @@ $(document).ready(function() {
 	    $('#userDispName').text(row[1]);
 	    $('#userUsername').text(row[2]);
 	    $("#currentRole").html(row[4]);
-	    $("#selectedUserRole").val(row[4]);
+	    $("#selectedUserRoleId").val(getUserRoleId(row[4]));
 	    $('#userCreated').text(row[5].substring(0,10));
 	    
 	    if (row[3].includes('0')) {
@@ -77,48 +77,47 @@ $("#sendResetPasswordBtn").click(function(){
 }); 
 
 function selectRole(roleId) {
-	if (roleId == 1) {
-		$("#currentRole").html("System Admin");
-	} else if (roleId == 2) {
-		$("#currentRole").html("Site Admin");
-	} else {
-		$("#currentRole").html("User");
-	}
-	
-	var selectedUserRoleId = 10;
-	if ($("#selectedUserRole").val() == "System Admin") {
-		selectedUserRoleId = 1;
-	} else if ($("#selectedUserRole").val() == "Site Admin") {
-		selectedUserRoleId = 2;
-	}
-	
-	alert(parseInt($('#currentUserRoleID').val()));
-	alert(selectedUserRoleId);
-	alert($("#selectedUserRole").val());
+	$("#currentRole").html(getUserRoleText(roleId));
 	
 	if ($('#currentUserID').val() == $('#selectedUserId').val()) {
 		$("#setUserRoleBtn").prop('disabled', true);
-	} else if (parseInt($('#currentUserRoleID').val()) > selectedUserRoleId) {
+	} else if (parseInt($('#currentUserRoleID').val()) > parseInt($('#selectedUserRoleId').val())) {
 		$("#setUserRoleBtn").prop('disabled', true)
 	} else {
-		$("#setUserRoleBtn").prop('disabled', $("#currentRole").html() ==  $("#selectedUserRole").val());
+		$("#setUserRoleBtn").prop('disabled', $("#currentRole").html() ==  getUserRoleText(parseInt($('#selectedUserRoleId').val())));
+	}
+}
+
+function getUserRoleId(roleText) {
+	if (roleText.includes('System Admin')) {
+		return 1;
+	} else if (roleText.includes('Site Admin')) {
+		return 2;
+	} else {
+		return 10;
+	}
+}
+
+function getUserRoleText(roleId) {
+	if (roleId == 1) {
+		return 'System Admin';
+	} else if (roleId == 2) {
+		return 'Site Admin';
+	} else {
+		return 'User';
 	}
 }
 
 $("#setUserRoleBtn").click(function(){
-	if ($("#selectedUserRole").val() == "0") {
+	if ($("#selectedUserRoleId").val() == "0") {
 		showErrorPopup('Please select an user first.');
-	} else if ( $("#currentRole").html() ==  $("#selectedUserRole").val()) {
+	} else if ( getUserRoleId($("#currentRole").html()) ==  parseInt($("#selectedUserRoleId").val())) {
 		showErrorPopup('You didn\'t change the user\'s role. Nothing to save.');
 	} else if ($('#currentUserID').val() == $('#selectedUserId').val()){
 		showErrorPopup('You cannot set your own role');
 	} else {
-		var newRoleId = 10;
-		if ($("#currentRole").html() == "System Admin") {
-			newRoleId = 1;
-		} else if ($("#currentRole").html() == "Site Admin") {
-			newRoleId = 2;
-		}
+		var newRoleId = getUserRoleId($("#currentRole").html());
+		
 		var currentUserRoleId = parseInt($('#currentUserRoleID').val())
 		var accessToken = getAccessToken();
 	    $("#setUserRoleBtn").prop('disabled', true);
@@ -145,4 +144,3 @@ $("#setUserRoleBtn").click(function(){
 	}
     
 }); 
-

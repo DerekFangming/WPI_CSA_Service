@@ -255,8 +255,19 @@ public class UserController {
 				throw new IllegalStateException("You cannot set a role that is higher than your current role");
 			}
 			
+			if (roleId != 1 && roleId != 2) {
+				roleId = 10;
+			}
+			
 			userManager.setUserRole(requestedUser.getId(), roleId);
-			//send email
+			
+			String message = Utils.createRoleChangeEmail(roleId);
+			
+			if (Utils.prodMode){
+				helperManager.sendEmail("no-reply@fmning.com", requestedUser.getUsername(), "Role Changed Notification", message);
+			} else {
+				System.out.println(message);
+			}
 			
 			if (user.isTokenUpdated()) {
 				respond.put("accessToken", user.getAccessToken());

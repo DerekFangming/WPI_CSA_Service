@@ -13,4 +13,14 @@ public class UserRole {
 		return roleId == SYS_ADMIN;
 	}
 	
+	public static String getRoleName(int roleId) {
+		if (roleId == SYS_ADMIN) {
+			return "System Admin";
+		} else if (roleId == SITE_ADMIN) {
+			return "Site Admin";
+		} else {
+			return "User";
+		}
+	}
+	
 }
