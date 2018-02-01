@@ -25,6 +25,7 @@
     <link href="/resources/css/main.css?v=1" rel="stylesheet">
 	
 	<script src="/resources/js/common.js?v=1"></script>
+	<script src="resources/js/imagePicker.js?v=1"></script>
 	<script src="resources/js/editor.js"></script>
 	
 	<script>
@@ -53,19 +54,10 @@
 	</script>
 	<script>
     
-    window.onload=function(){
-    var temp = document.getElementsByTagName("a");
-    var i = 0;
-    for(i=0;i<temp.length;i++){
-        //console.log(temp[i].href);
-        if(temp[i].href=="https://froala.com/wysiwyg-editor")
-        {           
-        	temp[i].parentNode.removeChild(temp[i].parentNode.childNodes[0]);
-        }
-    }
-}
-
-</script>
+	$(document).ready(function() {
+		$('#img-picker').imagePicker({name: 'images'});
+	})
+	</script>
 
 	
 
@@ -87,12 +79,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="./sg">Survival Guide</a>
                     </li>
-                    <c:if test="${user != null}">
-    					<%@include file="subview/navUserLoggedIn.jsp" %>
-    					</c:if>
-    					<c:if test="${user == null}">
-    					<%@include file="subview/navLogin.jsp" %>
-    					</c:if>
+                    <%@include file="subview/navUserLoggedIn.jsp" %>
                 </ul>
             </div>
         </div>
@@ -102,13 +89,13 @@
     <div class="container">
 
        <div class="card top-buffer">
-			<div class="card-header">
-				Cover
+			<div class="card-header" style="height:49px;">
+				<p class="lead" style="margin-top:-13px"><font size="6">Cover&emsp;</font>This will be the cover image and title of your article</p>
 			</div>
 			<div class="row">
 				<div class="col-lg-6 col-sm-12">
 					<div class="life-img-container">
-						<img class="aspect-fill" />
+						<div id="img-picker" class="right-line aspect-fill"></div>
 					</div>
 				</div>
 				<div class="col-lg-6 clm-sm-12">
@@ -118,8 +105,8 @@
 		</div>
         
         <div class="card top-buffer">
-			<div class="card-header">
-				Article
+			<div class="card-header" style="height:49px;">
+				<p class="lead" style="margin-top:-13px"><font size="6">Article&emsp;</font>This is the content of your article</p>
 			</div>
 			<div style="min-height:300px">
 				<textarea></textarea>

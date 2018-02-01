@@ -151,7 +151,7 @@ create table payments (
 ALTER TABLE users RENAME auth_token TO access_token;
 ALTER TABLE users ALTER COLUMN timezone_offset SET DEFAULT 99;
 ALTER TABLE users RENAME timezone_offset to role_id;
-ALTER TABLE payments ALTER COLUMN method Type VARCHAR(20);
+ALTER TABLE payments ALTER COLUMN method Type VARCHAR(100);
 
 drop table sg;
 

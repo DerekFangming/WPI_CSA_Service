@@ -153,7 +153,26 @@ public class IndexController {
 	
 	@RequestMapping(value = "/new_article", method = RequestMethod.GET)
     public String addFeedController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+		Cookie cookie = null;
+		try {
+			User user = userManager.validateAccessToken(request);
+			String name = userManager.getUserDetail(user.getId()).getName();
+			if (name == null){name = "Unknown";}
+			user.setName(name);
+			model.addAttribute("user", user);
+			if (user.isTokenUpdated()) {
+				cookie = new Cookie("accessToken", user.getAccessToken());
+				cookie.setMaxAge(63113904);
+			}
+		} catch (NotFoundException e) {
+			cookie = new Cookie("accessToken", "invalid");
+			cookie.setMaxAge(0);
+			return "errorview/403";
+		}
 		
+		if (cookie != null) {
+			response.addCookie(cookie);
+		}
 		
 		return "createFeed";
 	}

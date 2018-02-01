@@ -17,6 +17,10 @@ body {
 
 .left-buffer { margin-left:20px; }
 
+.right-line {
+	border-right:1pt solid #DFDFDF;
+}
+
 .life-desc {
 	max-height: 284px;
 	overflow: hidden;
@@ -91,4 +95,24 @@ body {
 	height: 100%;
 	width: 100%;
 	object-fit: contain;
+}
+
+
+
+.img-upload-btn {} 
+
+.img-upload-btn input[type=file] { 
+    position: absolute; 
+    top: 0; 
+    right: 0; 
+    min-width: 100%; 
+    min-height: 100%; 
+    font-size: 100px; 
+    text-align: right; 
+    filter: alpha(opacity=0); 
+    opacity: 0; 
+    outline: none; 
+    background: white; 
+    cursor: inherit; 
+    display: block; 
 }

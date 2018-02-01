@@ -245,7 +245,7 @@ public class PaymentController {
 						message = StringUtils.abbreviate(message, 200);
 					}
 					paymentId = paymentManager.savePayment(PaymentType.EVENT.getName(), event.getId(), amount,
-							status, message, payerId, event.getOwnerId(), StringUtils.abbreviate(method, 20), nonce);
+							status, message, payerId, event.getOwnerId(), StringUtils.abbreviate(method, 100), nonce);
 					
 				} else {// payment for free tickets
 					paymentId = paymentManager.savePayment(PaymentType.EVENT.getName(), event.getId(), amount,
