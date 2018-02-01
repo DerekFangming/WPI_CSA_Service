@@ -65,7 +65,11 @@
         
         <div class="card top-buffer">
 			<div class="card-header">
-				${feed.body}
+				<script type="text/javascript">
+					var body = '${feed.body}';
+					document.write(linkify(body));
+				</script>
+				
 			</div>
 		</div>
 		

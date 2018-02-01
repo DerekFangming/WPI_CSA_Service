@@ -151,6 +151,13 @@ public class IndexController {
 		return "index";
 	}
 	
+	@RequestMapping(value = "/new_article", method = RequestMethod.GET)
+    public String addFeedController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+		
+		
+		return "createFeed";
+	}
+	
 	private List<FeedModel> getFeedList() {
 		List<Feed> feedList = feedManager.getRecentFeedByDate(Instant.now(), 10);
 		List<FeedModel> feedModelList = new ArrayList<>();
