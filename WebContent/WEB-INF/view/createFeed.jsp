@@ -99,14 +99,31 @@
 					</div>
 				</div>
 				<div class="col-lg-6 clm-sm-12">
-					<div class="card-body life-desc">Enter title</div>
+					<div class="card-body">
+						<div class="alert alert-warning" role="alert">
+							You do not have an avatar and it will show as the default panda. We strongly recommend you to add an avatar from mobile end before posting articles.
+						</div>
+						<div class="input-group">
+						    <div class="input-group-prepend">
+						        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						        	Blog
+						        </button>
+						        <div class="dropdown-menu">
+						            <a class="dropdown-item" href="#">Blog</a>
+						            <a class="dropdown-item" href="#">Trade</a>
+						            <a class="dropdown-item" href="#">Event</a>
+						        </div>
+						    </div>
+						    <input type="text" placeholder="Enter title and select article type" class="form-control" aria-label="Text input with dropdown button">
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
         
         <div class="card top-buffer">
 			<div class="card-header" style="height:49px;">
-				<p class="lead" style="margin-top:-13px"><font size="6">Article&emsp;</font>This is the content of your article</p>
+				<p class="lead" style="margin-top:-13px"><font size="6">Content&emsp;</font>This is the content of your article</p>
 			</div>
 			<div style="min-height:300px">
 				<textarea></textarea>
@@ -124,7 +141,7 @@
 
     <%@include file="subview/footer.jsp" %>
 
-
+	<script src="<%=BSjs %>"></script>
 
 </body>
 

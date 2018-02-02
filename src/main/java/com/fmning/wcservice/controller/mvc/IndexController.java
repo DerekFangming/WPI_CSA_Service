@@ -22,6 +22,7 @@ import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
+import com.fmning.util.ErrorMessage;
 import com.fmning.util.Util;
 import com.fmning.wcservice.model.FeedModel;
 import com.fmning.wcservice.model.LoginForm;
@@ -156,6 +157,10 @@ public class IndexController {
 		Cookie cookie = null;
 		try {
 			User user = userManager.validateAccessToken(request);
+			if (!user.getEmailConfirmed()) {
+				model.addAttribute("errorMessage", ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+				return "errorview/403";
+			}
 			String name = userManager.getUserDetail(user.getId()).getName();
 			if (name == null){name = "Unknown";}
 			user.setName(name);
@@ -165,8 +170,7 @@ public class IndexController {
 				cookie.setMaxAge(63113904);
 			}
 		} catch (NotFoundException e) {
-			cookie = new Cookie("accessToken", "invalid");
-			cookie.setMaxAge(0);
+			model.addAttribute("errorMessage", ErrorMessage.NO_USER_LOGGED_IN.getMsg());
 			return "errorview/403";
 		}
 		

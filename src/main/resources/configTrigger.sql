@@ -41,7 +41,7 @@ create table Payment_hists (
 	message varchar(200),
 	payer_id integer not null,
 	receiver_id integer not null,
-	method varchar(20),
+	method varchar(100),
 	nonce varchar(50),
 	created_at timestamp without time zone not null,
 	action varchar(1) not null default 'U',
