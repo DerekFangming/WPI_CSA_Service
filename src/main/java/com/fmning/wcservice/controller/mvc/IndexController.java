@@ -169,6 +169,11 @@ public class IndexController {
 				cookie = new Cookie("accessToken", user.getAccessToken());
 				cookie.setMaxAge(63113904);
 			}
+			
+			try{
+				imageManager.getTypeUniqueImage("Avatar", user.getId()).getId();
+				model.addAttribute("hasAvatar", true);
+			}catch(Exception e){}
 		} catch (NotFoundException e) {
 			model.addAttribute("errorMessage", ErrorMessage.NO_USER_LOGGED_IN.getMsg());
 			return "errorview/403";

@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
 import com.google.api.client.auth.oauth2.Credential;
@@ -146,7 +150,24 @@ private String backupScriptPath;
 		try{
 			String a = (String)request.getParameter("haha");
 			respond.put("haha", a);
+			throw new NotFoundException("hahaha");
 		}catch(Exception e){
+			Writer writer = new StringWriter();
+			e.printStackTrace(new PrintWriter(writer));// only need this
+			String s = writer.toString();
+			
+			StringBuffer requestURL = request.getRequestURL();
+		    String queryString = request.getQueryString();
+
+		    if (queryString == null) {
+		        String g = requestURL.toString();
+		        String gg = g;
+		    } else {
+		    		String g = requestURL.append('?').append(queryString).toString();
+		    		String gg = g;
+		    }
+			
+			
 			respond = Util.createErrorRespondFromException(e);
 		}
 

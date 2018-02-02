@@ -100,22 +100,43 @@
 				</div>
 				<div class="col-lg-6 clm-sm-12">
 					<div class="card-body">
-						<div class="alert alert-warning" role="alert">
+						<c:choose>
+						<c:when test="${hasAvatar == null}">
+					    <div class="alert alert-warning" role="alert" id ="alertMsg">
 							You do not have an avatar and it will show as the default panda. We strongly recommend you to add an avatar from mobile end before posting articles.
 						</div>
-						<div class="input-group">
+						<input type="hidden" id="hasAvatar" value="false">
+						</c:when>
+						<c:otherwise>
+					    <div class="alert alert-success" role="alert" id ="alertMsg" style="display: none;"></div>
+					    <input type="hidden" id="hasAvatar" value="true">
+						</c:otherwise>
+						</c:choose>
+						<div class="input-group mb-3">
 						    <div class="input-group-prepend">
-						        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						        <button class="btn btn-outline-secondary dropdown-toggle" id="currentType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						        	Blog
 						        </button>
 						        <div class="dropdown-menu">
-						            <a class="dropdown-item" href="#">Blog</a>
-						            <a class="dropdown-item" href="#">Trade</a>
-						            <a class="dropdown-item" href="#">Event</a>
+						            <a class="dropdown-item" href="#" onclick="selectType(1);">Blog</a>
+						            <a class="dropdown-item" href="#" onclick="selectType(2);">Trade</a>
+						            <c:if test="${user.roleId <= 2}">
+						            <a class="dropdown-item" href="#" onclick="selectType(3);">Event</a>
+			    						</c:if>
 						        </div>
 						    </div>
 						    <input type="text" placeholder="Enter title and select article type" class="form-control" aria-label="Text input with dropdown button">
 						</div>
+						
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text" id="">Start and end time</span>
+						  </div>
+						  <input type="text" class="form-control">
+						  <input type="text" class="form-control">
+						</div>
+						
+						
 					</div>
 				</div>
 			</div>
@@ -140,6 +161,8 @@
     <%@include file="subview/popup.jsp" %><!-- This must be placed below all other modals -->
 
     <%@include file="subview/footer.jsp" %>
+    
+    <script src="/resources/js/createFeed.js?v=1"></script>
 
 	<script src="<%=BSjs %>"></script>
 
