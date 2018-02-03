@@ -1,6 +1,5 @@
 package com.fmning.wcservice.controller.rest;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.fmning.service.domain.User;
 import com.fmning.service.domain.UserDetail;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
@@ -28,6 +28,7 @@ public class UserController {
 	@Autowired private UserManager userManager;
 	@Autowired private ImageManager imageManager;
 	@Autowired private HelperManager helperManager;
+	@Autowired private ErrorManager errorManager;
 	
 	/*
 	 * Register and login
@@ -49,7 +50,7 @@ public class UserController {
 			
 			respond.put("error", "");
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/login_migration", request);
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -84,7 +85,7 @@ public class UserController {
 			respond.put("emailConfirmed",false);
 			respond.put("error", "");
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/register", request);
 		}
 	
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -122,7 +123,7 @@ public class UserController {
 			
 			respond.put("error", "");
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/login", request);
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -151,7 +152,7 @@ public class UserController {
 				respond.put("accessToken", user.getAccessToken());
 			}
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/get_user_detail", request);
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -178,7 +179,7 @@ public class UserController {
 			respond.put("error", "");
 			
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/save_user_detail", request);
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -218,7 +219,7 @@ public class UserController {
 			}
 			respond.put("error", "");
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/update_password", request);
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -274,7 +275,7 @@ public class UserController {
 			}
 			respond.put("error", "");
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/update_user_role", request);
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);

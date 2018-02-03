@@ -21,17 +21,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.fmning.service.domain.Image;
 import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class ImageController {
 	
 	@Autowired private ImageManager imageManager;
 	@Autowired private UserManager userManager;
-	
+	@Autowired private ErrorManager errorManager;
 	
 	
 	@RequestMapping("/download_image_by_id")
@@ -51,7 +53,7 @@ public class ImageController {
 				respond.put("accessToken", user.getAccessToken());
 			}
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/download_image_by_id", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
@@ -71,7 +73,7 @@ public class ImageController {
 				respond.put("accessToken", user.getAccessToken());
 			}
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/delete_image", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 		
@@ -92,7 +94,7 @@ public class ImageController {
 				respond.put("accessToken", user.getAccessToken());
 			}
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/get_image_ids_by_type", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
@@ -120,7 +122,7 @@ public class ImageController {
 				respond.put("accessToken", user.getAccessToken());
 			}
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/get_singleton_img_by_type", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
@@ -153,7 +155,7 @@ public class ImageController {
 				respond.put("accessToken", user.getAccessToken());
 			}
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/save_type_unique_image", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 		

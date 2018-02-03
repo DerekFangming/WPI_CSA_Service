@@ -1,6 +1,5 @@
 package com.fmning.wcservice.controller.rest;
 
-import java.io.StringReader;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -11,8 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,14 +18,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 import com.fmning.service.domain.Event;
 import com.fmning.service.domain.Feed;
 import com.fmning.service.domain.User;
-import com.fmning.service.domain.UserDetail;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.EventManager;
 import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.ImageManager;
@@ -37,6 +32,7 @@ import com.fmning.util.ErrorMessage;
 import com.fmning.util.EventType;
 import com.fmning.util.ImageType;
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class FeedController {
@@ -45,6 +41,7 @@ public class FeedController {
 	@Autowired private FeedManager feedManager;
 	@Autowired private ImageManager imageManager;
 	@Autowired private EventManager eventManager;
+	@Autowired private ErrorManager errorManager;
 	
 	@RequestMapping(value = "/get_recent_feeds", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getRecentFeeds(HttpServletRequest request) {
@@ -93,7 +90,7 @@ public class FeedController {
 			respond.put("checkPoint", feedList.get(feedList.size() - 1).getCreatedAt().toString());
 			respond.put("error", "");
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
@@ -135,7 +132,7 @@ public class FeedController {
 			
 			respond.put("error", "");
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
@@ -188,7 +185,7 @@ public class FeedController {
 				respond.put("accessToken", user.getAccessToken());
 			}
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/create_feed", request);
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);

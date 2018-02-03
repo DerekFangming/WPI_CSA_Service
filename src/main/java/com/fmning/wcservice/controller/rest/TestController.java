@@ -168,7 +168,7 @@ private String backupScriptPath;
 		    }
 			
 			
-			respond = Util.createErrorRespondFromException(e);
+			//respond = Util.createErrorRespondFromException(e);
 		}
 
 		

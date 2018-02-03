@@ -1,6 +1,5 @@
 package com.fmning.wcservice.controller.rest;
 
-import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,10 +29,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.Ticket;
 import com.fmning.service.domain.User;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.TicketManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
-import com.fmning.util.Util;
+import com.fmning.wcservice.utils.Utils;
 
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKField;
@@ -52,6 +51,7 @@ public class TicketController {
 	
 	@Autowired private UserManager userManager;
 	@Autowired private TicketManager ticketManager;
+	@Autowired private ErrorManager errorManager;
 
 	@RequestMapping(value = "/test_pass", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
@@ -217,7 +217,7 @@ public class TicketController {
 				respond.put("accessToken", user.getAccessToken());
 			}
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/get_ticket", request);
 		}
 	
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);

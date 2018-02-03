@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.fmning.service.domain.Event;
 import com.fmning.service.domain.Payment;
 import com.fmning.service.domain.User;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.EventManager;
 import com.fmning.service.manager.PaymentManager;
 import com.fmning.service.manager.UserManager;
@@ -31,6 +32,7 @@ import com.fmning.util.PaymentType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.model.PartiListModel;
 import com.fmning.wcservice.utils.UserRole;
+import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class EventController {
@@ -38,6 +40,7 @@ public class EventController {
 	@Autowired private UserManager userManager;
 	@Autowired private EventManager eventManager;
 	@Autowired private PaymentManager paymentManager;
+	@Autowired private ErrorManager errorManager;
 
 	@RequestMapping(value = "/get_event", method = RequestMethod.GET) //Either by actual id or by mapping id
     public ResponseEntity<Map<String, Object>> getEvent(HttpServletRequest request) {
@@ -65,7 +68,7 @@ public class EventController {
 			}
 			respond.put("error", "");
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
@@ -94,7 +97,7 @@ public class EventController {
 			respond.put("error", "");
 			
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/update_event_status", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
@@ -126,7 +129,7 @@ public class EventController {
 			respond.put("error", "");
 			
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/update_event_balance", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
@@ -160,7 +163,7 @@ public class EventController {
 			respond.put("error", "");
 			
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/update_event_details", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
@@ -208,7 +211,7 @@ public class EventController {
 			respond.put("error", "");
 			
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/get_parti_list", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}

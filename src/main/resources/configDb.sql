@@ -174,3 +174,11 @@ update users set role_id = 1 where user_id = 25; -- careful  which is the right 
 
 update events set active = false;  --Test make payment on all three environments
 update events set fee = 0 where fee is null; 
+
+create table error_logs (
+	id serial primary key,
+	url varchar(100),
+	param text,
+	trace text,
+	created_at timestamp without time zone not null
+);

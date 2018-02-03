@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
-import com.fmning.util.Util;
 import com.fmning.wcservice.utils.UserRole;
 import com.fmning.wcservice.utils.Utils;
 
@@ -32,6 +32,7 @@ public class EmailController {
 	
 	@Autowired private HelperManager helperManager;
 	@Autowired private UserManager userManager;
+	@Autowired private ErrorManager errorManager;
 	
 	@RequestMapping("/send_verification_email")
     public ResponseEntity<Map<String, Object>> sendEmailConfirmation(@RequestBody Map<String, Object> request) {
@@ -79,7 +80,7 @@ public class EmailController {
 				respond.put("accessToken", user.getAccessToken());
 			}
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/send_verification_email", request);
 		}
 	
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -165,7 +166,7 @@ public class EmailController {
 			
 			respond.put("error", "");
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/send_change_pwd_email", request);
 		}
 	
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);

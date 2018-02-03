@@ -43,6 +43,9 @@ public class Utils {
 	/*Ticket parameters*/
 	public static String ticketPath = "";
 	
+	/*For error logging, to get the request URL*/
+	public static String rootDir = "";
+	
 	@Autowired private HelperManager helperManager;
 	
 	public static String createVerificationEmail(String veriCode) {
@@ -95,11 +98,13 @@ public class Utils {
 	@Value("${emailVerificationPath}") private String emailVerificationPathProp;
 	@Value("${emailChangePwdPath}") private String emailChangePwdPathProp;
 	@Value("${ticketPath}") private String ticketPathProp;
+	@Value("${rootDir}") private String rootDirProp;
 
 	@Value("${env}") private String env;
 	@Value("${merchantId}") private String merchantId;
 	@Value("${publicKey}") private String publicKey;
 	@Value("${privateKey}") private String privateKey;
+	
 	
 	@PostConstruct
     public void runOnceOnlyOnStartup() {
@@ -111,6 +116,7 @@ public class Utils {
 		emailVerificationPath = emailVerificationPathProp;
 		emailChangePwdPath = emailChangePwdPathProp;
 		ticketPath = ticketPathProp;
+		rootDir = rootDirProp;
 		
 		Environment btEnv = env.equals("sandbox") ? Environment.SANDBOX : Environment.PRODUCTION;
 		

@@ -21,15 +21,12 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.braintreegateway.BraintreeGateway;
-import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
@@ -39,6 +36,7 @@ import com.fmning.service.domain.Ticket;
 import com.fmning.service.domain.TicketTemplate;
 import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.EventManager;
 import com.fmning.service.manager.PaymentManager;
 import com.fmning.service.manager.TicketManager;
@@ -68,7 +66,7 @@ public class PaymentController {
 	@Autowired private PaymentManager paymentManager;
 	@Autowired private EventManager eventManager;
 	@Autowired private TicketManager ticketManager;
-	
+	@Autowired private ErrorManager errorManager;
 	
 	
 	private static DateTimeFormatter formatter =
@@ -141,7 +139,7 @@ public class PaymentController {
 			}
 			
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/check_payment_status", request);
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -285,7 +283,7 @@ public class PaymentController {
 			}
 			
 		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/make_payment", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 		
