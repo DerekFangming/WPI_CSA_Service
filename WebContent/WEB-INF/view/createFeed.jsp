@@ -25,41 +25,9 @@
     <link href="/resources/css/main.css?v=1" rel="stylesheet">
 	
 	<script src="/resources/js/common.js?v=1"></script>
-	<script src="resources/js/imagePicker.js?v=1"></script>
-	<script src="resources/js/editor.js"></script>
-	
-	<script>
-	$(function() {
-	    $('textarea').froalaEditor({
-	    	height: 300,
-			toolbarButtons: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '|', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen', 'html'],
-			toolbarButtonsMD: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '|', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen', 'html'],
-			toolbarButtonsSM: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '-', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen', 'html'],
-			toolbarButtonsXS: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '-', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen', 'html'],
-			paragraphFormat: {
-				H1: 'Heading 1',
-				H2: 'Heading 2',
-				H3: 'Heading 3',
-				H4: 'Heading 4',
-				N: 'Paragraph'
-			}, 
-			imageInsertButtons: ['imageBack', '|', 'imageUpload', 'imageByURL'],
-			imageEditButtons: ['imageReplace', 'imageSize', 'imageRemove'],
-			tableEditButtons: ['tableRows', 'tableRemove'],
-			tableInsertMaxSize: 1,
-			colorsBackground: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
-			quickInsertButtons: ['image']
-		});
-	});
-	</script>
-	<script>
-    
-	$(document).ready(function() {
-		$('#img-picker').imagePicker({name: 'images'});
-	})
-	</script>
-
-	
+	<script src="/resources/js/imagePicker.js?v=1"></script>
+	<script src="/resources/js/editor.js?v=1"></script>
+	<script src="/resources/js/froala.js"></script><!-- Replace this with online version -->
 
 </head>
 
@@ -95,7 +63,7 @@
 			<div class="row">
 				<div class="col-lg-6 col-sm-12">
 					<div class="life-img-container">
-						<div id="img-picker" class="right-line aspect-fill"></div>
+						<div id="img-picker" class="right-line aspect-fill" ondragover="allowDrop(event)"></div>
 					</div>
 				</div>
 				<div class="col-lg-6 clm-sm-12">
@@ -108,7 +76,9 @@
 						<input type="hidden" id="hasAvatar" value="false">
 						</c:when>
 						<c:otherwise>
-					    <div class="alert alert-success" role="alert" id ="alertMsg" style="display: none;"></div>
+					    <div class="alert alert-success" role="alert" id ="alertMsg">
+					    	Don't forget to check format to make sure your article look good in all platforms.
+					    </div>
 					    <input type="hidden" id="hasAvatar" value="true">
 						</c:otherwise>
 						</c:choose>
@@ -128,13 +98,13 @@
 						    <input type="text" placeholder="Enter title and select article type" class="form-control" aria-label="Text input with dropdown button">
 						</div>
 						
-						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text" id="">Start and end time</span>
-						  </div>
-						  <input type="text" class="form-control">
-						  <input type="text" class="form-control">
+						<div class="input-group mb-3">
 						</div>
+						
+
+						<button type="button" id="submitBtn" class="btn btn-success pull-right">Submit</button>
+						<button type="button" id="checkFormatBtn" class="btn btn-secondary">Check formatting</button>
+
 						
 						
 					</div>
