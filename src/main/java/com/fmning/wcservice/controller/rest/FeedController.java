@@ -172,7 +172,8 @@ public class FeedController {
 						} else {
 							imgId = imageManager.createImage(src, ImageType.FEED.getName(), Util.nullInt, userId, null);
 						}
-						body = body.replace(src, "WCImage_" + Integer.toString(imgId));
+						String dimension = Util.shrinkImageAndGetDimension(imgId);
+						body = body.replace(imgTag, "<img src=\"WCImage_" + Integer.toString(imgId) + "\" " + dimension + " />");
 					} catch (Exception e) {
 						body = body.replace(imgTag, "");
 					}

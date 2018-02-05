@@ -68,7 +68,7 @@ $("#submitBtn").click(function(){
 				if (data['error'] == "" ) {
 					showPopup('Done', 'Article created. You will be redirected in 5 seconds.');
 					window.setTimeout(function(){
-						window.location.href = "<%=rootDir %>";
+						window.location.href = "./";
 					}, 5000);
 				} else {
 					showErrorPopup(data['error']);

@@ -71,7 +71,7 @@ public class FeedDetailController {
 		String feedId = request.getParameter("id");
 		Feed feed = feedManager.getFeedById(Integer.parseInt(feedId));
 		
-		List<String> matchs = new ArrayList<>();
+		/*List<String> matchs = new ArrayList<>();
 		Matcher m = Pattern.compile("<img.*?>")
                 .matcher(feed.getBody());
         while (m.find()) {
@@ -92,8 +92,8 @@ public class FeedDetailController {
 	        	} catch (Exception e) {
 	        		continue;
 	        	}
-        }
-        feed.setBody(newBody);
+        }*/
+        feed.setBody(feed.getBody());
 		
 		model.addAttribute("feed", feed);
 		

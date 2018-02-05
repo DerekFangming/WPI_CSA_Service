@@ -106,6 +106,7 @@
     </c:if>
     
     <script src="/resources/js/sg.js?v=1"></script>
+    <script src="/resources/js/parser.js?v=1"></script>
 
 </body>
 

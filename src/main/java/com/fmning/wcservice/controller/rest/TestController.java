@@ -158,12 +158,8 @@ private String backupScriptPath;
 	public ResponseEntity<Map<String, Object>> getFeedPreviewImage(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			URL url = new URL("http://www.uniwallpaper.com/static/images/1391099215267_hero2_4CePXei.jpg");
-			try(InputStream in = url.openStream()){
-			    Files.copy(in, Paths.get(Util.imagePath + "77.jpg"));
-			}catch (IOException e) {
-				System.out.println("gocha!");
-			}
+			BufferedImage img = ImageIO.read(new URL("https://i.froala.com/download/42cdda3be793cf46535be199bf5f5c65fc72e9a9.png?1517849552"));
+			imageManager.createImage(img, ImageType.FEED.getName(), Util.nullInt, 1, null);
 			
 		}catch(Exception e){
 			

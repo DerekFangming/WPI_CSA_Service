@@ -65,14 +65,7 @@ function getAcceptableHTML(content) {
 		var img = document.createElement('img');
 		img.setAttribute('src', imgList[i].src);
 		
-		var subStyle = imgList[i].style.cssText.split(';')
-		for (var j in subStyle) {
-			if (subStyle[j].trim().startsWith('width')) {
-				img.setAttribute('width', subStyle[j].replace("width", "").replace(":", "").replace("px", "").split(".")[0].trim());
-			} else if (subStyle[j].trim().startsWith('height')) {
-				img.setAttribute('height', subStyle[j].replace("height", "").replace(":", "").replace("px", "").split(".")[0].trim());
-			}
-		}
+		
 		if (imgList[i].parentNode.innerHTML.length == imgList[i].outerHTML.length) {
 			imgList[i].parentNode.replaceWith(img);
 		} else {
@@ -144,7 +137,13 @@ function getAcceptableHTML(content) {
 		elm.outerHTML = font.outerHTML
 	});
 	
+	//Processing links
+	var linkList = doc.getElementsByTagName('a');
+	for (var i=linkList.length - 1; i > -1; i--) {
+		linkList[i].outerHTML = linkList[i].innerHTML;
+	}
 	
+	//Removing the close tag for table new lines
 	return doc.body.innerHTML.replace(/<tbr><\/tbr>/g, '<tbr>');
 }
 

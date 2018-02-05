@@ -25,6 +25,7 @@
     <link href="/resources/css/main.css?v=1" rel="stylesheet">
 	
 	<script src="/resources/js/common.js?v=1"></script>
+    <script src="/resources/js/parser.js?v=1"></script>
 
 </head>
 
@@ -67,7 +68,7 @@
 			<div class="card-header">
 				<script type="text/javascript">
 					var body = '${feed.body}';
-					document.write(linkify(body));
+					document.write(processContent(body));
 				</script>
 				
 			</div>
