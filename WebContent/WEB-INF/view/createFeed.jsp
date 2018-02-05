@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import = "java.util.ResourceBundle" %>
 <% ResourceBundle resource = ResourceBundle.getBundle("dataSource");
-  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs"); %>
+  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs"); String rootDir=resource.getString("rootDir"); %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -95,14 +95,16 @@
 			    						</c:if>
 						        </div>
 						    </div>
-						    <input type="text" placeholder="Enter title and select article type" class="form-control" aria-label="Text input with dropdown button">
+						    <input type="text" id="title" placeholder="Enter title and select article type" class="form-control" aria-label="Text input with dropdown button">
 						</div>
 						
 						<div class="input-group mb-3">
 						</div>
 						
 
-						<button type="button" id="submitBtn" class="btn btn-success pull-right">Submit</button>
+						<button type="button" id="submitBtn" class="btn btn-success pull-right">
+							<i id="submitSpinner" class="fa fa-refresh fa-spin" style="display: none"></i>&nbsp;Submit
+						</button>
 						<button type="button" id="checkFormatBtn" class="btn btn-secondary">Check formatting</button>
 
 						

@@ -1,5 +1,6 @@
 package com.fmning.wcservice.controller.rest;
 
+import java.net.URL;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -162,14 +163,20 @@ public class FeedController {
 				Matcher srcMatcher = Pattern.compile("src=\".*?\"").matcher(imgTag);
 				
 				if (srcMatcher.find()) {
-					String base64 = srcMatcher.group().replace("src=", "").replace("\"", "");
 					try {
-						int imgId = imageManager.createImage(base64, ImageType.FEED.getName(), Util.nullInt, userId, null);
-						//int imgId = 33;
-						body = body.replace(base64, "WCImage_" + Integer.toString(imgId));
+						String src = srcMatcher.group().replace("src=", "").replace("\"", "");
+						int imgId = 0;
+						if (src.toLowerCase().contains("i.froala.com")) {
+							URL url = new URL(src);
+							imgId = imageManager.createImage(url, ImageType.FEED.getName(), Util.nullInt, userId, null);
+						} else {
+							imgId = imageManager.createImage(src, ImageType.FEED.getName(), Util.nullInt, userId, null);
+						}
+						body = body.replace(src, "WCImage_" + Integer.toString(imgId));
 					} catch (Exception e) {
 						body = body.replace(imgTag, "");
 					}
+					
 				} else {
 					body = body.replace(imgTag, "");
 				}

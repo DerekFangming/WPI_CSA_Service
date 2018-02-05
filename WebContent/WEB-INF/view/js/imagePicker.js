@@ -58,3 +58,24 @@
     };
     
 }( jQuery ));
+
+var dragTimer;
+$('#img-picker').on('dragover', function(e) {
+	var dt = e.originalEvent.dataTransfer;
+	if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') != -1 : dt.types.contains('Files'))) {
+		$('#img-picker').attr('style', 'background: #DFDFDF;');
+		window.clearTimeout(dragTimer);
+	}
+});
+
+$('#img-picker').on('dragleave', function(e) {
+	dragTimer = window.setTimeout(function() {
+		$('#img-picker').attr('style', 'background: white;');
+	}, 25);
+});
+
+function allowDrop(ev) {
+	if ($('#img-picker').children().children('img').length == 0) {
+		ev.preventDefault();
+	}
+}

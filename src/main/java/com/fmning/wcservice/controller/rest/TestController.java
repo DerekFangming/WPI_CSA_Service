@@ -1,13 +1,18 @@
 package com.fmning.wcservice.controller.rest;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -17,9 +22,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ImageManager;
+import com.fmning.util.ImageType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
 import com.google.api.client.auth.oauth2.Credential;
@@ -55,6 +64,7 @@ public class TestController {
 	
 private String backupScriptPath;
 
+	@Autowired private ImageManager imageManager;
 	
 	private HttpTransport httpTransport;
 	private FileDataStoreFactory dataStoreFactory;
@@ -148,25 +158,16 @@ private String backupScriptPath;
 	public ResponseEntity<Map<String, Object>> getFeedPreviewImage(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			String a = (String)request.getParameter("haha");
-			respond.put("haha", a);
-			throw new NotFoundException("hahaha");
+			URL url = new URL("http://www.uniwallpaper.com/static/images/1391099215267_hero2_4CePXei.jpg");
+			try(InputStream in = url.openStream()){
+			    Files.copy(in, Paths.get(Util.imagePath + "77.jpg"));
+			}catch (IOException e) {
+				System.out.println("gocha!");
+			}
+			
 		}catch(Exception e){
-			Writer writer = new StringWriter();
-			e.printStackTrace(new PrintWriter(writer));// only need this
-			String s = writer.toString();
 			
-			StringBuffer requestURL = request.getRequestURL();
-		    String queryString = request.getQueryString();
-
-		    if (queryString == null) {
-		        String g = requestURL.toString();
-		        String gg = g;
-		    } else {
-		    		String g = requestURL.append('?').append(queryString).toString();
-		    		String gg = g;
-		    }
-			
+			e.printStackTrace();
 			
 			//respond = Util.createErrorRespondFromException(e);
 		}
