@@ -140,20 +140,10 @@ create table payments (
 	message varchar(200),
 	payer_id integer not null,
 	receiver_id integer not null,
-	method varchar(20),
+	method varchar(100),
 	nonce varchar(50),
 	created_at timestamp without time zone not null
 );
-
-
--- Needs to be run on Prod    Also run app version script!
-
-ALTER TABLE users RENAME auth_token TO access_token;
-ALTER TABLE users ALTER COLUMN timezone_offset SET DEFAULT 99;
-ALTER TABLE users RENAME timezone_offset to role_id;
-ALTER TABLE payments ALTER COLUMN method Type VARCHAR(100);
-
-drop table sg;
 
 create table survival_guides (
 	id serial primary key,
@@ -164,16 +154,6 @@ create table survival_guides (
 	created_at timestamp without time zone not null default now(),
 	owner_id integer not null default 0
 );
-
-update survival_guides set owner_id = 25;
-
---finish updating SG images and then add triggers!
-
-update users set role_id = 10;
-update users set role_id = 1 where user_id = 25; -- STILL NOT RUN
-
-update events set active = false;  --Test make payment on all three environments
-update events set fee = 0 where fee is null; 
 
 create table error_logs (
 	id serial primary key,

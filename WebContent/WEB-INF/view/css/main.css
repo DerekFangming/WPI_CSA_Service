@@ -30,6 +30,31 @@ body {
 	height: 300px;
 }
 
+.ticket-bg-container {
+	width: 300px;
+	height: 450px;
+	float: right;
+	position: relative;
+}
+
+.ticket_blur {
+	width: 300px;
+	height: 450px;
+	background-color:#b3b3b3;
+	opacity: 0.8;
+	position: relative;
+}
+
+.ticket-thum-container {
+	width: 150px;
+	height: 150px;
+	background-color: white;
+	top: 50px;
+	right: 20px;
+	position: absolute;
+	border: 1pt solid #DFDFDF;
+}
+
 .feed-img-container {
 	margin-top: 20px;
 	margin-bottom: 20px;

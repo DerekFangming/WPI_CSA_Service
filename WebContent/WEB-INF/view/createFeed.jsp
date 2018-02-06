@@ -96,16 +96,21 @@
 						    <input type="text" id="title" placeholder="Enter title and select article type" class="form-control" aria-label="Text input with dropdown button">
 						</div>
 						
-						<div class="input-group mb-3">
+						<c:if test="${user.roleId <= 2}">
+						<div class="input-group mb-3" id="eventInput" style="display: none">
+						    <div class="input-group-prepend">
+						        <button class="btn btn-outline-secondary" id="eventInputBtn" type="button">Add an event</button>
+						    </div>
+						    <input type="text" class="form-control" placeholder="No event added yet" aria-label="" aria-describedby="basic-addon1" disabled>
 						</div>
+						</c:if>
 						
-
+						<div class="top-buffer"></div>
 						<button type="button" id="submitBtn" class="btn btn-success pull-right">
 							<i id="submitSpinner" class="fa fa-refresh fa-spin" style="display: none"></i>&nbsp;Submit
 						</button>
 						<button type="button" id="checkFormatBtn" class="btn btn-secondary">Check formatting</button>
-
-						
+						<button type="button" id="instructionBtn" class="btn btn-secondary">Instruction</button>
 						
 					</div>
 				</div>
@@ -126,7 +131,104 @@
     </div>
     <!-- /.container -->
 
-
+	<c:if test="${user.roleId <= 2}">
+	<!-- event input modal -->
+	<div class="modal fade" id="eventInputModal" role="dialog">
+	    <div class="modal-dialog modal-dialog-centered">
+	
+	        <!-- Modal content-->
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h4 class="modal-title">New event<small><small class="text-muted">&emsp;All fields are required.</small></small></h4>
+	                <button type="button" class="close" data-dismiss="modal">&times;</button>
+	            </div>
+	            <div class="modal-body">
+		            	<form>
+					    <div class="form-group">
+					        <label for="recipient-name" class="col-form-label">Title:</label>
+					        <input type="text" class="form-control" id="eventTitle">
+					    </div>
+					    <div class="form-group">
+					        <label for="recipient-name" class="col-form-label">Description:</label>
+					        <input type="text" class="form-control" id="eventTitle">
+					    </div>
+					    <div class="form-group">
+					        <label for="message-text" class="col-form-label">Start Time:</label>
+					        <input type="datetime-local" class="form-control" id="eventSTime">
+					    </div>
+					    <div class="form-group">
+					        <label for="message-text" class="col-form-label">End Time:</label>
+					        <input type="datetime-local" class="form-control" id="eventETime">
+					    </div>
+					    <div class="form-group">
+					        <label for="message-text" class="col-form-label">Location:</label>
+					        <input type="text" class="form-control" id="eventLocation">
+					    </div>
+					    <div class="form-group">
+					    		<label for="message-text" class="col-form-label">Event type:</label>
+					    		<div class="input-group">
+							    <div class="input-group-prepend">
+							        <button class="btn btn-secondary" type="button" id="calToggleBtn">Calendar only</button>
+							        <button class="btn btn-outline-secondary" type="button" id="ticketToggleBtn">Sell ticket</button>
+							    </div>
+							    <input type="text" id="ticketStatusLbl" class="form-control" placeholder="You are all set" disabled>
+							</div>
+						</div>
+						<div class="form-group">
+					    		<label for="message-text" class="col-form-label">Ticket price:<small class="text-warning">&emsp;Cannot modify once created.</small></label>
+					    		<div class="input-group">
+							    <div class="input-group-prepend">
+							        <button class="btn btn-secondary" type="button" id="freeTicketToggleBtn">Free</button>
+							        <button class="btn btn-outline-secondary" type="button" id="paidTicketToggleBtn">Sell ticket</button>
+							        <span class="input-group-text">$</span>
+							    </div>
+							    <input type="text" id="ticketFeeInput" onkeypress="validateInputNumber(event)" onfocusout="this.value = formalizeFeeAmount(this.value)" class="form-control" placeholder="0.00" disabled>
+							</div>
+						</div>
+						<div class="form-group">
+					    		<label for="message-text" class="col-form-label">Ticket balance:</label>
+					    		<div class="input-group">
+							    <div class="input-group-prepend">
+							        <button class="btn btn-secondary" type="button" id="sellNowToggleBtn">Sell now</button>
+							        <button class="btn btn-outline-secondary" type="button" id="sellLaterToggleBtn">Sell later</button>
+							        <span class="input-group-text">#</span>
+							    </div>
+							    <input type="text" id="ticketBalInput" onkeypress="return event.charCode >= 48 && event.charCode <= 57" class="form-control" placeholder="Ticket balance count">
+							</div>
+						</div>
+						<div class="form-group">
+					        <label for="message-text" class="col-form-label">Ticket design:</label>
+					        <div>
+					        		<div style="float: left;">
+									<button class="btn btn-secondary" type="button" onclick="chooseFile(1);" id="ticketBgSBtn">Add background</button><br>
+							        <button class="btn btn-secondary top-buffer" type="button" onclick="chooseFile(2);" id="ticketThumBtn">Add thumbnail</button>
+							        <div style="display:none;">
+								        	<input id="ticketImgInput" type="file" accept="image/jpeg, image/jpg, image/png"/>
+								        <input id="ticketImgOption" value="1">
+									</div>
+								</div>
+								<div class="ticket-bg-container" >
+									<img id="ticketBGImage" class="aspect-fill" width="300px" height="450px" style="position: absolute;"/>
+									<div class="ticket_blur"></div>
+									<div class="ticket-thum-container">
+									<img id="ticketThumnImage" class="aspect-fill" width="150px" height="150px"/>
+									</div>
+								</div>
+					        </div>
+							
+					    </div>
+					    
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button onclick="editEvent();" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+	    </div>
+	</div>
+	<!-- /.event input modal -->
+	</c:if>
     
     <%@include file="subview/popup.jsp" %><!-- This must be placed below all other modals -->
 
