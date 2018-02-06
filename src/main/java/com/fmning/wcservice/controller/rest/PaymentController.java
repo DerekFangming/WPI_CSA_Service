@@ -9,14 +9,18 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +42,7 @@ import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.EventManager;
+import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.PaymentManager;
 import com.fmning.service.manager.TicketManager;
 import com.fmning.service.manager.UserManager;
@@ -46,6 +51,7 @@ import com.fmning.util.PaymentStatusType;
 import com.fmning.util.PaymentType;
 import com.fmning.util.TicketType;
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.UserRole;
 import com.fmning.wcservice.utils.Utils;
 
 import de.brendamour.jpasskit.PKBarcode;
@@ -67,6 +73,7 @@ public class PaymentController {
 	@Autowired private EventManager eventManager;
 	@Autowired private TicketManager ticketManager;
 	@Autowired private ErrorManager errorManager;
+	@Autowired private HelperManager helperManager;
 	
 	
 	private static DateTimeFormatter formatter =
@@ -230,6 +237,15 @@ public class PaymentController {
 						status = PaymentStatusType.DONE.getName();
 						respond.put("error", "");
 						respond.put("status", PaymentStatusType.DONE.getName());
+						try {
+							String emailMsg = createReceiptEmail(userManager.getUserDisplayedName(user.getId()), event.getTitle(),
+									method, String.format( "%.2f", amount));
+							if (Utils.prodMode){
+								helperManager.sendEmail("no-reply@fmning.com", user.getUsername(), "Receipt", emailMsg);
+							} else {
+								System.out.println(emailMsg);
+							}
+						} catch (Exception e1){}
 					} else {
 						paymentRejected = true;
 						status = PaymentStatusType.REJECTED.getName();
@@ -248,6 +264,14 @@ public class PaymentController {
 				} else {// payment for free tickets
 					paymentId = paymentManager.savePayment(PaymentType.EVENT.getName(), event.getId(), amount,
 						PaymentStatusType.DONE.getName(), null, payerId, event.getOwnerId(), null, null);
+					try {
+						String emailMsg = createFreeTicketEmail(userManager.getUserDisplayedName(user.getId()), event.getTitle());
+						if (Utils.prodMode){
+							helperManager.sendEmail("no-reply@fmning.com", user.getUsername(), "Receipt", emailMsg);
+						} else {
+							System.out.println(emailMsg);
+						}
+					} catch (Exception e1){}
 					respond.put("error", "");
 					respond.put("status", PaymentStatusType.DONE.getName());
 				}
@@ -288,11 +312,6 @@ public class PaymentController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 		
 	}
-	
-	
-	
-	
-	
 	
 	private byte[] createTicket(Event event, TicketTemplate template, int userId) throws UnrecoverableKeyException,
 			NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException, PKSigningException{
@@ -361,106 +380,32 @@ public class PaymentController {
         }
 	}
 	
-	//Legacy make payment method for roll back only
-	/*@RequestMapping("/make_payment")
-	public ResponseEntity<Map<String, Object>> makePayment(@RequestBody Map<String, Object> request) {
-		Map<String, Object> respond = new HashMap<String, Object>();
-		try{
-			User user = userManager.validateAccessToken(request);
-			if (!user.getEmailConfirmed())
-				throw new IllegalStateException("Please confirm your email before getting ticket");
-			
-			int payerId = user.getId();
-			String type = (String)request.get("type");
-			int id = (int)request.get("id"); 
-			double amount = 0;
-			try{
-				amount = (double)request.get("amount");
-			}catch(ClassCastException e){
-				amount =  (int)request.get("amount");
-			}
-			
-			if (!type.equals(PaymentType.EVENT.getName()) || amount > 0)
-				throw new IllegalStateException(ErrorMessage.PAYMENT_NOT_SUPPORTED.getMsg());
-			
-			Event event = eventManager.getEventById(id);
-			
-			if(event.getFee() != amount)
-				throw new IllegalStateException("Payment amount is not correct.");
-			
-			if(event.getFee() == 0 && !user.getUsername().endsWith("@wpi.edu"))
-				throw new IllegalStateException("You can only get free ticket using wpi email account");
-			
-			
-			try{//If the payment is already done, re-provide ticket and bypass validation
-				Payment payment = paymentManager.getPaymentByTypeAndPayer(PaymentType.EVENT.getName(),
-						event.getId(), payerId, event.getOwnerId());
-				try{
-					Ticket ticket = ticketManager.getTicketByType(TicketType.PAYMENT.getName(), payment.getId());
-					respond.put("error", "");
-					respond.put("status", PaymentStatusType.ALREADY_PAID.getName());
-					respond.put("ticketStatus", "ok");
-					respond.put("ticketId", ticket.getId());
-				} catch (NotFoundException e){
-					throw new IllegalStateException(ErrorMessage.TICKET_INTERNAL_ERROR.getMsg());
-				}
-				
-			}catch (NotFoundException e){
-				//Validation for buying new ticket
-				if(!event.getActive()){
-					if(event.getMessage() == null)
-						throw new IllegalStateException(ErrorMessage.EVENT_NOT_ACTIVE.getMsg());
-					else
-						throw new IllegalStateException(event.getMessage());
-				}
-				if(event.getTicketBalance() < 1) {
-					throw new IllegalStateException(ErrorMessage.TICKET_SOLD_OUT.getMsg());
-				} else {
-					eventManager.setBalance(event.getId(), event.getTicketBalance() - 1);
-				}
-				
-				
-				//Validation done
-				int paymentId = paymentManager.createPayment(PaymentType.EVENT.getName(), event.getId(), amount,
-						PaymentStatusType.DONE.getName(), null, payerId, event.getOwnerId(), null, null);
-				respond.put("error", "");
-				respond.put("status", "ok");
-				
-				if(event.getTicketTemplateId() == Util.nullInt) {
-					respond.put("ticketStatus", "There is no ticket for this event.");
-				} else {
-					TicketTemplate template = ticketManager.getTicketTemplateById(event.getTicketTemplateId());
-					try{
-						byte[] ticket = createTicket(event, template, payerId);
-						String ticketFile = Utils.ticketPath + "T_" + Integer.toString(payerId);
-						ticketFile += "_" + formatter.format(Instant.now()) + ".pkpass";
-						int ticketId = ticketManager.createTicket(template.getId(), TicketType.PAYMENT.getName(), paymentId,
-								ticketFile, payerId);
-						respond.put("ticketStatus", "ok");
-						if (request.get("web") != null) {// For web requests, return the ticket id instead of ticket itself
-							respond.put("ticketId", ticketId);
-						} else {
-							respond.put("ticket", ticket);
-						}
-						try{
-							ByteArrayInputStream inputStream = new ByteArrayInputStream(ticket);
-							IOUtils.copy(inputStream, new FileOutputStream(ticketFile));
-						}catch(Exception e1){}//TODO: Do something here?
-					} catch (Exception e1) {
-						respond.put("ticketStatus", "Ticket generation failed.");
-					}
-				}
-			}
-			
-			
-			
-			
-		}catch(Exception e){
-			respond = Util.createErrorRespondFromException(e);
-		}
-		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	public static String createReceiptEmail(String name, String eventName, String paymentMethod, String amount) {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		df.setTimeZone(TimeZone.getTimeZone("EST"));
 		
-	}*/
+		String message = "Hi " + name + ",";
+		message += "\n";
+		message += "Thank you for purchasing ticket with WPI CSA. Your payment is processed successfully.";
+		message += "\n\nEvent: " + eventName;
+		message += "\nPayment method: " + paymentMethod;
+		message += "\nAmount: $" + amount;
+		message += "\nDate: " + df.format(new Date());
+		message += "\n\nThank you.";
+		message += "\n";
+		return message;
+	}
+	
+	public static String createFreeTicketEmail(String name, String eventName) {
+		String message = "Hi " + name + ",";
+		message += "\n";
+		message += "Thank you for registering event " + eventName + ".";
+		message += "\n\nSince this is a free event, please remember to let us know if you cannot attend due to any reason.";
+		message += "\nTo do that, you can email csa@wpi.edu, admin@fmning.com or send a WeChat message to any of the CSA members.";
+		message += "\n\nThank you.";
+		message += "\n";
+		return message;
+	}
 	
 	
 }

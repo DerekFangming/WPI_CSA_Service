@@ -46,7 +46,7 @@ function checkContentFormat(content) {
 	
 	var imageList = doc.getElementsByTagName('img');
 	for (var i=imageList.length - 1; i > -1; i--) {
-		var src = imageList[i].src;
+		var src = imageList[i].getAttribute('src');
 		if (src.toLowerCase().includes('gif')) {
 			return 'Gif image is not supported. Please remove the following image <br><br><img class="aspect-fill" src="' + src +'">';
 		}

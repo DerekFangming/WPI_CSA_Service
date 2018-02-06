@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import = "java.util.ResourceBundle" %>
 <% ResourceBundle resource = ResourceBundle.getBundle("dataSource");
-  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs"); %>
+  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs");
+  String tokenKey=resource.getString("tokenKey");%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -94,6 +95,7 @@
   				<c:otherwise>
   				<a id="payButton" href="#" class="btn btn-primary"><i id="ticketSpinner" class=""></i>&nbsp;$${event.fee} - Pay and get ticket</a>
   				<input type="hidden" id="eventId" value="${event.id}">
+  				<input type="hidden" id="tokenKey" value="<%=tokenKey %>">
   				</c:otherwise>
 			</c:choose>
     			<input type="hidden" id="ticketFee" value="${event.fee}">

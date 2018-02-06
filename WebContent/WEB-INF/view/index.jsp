@@ -63,7 +63,7 @@
 			<p class="lead">If you see any errors & bugs, don't forget to report to CSA!</p>
         </header>
         
-        <div class="row"><button id="createArticleBtn" type="button" class="btn btn-primary">Create Article</button></div>
+        <!--  <div class="row"><button id="createArticleBtn" type="button" class="btn btn-primary">Create Article</button></div>-->
         
         <c:forEach items="${feedList}" var="fm">
         <div class="card top-buffer">

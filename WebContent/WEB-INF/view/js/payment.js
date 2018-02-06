@@ -31,7 +31,7 @@ $('#payButton').on('click', function (e) {
     	    		$('#paymentModal').modal('toggle');
     	        	var button = document.querySelector('#submitPaymentButton');
     	        	braintree.dropin.create({
-    	        		authorization: 'sandbox_bk8pdqf3_wnbj3bx4nwmtyz77',
+    	        		authorization: $('#tokenKey').val(),
     	        		container: '#dropinContainer',
     	        		paypal: {
     	        			flow: 'vault'
