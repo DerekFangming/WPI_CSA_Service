@@ -112,7 +112,7 @@ create table events (
 
 create table ticket_templates (
 	id serial primary key,
-	location varchar(50) not null,
+	location varchar(100) not null,
 	serial_number integer not null,
 	description varchar(50) not null,
 	logo_text varchar(30),
@@ -162,4 +162,6 @@ create table error_logs (
 	trace text,
 	created_at timestamp without time zone not null
 );
+
+alter table ticket_templates alter column location type varchar(100);
 

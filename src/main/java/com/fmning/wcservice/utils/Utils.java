@@ -46,6 +46,9 @@ public class Utils {
 	/*For error logging, to get the request URL*/
 	public static String rootDir = "";
 	
+	/*For doing stuff as CSA Official*/
+	public static final int CSA_ID = 2;
+	
 	@Autowired private HelperManager helperManager;
 	
 	public static String createVerificationEmail(String veriCode) {

@@ -101,7 +101,7 @@
 						    <div class="input-group-prepend">
 						        <button class="btn btn-outline-secondary" id="eventInputBtn" type="button">Add an event</button>
 						    </div>
-						    <input type="text" class="form-control" placeholder="No event added yet" aria-label="" aria-describedby="basic-addon1" disabled>
+						    <input type="text" class="form-control" placeholder="No event added yet" id="eventTitlePreview" disabled>
 						</div>
 						</c:if>
 						
@@ -150,7 +150,7 @@
 					    </div>
 					    <div class="form-group">
 					        <label for="recipient-name" class="col-form-label">Description:</label>
-					        <input type="text" class="form-control" id="eventTitle">
+					        <input type="text" class="form-control" id="eventDesc">
 					    </div>
 					    <div class="form-group">
 					        <label for="message-text" class="col-form-label">Start Time:</label>
@@ -168,60 +168,62 @@
 					    		<label for="message-text" class="col-form-label">Event type:</label>
 					    		<div class="input-group">
 							    <div class="input-group-prepend">
-							        <button class="btn btn-secondary" type="button" id="calToggleBtn">Calendar only</button>
-							        <button class="btn btn-outline-secondary" type="button" id="ticketToggleBtn">Sell ticket</button>
+							        <button class="btn btn-secondary" type="button" id="ticketToggleBtn">Sell ticket</button>
+							        <button class="btn btn-outline-secondary" type="button" id="calToggleBtn">Calendar only</button>
 							    </div>
 							    <input type="text" id="ticketStatusLbl" class="form-control" placeholder="You are all set" disabled>
 							</div>
 						</div>
-						<div class="form-group">
-					    		<label for="message-text" class="col-form-label">Ticket price:<small class="text-warning">&emsp;Cannot modify once created.</small></label>
-					    		<div class="input-group">
-							    <div class="input-group-prepend">
-							        <button class="btn btn-secondary" type="button" id="freeTicketToggleBtn">Free</button>
-							        <button class="btn btn-outline-secondary" type="button" id="paidTicketToggleBtn">Sell ticket</button>
-							        <span class="input-group-text">$</span>
-							    </div>
-							    <input type="text" id="ticketFeeInput" onkeypress="validateInputNumber(event)" onfocusout="this.value = formalizeFeeAmount(this.value)" class="form-control" placeholder="0.00" disabled>
-							</div>
-						</div>
-						<div class="form-group">
-					    		<label for="message-text" class="col-form-label">Ticket balance:</label>
-					    		<div class="input-group">
-							    <div class="input-group-prepend">
-							        <button class="btn btn-secondary" type="button" id="sellNowToggleBtn">Sell now</button>
-							        <button class="btn btn-outline-secondary" type="button" id="sellLaterToggleBtn">Sell later</button>
-							        <span class="input-group-text">#</span>
-							    </div>
-							    <input type="text" id="ticketBalInput" onkeypress="return event.charCode >= 48 && event.charCode <= 57" class="form-control" placeholder="Ticket balance count">
-							</div>
-						</div>
-						<div class="form-group">
-					        <label for="message-text" class="col-form-label">Ticket design:</label>
-					        <div>
-					        		<div style="float: left;">
-									<button class="btn btn-secondary" type="button" onclick="chooseFile(1);" id="ticketBgSBtn">Add background</button><br>
-							        <button class="btn btn-secondary top-buffer" type="button" onclick="chooseFile(2);" id="ticketThumBtn">Add thumbnail</button>
-							        <div style="display:none;">
-								        	<input id="ticketImgInput" type="file" accept="image/jpeg, image/jpg, image/png"/>
-								        <input id="ticketImgOption" value="1">
-									</div>
+						<div id="ticketDetailSec">
+							<div class="form-group">
+						    		<label for="message-text" class="col-form-label">Ticket price:<small class="text-warning">&emsp;Cannot modify once created.</small></label>
+						    		<div class="input-group">
+								    <div class="input-group-prepend">
+								        <button class="btn btn-secondary" type="button" id="freeTicketToggleBtn">Free</button>
+								        <button class="btn btn-outline-secondary" type="button" id="paidTicketToggleBtn">Sell ticket</button>
+								        <span class="input-group-text">$</span>
+								    </div>
+								    <input type="text" id="ticketFeeInput" onkeypress="validateInputNumber(event)" onfocusout="this.value = formalizeFeeAmount(this.value)" class="form-control" placeholder="0.00" disabled>
 								</div>
-								<div class="ticket-bg-container" >
-									<img id="ticketBGImage" class="aspect-fill" width="300px" height="450px" style="position: absolute;"/>
-									<div class="ticket_blur"></div>
-									<div class="ticket-thum-container">
-									<img id="ticketThumnImage" class="aspect-fill" width="150px" height="150px"/>
-									</div>
+							</div>
+							<div class="form-group">
+						    		<label for="message-text" class="col-form-label">Ticket balance:</label>
+						    		<div class="input-group">
+								    <div class="input-group-prepend">
+								        <button class="btn btn-secondary" type="button" id="sellNowToggleBtn">Sell now</button>
+								        <button class="btn btn-outline-secondary" type="button" id="sellLaterToggleBtn">Sell later</button>
+								        <span class="input-group-text">#</span>
+								    </div>
+								    <input type="text" id="ticketBalInput" onkeypress="return event.charCode >= 48 && event.charCode <= 57" class="form-control" placeholder="Ticket balance count">
 								</div>
-					        </div>
-							
+							</div>
+							<div class="form-group">
+						        <label for="message-text" class="col-form-label">Ticket design:</label>
+						        <div>
+						        		<div style="float: left;">
+										<button class="btn btn-secondary" type="button" onclick="chooseFile(1);" id="ticketBgSBtn">Add background</button><br>
+								        <button class="btn btn-secondary top-buffer" type="button" onclick="chooseFile(2);" id="ticketThumBtn">Add thumbnail</button>
+								        <div style="display:none;">
+									        	<input id="ticketImgInput" type="file" accept="image/jpeg, image/jpg, image/png"/>
+									        <input id="ticketImgOption" value="1">
+										</div>
+									</div>
+									<div class="ticket-bg-container" >
+										<img id="ticketBGImage" class="aspect-fill" width="300px" height="450px" style="position: absolute;"/>
+										<div class="ticket_blur"></div>
+										<div class="ticket-thum-container">
+										<img id="ticketThumnImage" class="aspect-fill" width="150px" height="150px"/>
+										</div>
+									</div>
+						        </div>
+								
+						    </div>
 					    </div>
 					    
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button onclick="editEvent();" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+					<button onclick="saveEvent();" type="button" class="btn btn-primary">Save</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				</div>
 			</div>

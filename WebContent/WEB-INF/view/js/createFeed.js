@@ -126,12 +126,14 @@ $("#calToggleBtn").click(function(){
 	$('#calToggleBtn').attr('class', 'btn btn-secondary');
 	$('#ticketToggleBtn').attr('class', 'btn btn-outline-secondary');
 	$('#ticketStatusLbl').attr('placeholder', 'You are all set');
+	$("#ticketDetailSec").fadeOut();
 });
 
 $("#ticketToggleBtn").click(function(){
 	$('#calToggleBtn').attr('class', 'btn btn-outline-secondary');
 	$('#ticketToggleBtn').attr('class', 'btn btn-secondary');
 	$('#ticketStatusLbl').attr('placeholder', 'Enter following fields');
+	$("#ticketDetailSec").fadeIn();
 });
 
 //Event fee toggle
@@ -177,3 +179,61 @@ $("#ticketImgInput").change(function() {
         reader.readAsDataURL($("#ticketImgInput").prop('files')[0]);
     }                
 });
+
+$('#eventInputModal').on('hidden.bs.modal', function () {
+	if ($('#eventTitle').val().trim() != '' || $('#eventDesc').val().trim() != '' || $('#eventSTime').val().trim() != '' || $('#eventETime').val().trim() != '' ||
+			$('#eventLocation').val().trim() != '') {
+		$('#eventInputBtn').html('Edit event');
+		$('#eventTitlePreview').val($('#eventTitle').val() == '' ? 'Title not enterred yet' : $('#eventTitle').val());
+	} else {
+		$('#eventInputBtn').html('Add an event');
+		$('#eventTitlePreview').val('');
+	}
+})
+
+function saveEvent(){
+	var error = checkEventFormat();
+	if (error != '' ) {
+		showErrorPopup(error);
+	} else {
+		$('#eventInputModal').modal('toggle');
+	}
+}
+
+
+function checkEventFormat() {
+	if ($('#eventTitle').val().trim().length == 0) {
+		return 'Please enter event title.';
+	}
+	if ($('#eventDesc').val().trim().length == 0) {
+		return 'Please enter the description for this event. This will be shown in Calendar if user adds this event.';
+	}
+	if ($('#eventSTime').val().trim().length == 0) {
+		return 'Please enter the start time for this event.';
+	}
+	if ($('#eventETime').val().trim().length == 0) {
+		return 'Please enter the end time for this event.';
+	}
+	if ($('#eventLocation').val().trim().length == 0) {
+		return 'Please enter the location for this event';
+	}
+	
+	//Check if needs to sell ticket
+	if ($('#calToggleBtn').attr('class').includes('btn-outline-secondary')) {
+		if($('#ticketBalInput').val().trim().length == 0) {
+			return 'Please enter ticket balance. This will be the total amount to ticket can be sold from all platforms. This can be updated later.';
+		}
+		var attr = $('#ticketBGImage').attr('src');
+		if(typeof attr == typeof undefined || attr == false) {
+			return 'Please select a ticket background image. Note that the image will be blurred and we recommand a dark colorred image for better effect.';
+		}
+		attr = $('#ticketThumnImage').attr('src');
+		if(typeof attr == typeof undefined || attr == false) {
+			return 'Please select a ticket thumbnail image.';
+		}
+	}
+	
+	
+	return '';
+}
+

@@ -1,17 +1,29 @@
 package com.fmning.wcservice.controller.rest;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +40,13 @@ import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.EventManager;
 import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.ImageManager;
+import com.fmning.service.manager.TicketManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
 import com.fmning.util.EventType;
 import com.fmning.util.ImageType;
 import com.fmning.util.Util;
+import com.fmning.wcservice.utils.UserRole;
 import com.fmning.wcservice.utils.Utils;
 
 @Controller
@@ -43,6 +57,7 @@ public class FeedController {
 	@Autowired private ImageManager imageManager;
 	@Autowired private EventManager eventManager;
 	@Autowired private ErrorManager errorManager;
+	@Autowired private TicketManager ticketManager;
 	
 	@RequestMapping(value = "/get_recent_feeds", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getRecentFeeds(HttpServletRequest request) {
@@ -155,7 +170,7 @@ public class FeedController {
 				throw new IllegalStateException(ErrorMessage.INVALID_FEED_INPUT.getMsg());
 			}
 			
-			//body = "<img src=\"file:///Attachment.png\" alt=\"Attachment.png\">wtf<img src=\"file:///Attachment123.png\">";
+			//Saving images, then create feed
 			Matcher imgMatcher = Pattern.compile("<img.*?>").matcher(body);
 			while (imgMatcher.find()) {
 				String imgTag = imgMatcher.group();
@@ -188,6 +203,57 @@ public class FeedController {
 				imageManager.createImage(coverImageString, ImageType.FEED_COVER.getName(), feedId, userId, null);
 			}
 			
+			//Check if there is an event. If so, save it after saving feeds
+			String eventTitle = (String)request.get("eventTitle");
+			if (eventTitle != null) {
+				if(!UserRole.isAdmin(user.getRoleId())) {
+					throw new IllegalStateException(ErrorMessage.EVENT_NO_PERMISSION.getMsg());
+				}
+				String eventDesc = (String)request.get("eventDesc");
+				String startTime = (String)request.get("eventStartTime");
+				String endTime = (String)request.get("eventEndTime");
+				String eventLocation = (String)request.get("eventLocation");
+				
+				if (eventDesc == null || startTime == null || endTime == null || eventLocation == null) {
+					throw new IllegalStateException(ErrorMessage.EVENT_NOT_CREATED.getMsg());
+				}
+				
+				//Check if ticket is available for this event or not
+				String ticketBgImage = (String)request.get("ticketBgImage");
+				if (ticketBgImage != null) {
+					// Adding full event with ticket design
+					try {
+						String ticketThumbImage = (String)request.get("ticketThumbImage");
+						boolean ticketActive = (boolean)request.get("ticketActive");
+						int ticketBalance = (int)request.get("ticketBalance");
+						
+						double ticketFee = 0;
+						try{
+							ticketFee = (double)request.get("ticketFee");
+						}catch(ClassCastException e){
+							ticketFee =  (int)request.get("ticketFee");
+						}
+						
+						//Creating ticket template
+						String location = "/Volumes/Data/passTemplates/";
+						String folderName = eventTitle.replaceAll("\\s+","");
+						folderName = folderName.length() < 20 ? folderName : folderName.substring(0, 20);
+						folderName += new SimpleDateFormat("yyyyMMddss").format(new Date());
+						location += folderName;
+						
+						int templateId = ticketManager.createTicketTemplate(location, "WPI CSA Event", "WPI CSA", null, Utils.CSA_ID);
+						createTicketTemplate(ticketBgImage, ticketThumbImage, folderName);
+						
+					} catch (NullPointerException | ClassCastException | NumberFormatException e) {
+						throw new IllegalStateException(ErrorMessage.EVENT_NOT_CREATED.getMsg());
+					}
+					
+				} else {
+					// Adding calendar only event with default fee and no ticket design
+				}
+				
+			}
+			
 			respond.put("error", "");
 			if (user.isTokenUpdated()) {
 				respond.put("accessToken", user.getAccessToken());
@@ -197,6 +263,52 @@ public class FeedController {
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	private void createTicketTemplate(String background, String thumbnail, String folderName) {
+		File srcDir = new File("/Volumes/Data/passTemplates/base");
+		File destDir = new File("/Volumes/Data/passTemplates/" + folderName);
+
+		try {
+			//Creating base folder
+			FileUtils.copyDirectory(srcDir, destDir);
+			
+			//Saving images as temp
+			if(background.contains(",")){background = background.split(",")[1];}
+			byte[] bgData = Base64.decodeBase64(background);
+			BufferedImage bg = ImageIO.read(new ByteArrayInputStream(bgData));
+			int bgWidth = bg.getWidth();
+			int bgHeight = bg.getHeight();
+			for (int i = 1; i < 4; i ++) {
+				int newWidth = bgWidth > bgHeight ? bgWidth * 220 / bgHeight * i : 180 * i;
+				int newHeight = bgWidth > bgHeight ? 220 * i : bgHeight * 180 / bgWidth * i;
+				BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+				Graphics g = newImage.createGraphics();
+				g.drawImage(bg, 0, 0, newWidth, newHeight, null);
+				g.dispose();
+				ImageIO.write(newImage, "png",
+						new File("/Volumes/Data/passTemplates/" + folderName + "/background@" + Integer.toString(i) + "x.jpg"));
+			}
+			
+			if(thumbnail.contains(",")){thumbnail = thumbnail.split(",")[1];}
+			byte[] thData = Base64.decodeBase64(thumbnail);
+			BufferedImage th = ImageIO.read(new ByteArrayInputStream(thData));
+			int thWidth = th.getWidth();
+			int thHeight = th.getHeight();
+			for (int i = 1; i < 4; i ++) {
+				int newWidth = thWidth > thHeight ? thWidth * 90 / thHeight * i : 90 * i;
+				int newHeight = thWidth > thHeight ? 90 * i : thHeight * 90 / thWidth * i;
+				BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+				Graphics g = newImage.createGraphics();
+				g.drawImage(th, 0, 0, newWidth, newHeight, null);
+				g.dispose();
+				ImageIO.write(newImage, "png",
+						new File("/Volumes/Data/passTemplates/" + folderName + "/thumbnail@" + Integer.toString(i) + "x.jpg"));
+			}
+			
+		} catch (IOException e) {
+			errorManager.logError(e);
+		}
 	}
 
 }

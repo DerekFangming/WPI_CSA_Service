@@ -1,7 +1,9 @@
 package com.fmning.wcservice.controller.rest;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +28,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -179,15 +182,17 @@ private String backupScriptPath;
 	}
 	
 	@RequestMapping("/test")
-	public ResponseEntity<String> test(@RequestBody Map<String, Object> request) {
+	public ResponseEntity<String> test(@RequestBody Map<String, Object> request) throws IOException {
 	
+		//int a = (int) request.get("a");//nullpointer if a is not there  class case if type not right
+		//double b = (double) request.get("b");//nullponter if b is not there
 		
-		
-		
-		
+
 		
 		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
+	
+
 	
 	@RequestMapping(value = "/files", method = RequestMethod.GET)
 	public void getFile(){

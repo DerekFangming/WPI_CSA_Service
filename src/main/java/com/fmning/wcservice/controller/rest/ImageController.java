@@ -171,7 +171,7 @@ public class ImageController {
 	        org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
 	        response.flushBuffer();
 		} catch (Exception e) {
-			//e.printStackTrace();
+			errorManager.logError(e);
 			try {
 				response.setStatus(200);
 				response.getWriter().write(e.getMessage());
@@ -179,8 +179,7 @@ public class ImageController {
 				response.getWriter().close();
 				
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				errorManager.logError(e1);
 			}
 		}
 

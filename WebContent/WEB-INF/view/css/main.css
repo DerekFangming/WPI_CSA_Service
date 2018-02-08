@@ -8,6 +8,7 @@ body {
 		max-width:1200px;
 	}
 }
+.modal { overflow: auto !important; }
 
 .tooltip {
     z-index: 0 !important;
