@@ -59,11 +59,41 @@ $("#submitBtn").click(function(){
 		var accessToken = getAccessToken();
 		$("#submitBtn").prop('disabled', true);
 		$("#submitSpinner").show();
+		
+		var params = {accessToken : accessToken, title : title, type : type, body : content, coverImage : cover };
+		
+		if ($("#currentType").html() == 'Event') {
+			error = checkEventFormat();
+			if (error != '' ) {
+				showErrorPopup(error);
+				return;
+			} else {
+				params.eventTitle = $("#eventTitle").val().trim();
+				params.eventDesc = $("#eventDesc").val().trim();
+				params.eventStartTime = new Date($("#eventSTime").val().trim()).toISOString();
+				params.eventEndTime = new Date($("#eventETime").val().trim()).toISOString();
+				params.eventLocation = $("#eventLocation").val().trim();
+				
+				
+				if ($('#calToggleBtn').attr('class').includes('btn-outline-secondary')) {//ticket also needed
+					if ($('#ticketFeeInput').val() == '') {
+						params.ticketFee = 0.0;
+					} else {
+						params.ticketFee = parseFloat($('#ticketFeeInput').val());
+					}
+					params.ticketActive = $('#sellNowToggleBtn').attr('class').includes('btn-secondary');
+					params.ticketBalance = parseInt($('#ticketBalInput').val());
+					params.ticketBgImage = $('#ticketBGImage').attr('src');
+					params.ticketThumbImage = $('#ticketThumnImage').attr('src');
+				}
+				
+			}
+		}
 	    
 	    $.ajax({
 	        type: "POST",
 	        url: "./create_feed",
-	        data: JSON.stringify({accessToken : accessToken, title : title, type : type, body : content, coverImage : cover }),
+	        data: JSON.stringify(params),
 	        contentType: "application/json",
 	        dataType: "json",
 	        success: function(data){

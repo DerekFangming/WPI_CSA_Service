@@ -244,12 +244,21 @@ public class FeedController {
 						int templateId = ticketManager.createTicketTemplate(location, "WPI CSA Event", "WPI CSA", null, Utils.CSA_ID);
 						createTicketTemplate(ticketBgImage, ticketThumbImage, folderName);
 						
+						eventManager.createEvent(EventType.FEED.getName(), feedId, eventTitle, eventDesc, Instant.parse(startTime),
+								Instant.parse(endTime), eventLocation, ticketFee, Utils.CSA_ID, templateId, ticketActive,
+								"", ticketBalance);
+						
+						
 					} catch (NullPointerException | ClassCastException | NumberFormatException e) {
+						e.printStackTrace();
 						throw new IllegalStateException(ErrorMessage.EVENT_NOT_CREATED.getMsg());
 					}
 					
 				} else {
 					// Adding calendar only event with default fee and no ticket design
+					eventManager.createEvent(EventType.FEED.getName(), feedId, eventTitle, eventDesc, Instant.parse(startTime),
+							Instant.parse(endTime), eventLocation, 0, Utils.CSA_ID, Util.nullInt, false,
+							"", 0);
 				}
 				
 			}
@@ -287,7 +296,7 @@ public class FeedController {
 				g.drawImage(bg, 0, 0, newWidth, newHeight, null);
 				g.dispose();
 				ImageIO.write(newImage, "png",
-						new File("/Volumes/Data/passTemplates/" + folderName + "/background@" + Integer.toString(i) + "x.jpg"));
+						new File("/Volumes/Data/passTemplates/" + folderName + "/background@" + Integer.toString(i) + "x.png"));
 			}
 			
 			if(thumbnail.contains(",")){thumbnail = thumbnail.split(",")[1];}
@@ -303,7 +312,7 @@ public class FeedController {
 				g.drawImage(th, 0, 0, newWidth, newHeight, null);
 				g.dispose();
 				ImageIO.write(newImage, "png",
-						new File("/Volumes/Data/passTemplates/" + folderName + "/thumbnail@" + Integer.toString(i) + "x.jpg"));
+						new File("/Volumes/Data/passTemplates/" + folderName + "/thumbnail@" + Integer.toString(i) + "x.png"));
 			}
 			
 		} catch (IOException e) {
