@@ -64,42 +64,49 @@
         
         <div class="input-group mb-3">
 		    <div class="input-group-prepend">
-		        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All</button>
+		        <button class="btn btn-outline-secondary dropdown-toggle" id="searchType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All</button>
 		        <div class="dropdown-menu">
-		            <a class="dropdown-item" href="#">All</a>
+		            <a class="dropdown-item" href="#" onclick="selectType(1);">All</a>
 		            <div role="separator" class="dropdown-divider"></div>
-		            <a class="dropdown-item" href="#">Event</a>
-		            <a class="dropdown-item" href="#">Blog</a>
-		            <a class="dropdown-item" href="#">Trade</a>
+		            <a class="dropdown-item" href="#" onclick="selectType(2);">Blog</a>
+		            <a class="dropdown-item" href="#" onclick="selectType(3);">Trade</a>
+		            <a class="dropdown-item" href="#" onclick="selectType(4);">Event</a>
 		        </div>
 		    </div>
 		    <input type="text" placeholder="Enter some keyword or search by type" class="form-control" aria-label="Text input with dropdown button">
 		    <div class="input-group-append">
-			    <button class="btn btn-outline-secondary" type="button"><i class="fa fa-search" style="color:#6D767E;"></i>&nbsp;Search</button>
+			    <button class="btn btn-outline-secondary" type="button" id="searchArticleBtn"><i class="fa fa-search" style="color:#6D767E;"></i>&nbsp;Search</button>
 			    <button class="btn btn-outline-secondary" type="button" id="createArticleBtn"><i class="fa fa-plus" style="color:#6D767E;"></i>&nbsp;Create New Article</button>
 			</div>
 		</div>
         
         <!--  <div class="row"><button id="createArticleBtn" type="button" class="btn btn-primary">Create Article</button></div>-->
         
-        <c:forEach items="${feedList}" var="fm">
-        <div class="card top-buffer">
-			<div class="card-header">
-				<h1><a href="./feed?id=${fm.feed.id}">${fm.feed.title}</a></h1>
-			</div>
-			<div class="row">
-				<div class="col-lg-6 col-sm-12">
-					<div class="life-img-container">
-						<img class="aspect-fill" src="./images/${fm.coverImageId}.jpg" />
+        <div id="feedSearchResult">
+	        <c:forEach items="${feedList}" var="fm">
+	        <div class="card top-buffer">
+				<div class="card-header">
+					<h1><a href="./feed?id=${fm.feed.id}">${fm.feed.title}</a></h1>
+				</div>
+				<div class="row">
+					<div class="col-lg-6 col-sm-12">
+						<div class="life-img-container">
+							<img class="aspect-fill" src="./images/${fm.coverImageId}.jpg" />
+						</div>
+					</div>
+					<div class="col-lg-6 clm-sm-12">
+						<div class="card-body life-desc">${fm.feed.body}</div>
 					</div>
 				</div>
-				<div class="col-lg-6 clm-sm-12">
-					<div class="card-body life-desc">${fm.feed.body}</div>
-				</div>
 			</div>
-		</div>
+	        
+	      	</c:forEach>
+        </div>
         
-      	</c:forEach>
+      	
+      	<c:if test="${user != null}">
+		<input type="hidden" id="userEmailConfirmed" value="${user.emailConfirmed}">
+		</c:if>
 		
 
     </div>
@@ -123,18 +130,8 @@
     <script src="/resources/js/formLogin.js?v=1"></script>
     </c:if>
     
-    <script>
-    $("#createArticleBtn").click(function(){
-        var accessToken = getAccessToken();
-        
-        if (accessToken == "") {
-        	showErrorPopup('You have to login first before creating articles');
-        } else {
-        	window.location="./new_article";
-        }
-        
-    }); 
-    </script>
+    <script src="/resources/js/index.js?v=1"></script>
+    
 
 </body>
 

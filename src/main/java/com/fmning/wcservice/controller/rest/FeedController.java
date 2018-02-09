@@ -282,7 +282,7 @@ public class FeedController {
 			//Creating base folder
 			FileUtils.copyDirectory(srcDir, destDir);
 			
-			//Saving images as temp
+			//Saving background and thumbnails
 			if(background.contains(",")){background = background.split(",")[1];}
 			byte[] bgData = Base64.decodeBase64(background);
 			BufferedImage bg = ImageIO.read(new ByteArrayInputStream(bgData));
@@ -291,7 +291,7 @@ public class FeedController {
 			for (int i = 1; i < 4; i ++) {
 				int newWidth = bgWidth > bgHeight ? bgWidth * 220 / bgHeight * i : 180 * i;
 				int newHeight = bgWidth > bgHeight ? 220 * i : bgHeight * 180 / bgWidth * i;
-				BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+				BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
 				Graphics g = newImage.createGraphics();
 				g.drawImage(bg, 0, 0, newWidth, newHeight, null);
 				g.dispose();
@@ -307,7 +307,7 @@ public class FeedController {
 			for (int i = 1; i < 4; i ++) {
 				int newWidth = thWidth > thHeight ? thWidth * 90 / thHeight * i : 90 * i;
 				int newHeight = thWidth > thHeight ? 90 * i : thHeight * 90 / thWidth * i;
-				BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+				BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
 				Graphics g = newImage.createGraphics();
 				g.drawImage(th, 0, 0, newWidth, newHeight, null);
 				g.dispose();

@@ -171,7 +171,7 @@
 							        <button class="btn btn-secondary" type="button" id="ticketToggleBtn">Sell ticket</button>
 							        <button class="btn btn-outline-secondary" type="button" id="calToggleBtn">Calendar only</button>
 							    </div>
-							    <input type="text" id="ticketStatusLbl" class="form-control" placeholder="You are all set" disabled>
+							    <input type="text" id="ticketStatusLbl" class="form-control" placeholder="Enter following fields" disabled>
 							</div>
 						</div>
 						<div id="ticketDetailSec">

@@ -186,7 +186,17 @@ private String backupScriptPath;
 	
 		//int a = (int) request.get("a");//nullpointer if a is not there  class case if type not right
 		//double b = (double) request.get("b");//nullponter if b is not there
+		String background = (String)request.get("b");
+		if(background.contains(",")){background = background.split(",")[1];}
+		byte[] bgData = Base64.decodeBase64(background);
+		BufferedImage bg = ImageIO.read(new ByteArrayInputStream(bgData));
 		
+		BufferedImage newImage = new BufferedImage(bg.getWidth(), bg.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics g = newImage.createGraphics();
+		g.drawImage(bg, 0, 0, bg.getWidth(), bg.getHeight(), null);
+		g.dispose();
+		ImageIO.write(newImage, "png",
+				new java.io.File("/Volumes/Data/passTemplates/gg.png"));
 
 		
 		return new ResponseEntity<String>("", HttpStatus.OK);
