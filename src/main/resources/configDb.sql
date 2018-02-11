@@ -51,7 +51,8 @@ create table feeds (
 	body text,
 	owner_id integer NOT NULL,
 	enabled boolean NOT NULL DEFAULT true,
-	created_at timestamp without time zone NOT NULL
+	created_at timestamp without time zone NOT NULL,
+	updated_by integer
 );
 
 create table comments (
@@ -163,5 +164,8 @@ create table error_logs (
 	created_at timestamp without time zone not null
 );
 
-alter table ticket_templates alter column location type varchar(100);
+--deployment check list
+--1. use raw git for editor
+--2. remove html option for editor
 
+alter table feeds add column updated_by integer;

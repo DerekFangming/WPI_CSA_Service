@@ -82,7 +82,11 @@
 	        <c:forEach items="${feedList}" var="fm">
 	        <div class="card top-buffer">
 				<div class="card-header">
-					<h1><a href="./feed?id=${fm.feed.id}">${fm.feed.title}</a></h1>
+					<h1 class="mb-0"><a href="./feed?id=${fm.feed.id}">${fm.feed.title}</a></h1>
+					<p class="mb-0">
+						<span class="badge badge-secondary">${fm.feed.type}</span>
+						<span class="text-muted">&nbsp; Created by <b>${fm.ownerName}</b> on <script> parseDate( '${fm.feed.createdAt}' ); </script></span>
+					</p>
 				</div>
 				<div class="row">
 					<div class="col-lg-6 col-sm-12">

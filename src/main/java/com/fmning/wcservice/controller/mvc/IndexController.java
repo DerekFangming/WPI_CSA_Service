@@ -194,6 +194,7 @@ public class IndexController {
 			FeedModel fm = new FeedModel();
 			m.setBody(m.getBody().replaceAll("\\<[^>]*>",""));
 			fm.setFeed(m);
+			fm.setOwnerName(userManager.getUserDisplayedName(m.getOwnerId()));
 			
 			try {
 				int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();

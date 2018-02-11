@@ -72,7 +72,7 @@
 				<div class="card sg-title">
 					<div class="card-header sg-title">
 					<h1 class="lead"><big><big id="sgTitle"></big></big></h1>
-					<p><small class="text-muted" id="sgSubTitle">Last updated 3 mins ago</small></p>
+					<p><small class="text-muted" id="sgSubTitle"></small></p>
 					</div>
 				</div>
 				<div class="card top-buffer sg-body">

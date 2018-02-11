@@ -65,10 +65,12 @@ $("#searchArticleBtn").click(function(){
 				var feedList = data['feedList'];
 				var result = '';
 				for (var i = 0; i < feedList.length; i++) {
-					result += '<div class="card top-buffer"><div class="card-header"><h1><a href="./feed?id=';
+					result += '<div class="card top-buffer"><div class="card-header"><h1 class="mb-0"><a href="./feed?id=';
 					result += feedList[i].id;
 					result += '">' + feedList[i].title;
-					result += '</a></h1></div>';
+					result += '</a></h1><p class="mb-0"><span class="badge badge-secondary">' + feedList[i].type;
+					result += '</span><span class="text-muted">&nbsp; Created by <b>' + feedList[i].ownerName;
+					result += '</b> on ' + parseDateStr(feedList[i].createdAt) + '</span></p></div>';
 					
 					result += '<div class="row"><div class="col-lg-6 col-sm-12"><div class="life-img-container"><img class="aspect-fill" src="./images/';
 					result += feedList[i].coverImgId;

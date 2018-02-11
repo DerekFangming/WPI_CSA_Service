@@ -44,6 +44,7 @@ import com.fmning.service.manager.TicketManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
 import com.fmning.util.EventType;
+import com.fmning.util.FeedType;
 import com.fmning.util.ImageType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.UserRole;
@@ -216,6 +217,14 @@ public class FeedController {
 				throw new IllegalStateException(ErrorMessage.INVALID_FEED_INPUT.getMsg());
 			}
 			
+			if (type.equals(FeedType.EVENT.getName())) {
+				if (UserRole.isAdmin(user.getRoleId())) {
+					userId = Utils.CSA_ID;
+				} else {
+					throw new IllegalStateException(ErrorMessage.FEED_NO_PERMISSION.getMsg());
+				}
+			}
+			
 			//Saving images, then create feed
 			Matcher imgMatcher = Pattern.compile("<img.*?>").matcher(body);
 			while (imgMatcher.find()) {
@@ -244,7 +253,12 @@ public class FeedController {
 				}
 			}
 			
-			int feedId = feedManager.createFeed(title, type, body, userId);
+			int feedId = 0;
+			if (type.equals(FeedType.EVENT.getName())) {
+				feedId = feedManager.createFeed(title, type, body, userId, user.getId());
+			} else {
+				feedId = feedManager.createFeed(title, type, body, userId);
+			}
 			if (coverImageString != null) {
 				imageManager.createImage(coverImageString, ImageType.FEED_COVER.getName(), feedId, userId, null);
 			}
@@ -287,11 +301,11 @@ public class FeedController {
 						folderName += new SimpleDateFormat("yyyyMMddss").format(new Date());
 						location += folderName;
 						
-						int templateId = ticketManager.createTicketTemplate(location, "WPI CSA Event", "WPI CSA", null, Utils.CSA_ID);
+						int templateId = ticketManager.createTicketTemplate(location, "WPI CSA Event", "WPI CSA", null, userId);
 						createTicketTemplate(ticketBgImage, ticketThumbImage, folderName);
 						
 						eventManager.createEvent(EventType.FEED.getName(), feedId, eventTitle, eventDesc, Instant.parse(startTime),
-								Instant.parse(endTime), eventLocation, ticketFee, Utils.CSA_ID, templateId, ticketActive,
+								Instant.parse(endTime), eventLocation, ticketFee, userId, templateId, ticketActive,
 								"", ticketBalance);
 						
 						
@@ -303,7 +317,7 @@ public class FeedController {
 				} else {
 					// Adding calendar only event with default fee and no ticket design
 					eventManager.createEvent(EventType.FEED.getName(), feedId, eventTitle, eventDesc, Instant.parse(startTime),
-							Instant.parse(endTime), eventLocation, 0, Utils.CSA_ID, Util.nullInt, false,
+							Instant.parse(endTime), eventLocation, 0, userId, Util.nullInt, false,
 							"", 0);
 				}
 				
