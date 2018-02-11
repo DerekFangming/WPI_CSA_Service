@@ -42,7 +42,16 @@ $('#payButton').on('click', function (e) {
     	        				if (err != null) {
     	        					showErrorPopup(err == 'DropinError: No payment method is available.' ? 'Please select a payment method' : err);
     	        				} else {
-    	        					makePaymentRequest(fee, payload.type, payload.nonce)
+    	        					var paymentType = payload.type;
+    	        					
+    	        					if (paymentType == 'PayPalAccount') {
+    	        						paymentType += ', ' + payload.details.email;
+    	        					} else if (paymentType == 'CreditCard') {
+    	        						paymentType = payload.details.cardType + ', ' + payload.description;
+    	        					} else {
+    	        						paymentType += ', Unknown';
+    	        					}
+    	        					makePaymentRequest(fee, paymentType, payload.nonce)
     	        				}
     	        			});
     	        		});
@@ -74,6 +83,7 @@ $('#payButton').on('click', function (e) {
 function makePaymentRequest(fee, method, nonce) {
 	$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
 	$("#payButton").prop('disabled', true);
+	$('#processingModal').modal('toggle');
 	var accessToken = getAccessToken();
     var eventId = parseInt($('#eventId').val());
 	
@@ -92,6 +102,7 @@ function makePaymentRequest(fee, method, nonce) {
 		success: function (data) {
 			$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
 	    	$("#payButton").prop('disabled', false);
+	    	$('#processingModal').modal('toggle');
 	    	if (data['error'] != "" ) {
 	    		showErrorPopup(data['error']);
 	    	} else if (data['status'] == "Done") {
@@ -111,6 +122,7 @@ function makePaymentRequest(fee, method, nonce) {
 		error: function (jqXHR, textStatus, errorThrown) {
 			$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
 	    	$("#payButton").prop('disabled', false);
+	    	$('#processingModal').modal('toggle');
 			showErrorPopup('Unknown error occured. Please contact support');
 		}
 	});

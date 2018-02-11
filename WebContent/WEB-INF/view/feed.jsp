@@ -62,7 +62,13 @@
 
         <!-- Jumbotron Header -->
         <header class="jumbotron my-4">
-            <center><h1 class="display-4">${fm.feed.title}</h1></center>
+            <center>
+            	<h1 class="display-4 mb-0">${fm.feed.title}</h1>
+            	<p class="mb-0">
+					<span class="badge badge-secondary">${fm.feed.type}</span>
+					<span class="text-muted">&nbsp; Created by <b>${fm.ownerName}</b> on <script> parseDate( '${fm.feed.createdAt}' ); </script></span>
+				</p>
+            </center>
         </header>
         
         <div class="card top-buffer">
