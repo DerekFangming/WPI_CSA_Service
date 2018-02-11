@@ -111,6 +111,52 @@ public class FeedController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/search_feed", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Object>> searchFeeds(HttpServletRequest request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			String type = request.getParameter("type");
+			String keyword = request.getParameter("keyword");
+			boolean sendBody = request.getParameter("web") != null;
+			
+			List<Feed> feedList;
+			if (type == null && keyword == null) {
+				feedList = feedManager.getRecentFeedByDate(Instant.now(), 10);
+			} else {
+				feedList = feedManager.searchFeed(type, keyword);
+			}
+			
+			List<Map<String, Object>> processedFeedList = new ArrayList<Map<String, Object>>();
+			
+			for(Feed m : feedList){
+				Map<String, Object> processedFeed = new HashMap<String, Object>();
+				processedFeed.put("id", m.getId());
+				processedFeed.put("title", m.getTitle());
+				processedFeed.put("type", m.getType());
+				if (sendBody) processedFeed.put("body", m.getBody());
+				processedFeed.put("ownerId", m.getOwnerId());
+				processedFeed.put("ownerName", userManager.getUserDisplayedName(m.getOwnerId()));
+				processedFeed.put("createdAt", m.getCreatedAt().toString());
+				try {
+					int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
+					processedFeed.put("coverImgId", imgId);
+				}catch(Exception e) {}
+				
+				try {
+					int avatarId = imageManager.getTypeUniqueImage("Avatar", m.getOwnerId()).getId();
+					processedFeed.put("avatarId", avatarId);
+				}catch(Exception e) {}
+				
+				processedFeedList.add(processedFeed);
+			}
+			respond.put("feedList", processedFeedList);
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = errorManager.createErrorRespondFromException(e, request);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/get_feed", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();

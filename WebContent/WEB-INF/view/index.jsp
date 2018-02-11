@@ -57,12 +57,8 @@
     <div class="container">
 
         <!-- Jumbotron Header -->
-        <header class="jumbotron my-4">
-            <h1 class="display-3">A Warm Welcome!</h1>
-            <p class="lead">This site is created as web version of WPI CSA mobile apps. If you see any errors & bugs, don't forget to report to CSA!</p>
-        </header>
         
-        <div class="input-group mb-3">
+        <div class="input-group my-4">
 		    <div class="input-group-prepend">
 		        <button class="btn btn-outline-secondary dropdown-toggle" id="searchType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All</button>
 		        <div class="dropdown-menu">
@@ -73,14 +69,14 @@
 		            <a class="dropdown-item" href="#" onclick="selectType(4);">Event</a>
 		        </div>
 		    </div>
-		    <input type="text" placeholder="Enter some keyword or search by type" class="form-control" aria-label="Text input with dropdown button">
+		    <input type="text" id="searchInput" placeholder="Enter some keyword or search by type" class="form-control">
 		    <div class="input-group-append">
 			    <button class="btn btn-outline-secondary" type="button" id="searchArticleBtn"><i class="fa fa-search" style="color:#6D767E;"></i>&nbsp;Search</button>
 			    <button class="btn btn-outline-secondary" type="button" id="createArticleBtn"><i class="fa fa-plus" style="color:#6D767E;"></i>&nbsp;Create New Article</button>
 			</div>
 		</div>
         
-        <!--  <div class="row"><button id="createArticleBtn" type="button" class="btn btn-primary">Create Article</button></div>-->
+        <div id="feedLoading" class="col" align="center"></div>
         
         <div id="feedSearchResult">
 	        <c:forEach items="${feedList}" var="fm">
