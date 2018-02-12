@@ -260,7 +260,7 @@ public class UserController {
 				roleId = 10;
 			}
 			
-			userManager.setUserRole(requestedUser.getId(), roleId);
+			userManager.setUserRole(requestedUser.getId(), roleId, user.getId());
 			
 			String message = Utils.createRoleChangeEmail(roleId);
 			

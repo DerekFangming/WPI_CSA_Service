@@ -136,4 +136,42 @@ public class AdminController {
 		return "adminUser";
 	}
 	
+	@RequestMapping(value = "/admin/help", method = RequestMethod.GET)
+    public String adminHelpController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+		
+		Cookie cookie = null;
+		try {
+			User user = userManager.validateAccessToken(request);
+			if (!user.getEmailConfirmed()) {
+				model.addAttribute("errorMessage", ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+				return "errorview/403";
+			}
+			if (!UserRole.isAdmin(user.getRoleId())) {
+				return "errorview/403";
+			}
+			
+			String name = userManager.getUserDetail(user.getId()).getName();
+			if (name == null){name = "Unknown";}
+			user.setName(name);
+			model.addAttribute("currentUser", user);
+			if (user.isTokenUpdated()) {
+				cookie = new Cookie("accessToken", user.getAccessToken());
+				cookie.setMaxAge(63113904);
+				cookie.setPath("/");
+			}
+		} catch (NotFoundException e) {
+			//TODO: Ask user to login
+			model.addAttribute("errorMessage", ErrorMessage.NO_USER_LOGGED_IN.getMsg());
+			return "errorview/403";
+		}
+		
+		if (cookie != null) {
+			response.addCookie(cookie);
+		}
+		
+		
+		model.addAttribute("extraPath", "./..");
+		return "adminHelp";
+	}
+	
 }

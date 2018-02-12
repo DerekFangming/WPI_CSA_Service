@@ -1,3 +1,11 @@
+/*Table mappings*/
+/*
+ * user_details    --- user_detail_hists
+ * payments        --- payment_hists
+ * survival_guides --- survival_guide_hists
+ * users           --- User_hists
+ */
+
 create table User_detail_hists (
 	id integer,
 	user_id integer not null,
@@ -96,3 +104,37 @@ LANGUAGE 'plpgsql';
 CREATE TRIGGER Survival_guide_trigger BEFORE UPDATE OR DELETE
 ON Survival_guides FOR EACH ROW
 EXECUTE PROCEDURE Survival_guide_func();
+
+/*The followings are not on PROD yet*/
+
+create table User_hists (
+	id integer,
+	username varchar(32) not null,
+	password varchar(32) not null,
+	email_confirmed boolean not null default false,
+	role_id integer not null default 99,
+	updated_by integer,
+	action varchar(1) not null default 'U',
+	action_date timestamp without time zone not null default now()
+);
+
+CREATE OR REPLACE FUNCTION User_func() RETURNS trigger AS
+$$
+BEGIN
+	IF OLD.role_id != NEW.role_id THEN
+		INSERT INTO User_hists
+		VALUES (OLD.id, OLD.username, OLD.password, OLD.email_confirmed, OLD.role_id, OLD.updated_by, substring(TG_OP,1,1), NOW());
+	END IF;
+	IF TG_OP = 'DELETE' THEN
+		RETURN OLD;
+	ELSE
+		RETURN NEW;
+	END IF;
+
+END;
+$$
+LANGUAGE 'plpgsql';
+
+CREATE TRIGGER User_trigger BEFORE UPDATE OR DELETE
+ON Users FOR EACH ROW
+EXECUTE PROCEDURE User_func();

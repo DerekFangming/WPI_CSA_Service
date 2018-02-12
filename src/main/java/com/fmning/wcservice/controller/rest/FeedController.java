@@ -4,9 +4,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -60,6 +58,8 @@ public class FeedController {
 	@Autowired private ErrorManager errorManager;
 	@Autowired private TicketManager ticketManager;
 	
+	public static int totalFeeds = Util.nullInt;
+	
 	@RequestMapping(value = "/get_recent_feeds", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getRecentFeeds(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
@@ -71,40 +71,28 @@ public class FeedController {
 				limit = limit > 100 ? 100 : limit;
 			}catch(NumberFormatException e){}
 			
-			Instant checkPoint = Instant.now();
-			try{
-				String timeStr = request.getParameter("checkPoint");
-				if(timeStr != null) {
-					checkPoint = Instant.parse(timeStr);
+			String pageIndex = request.getParameter("page");
+			if (pageIndex == null) {
+				Instant checkPoint = Instant.now();
+				try{
+					String timeStr = request.getParameter("checkPoint");
+					if(timeStr != null) {
+						checkPoint = Instant.parse(timeStr);
+					}
+				}catch(DateTimeParseException e){}
+				
+				List<Feed> feedList = feedManager.getRecentFeedByDate(checkPoint, limit);
+				
+				respond.put("feedList", processFeedList(feedList, false));
+				respond.put("checkPoint", feedList.get(feedList.size() - 1).getCreatedAt().toString());
+			} else {
+				List<Feed> feedList = feedManager.getRecentFeedByPageIndex(Integer.parseInt(pageIndex), limit);
+				if (totalFeeds == Util.nullInt) {
+					totalFeeds = feedManager.getFeedCount();
 				}
-			}catch(DateTimeParseException e){}
-			
-			List<Feed> feedList = feedManager.getRecentFeedByDate(checkPoint, limit);
-			List<Map<String, Object>> processedFeedList = new ArrayList<Map<String, Object>>();
-			
-			for(Feed m : feedList){
-				Map<String, Object> processedFeed = new HashMap<String, Object>();
-				processedFeed.put("id", m.getId());
-				processedFeed.put("title", m.getTitle());
-				processedFeed.put("type", m.getType());
-				//processedFeed.put("body", m.getBody());
-				processedFeed.put("ownerId", m.getOwnerId());
-				processedFeed.put("ownerName", userManager.getUserDisplayedName(m.getOwnerId()));
-				processedFeed.put("createdAt", m.getCreatedAt().toString());
-				try {
-					int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
-					processedFeed.put("coverImgId", imgId);
-				}catch(Exception e) {}
-				
-				try {
-					int avatarId = imageManager.getTypeUniqueImage("Avatar", m.getOwnerId()).getId();
-					processedFeed.put("avatarId", avatarId);
-				}catch(Exception e) {}
-				
-				processedFeedList.add(processedFeed);
+				respond.put("feedList", processFeedList(feedList, true));
+				respond.put("pageCount", (int) Math.ceil((double) FeedController.totalFeeds / 10));
 			}
-			respond.put("feedList", processedFeedList);
-			respond.put("checkPoint", feedList.get(feedList.size() - 1).getCreatedAt().toString());
 			respond.put("error", "");
 		}catch(Exception e){
 			respond = errorManager.createErrorRespondFromException(e, request);
@@ -126,36 +114,38 @@ public class FeedController {
 			} else {
 				feedList = feedManager.searchFeed(type, keyword);
 			}
-			
-			List<Map<String, Object>> processedFeedList = new ArrayList<Map<String, Object>>();
-			
-			for(Feed m : feedList){
-				Map<String, Object> processedFeed = new HashMap<String, Object>();
-				processedFeed.put("id", m.getId());
-				processedFeed.put("title", m.getTitle());
-				processedFeed.put("type", m.getType());
-				if (sendBody) processedFeed.put("body", m.getBody());
-				processedFeed.put("ownerId", m.getOwnerId());
-				processedFeed.put("ownerName", userManager.getUserDisplayedName(m.getOwnerId()));
-				processedFeed.put("createdAt", m.getCreatedAt().toString());
-				try {
-					int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
-					processedFeed.put("coverImgId", imgId);
-				}catch(Exception e) {}
-				
-				try {
-					int avatarId = imageManager.getTypeUniqueImage("Avatar", m.getOwnerId()).getId();
-					processedFeed.put("avatarId", avatarId);
-				}catch(Exception e) {}
-				
-				processedFeedList.add(processedFeed);
-			}
-			respond.put("feedList", processedFeedList);
+			respond.put("feedList", processFeedList(feedList, sendBody));
 			respond.put("error", "");
 		}catch(Exception e){
 			respond = errorManager.createErrorRespondFromException(e, request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	private List<Map<String, Object>> processFeedList (List<Feed> feedList, boolean sendBody) {
+		List<Map<String, Object>> processedFeedList = new ArrayList<Map<String, Object>>();
+		for(Feed m : feedList){
+			Map<String, Object> processedFeed = new HashMap<String, Object>();
+			processedFeed.put("id", m.getId());
+			processedFeed.put("title", m.getTitle());
+			processedFeed.put("type", m.getType());
+			if (sendBody) processedFeed.put("body", m.getBody());
+			processedFeed.put("ownerId", m.getOwnerId());
+			processedFeed.put("ownerName", userManager.getUserDisplayedName(m.getOwnerId()));
+			processedFeed.put("createdAt", m.getCreatedAt().toString());
+			try {
+				int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
+				processedFeed.put("coverImgId", imgId);
+			}catch(Exception e) {}
+			
+			try {
+				int avatarId = imageManager.getTypeUniqueImage("Avatar", m.getOwnerId()).getId();
+				processedFeed.put("avatarId", avatarId);
+			}catch(Exception e) {}
+			
+			processedFeedList.add(processedFeed);
+		}
+		return processedFeedList;
 	}
 	
 	@RequestMapping(value = "/get_feed", method = RequestMethod.GET)
@@ -258,6 +248,11 @@ public class FeedController {
 				feedId = feedManager.createFeed(title, type, body, userId, user.getId());
 			} else {
 				feedId = feedManager.createFeed(title, type, body, userId);
+			}
+			if (totalFeeds == Util.nullInt) {
+				totalFeeds = feedManager.getFeedCount();
+			} else {
+				totalFeeds += 1;
 			}
 			if (coverImageString != null) {
 				imageManager.createImage(coverImageString, ImageType.FEED_COVER.getName(), feedId, userId, null);

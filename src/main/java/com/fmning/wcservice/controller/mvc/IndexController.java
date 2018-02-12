@@ -1,6 +1,5 @@
 package com.fmning.wcservice.controller.mvc;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +23,7 @@ import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
 import com.fmning.util.Util;
+import com.fmning.wcservice.controller.rest.FeedController;
 import com.fmning.wcservice.model.FeedModel;
 import com.fmning.wcservice.model.LoginForm;
 import com.fmning.wcservice.model.RegisterForm;
@@ -60,7 +60,8 @@ public class IndexController {
 			response.addCookie(cookie);
 		}
 		
-		model.addAttribute("feedList", getFeedList());
+		model.addAttribute("feedList", getFeedList(0));
+		model.addAttribute("pageCount", (int) Math.ceil((double) FeedController.totalFeeds / 10));
 		model.addAttribute("redirectPage", "index");
 		
 		return "index";
@@ -147,7 +148,8 @@ public class IndexController {
 		model.addAttribute("redirectPage", "index");
 		
 		
-		model.addAttribute("feedList", getFeedList());
+		model.addAttribute("feedList", getFeedList(0));
+		model.addAttribute("pageCount", (int) Math.ceil((double) FeedController.totalFeeds / 10));
 	
 		return "index";
 	}
@@ -186,8 +188,8 @@ public class IndexController {
 		return "createFeed";
 	}
 	
-	private List<FeedModel> getFeedList() {
-		List<Feed> feedList = feedManager.getRecentFeedByDate(Instant.now(), 10);
+	private List<FeedModel> getFeedList(int pageIndex) {
+		List<Feed> feedList = feedManager.getRecentFeedByPageIndex(pageIndex, 10);
 		List<FeedModel> feedModelList = new ArrayList<>();
 		
 		for(Feed m : feedList){
@@ -203,6 +205,11 @@ public class IndexController {
 			
 			feedModelList.add(fm);
 		}
+		
+		if (FeedController.totalFeeds == Util.nullInt) {
+			FeedController.totalFeeds = feedManager.getFeedCount();
+		}
+		
 		return feedModelList;
 	}
 

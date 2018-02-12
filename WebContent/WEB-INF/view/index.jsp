@@ -43,11 +43,11 @@
                         <a class="nav-link" href="./sg">Survival Guide</a>
                     </li>
                     <c:if test="${user != null}">
-    					<%@include file="subview/navUserLoggedIn.jsp" %>
-    					</c:if>
-    					<c:if test="${user == null}">
-    					<%@include file="subview/navLogin.jsp" %>
-    					</c:if>
+   					<%@include file="subview/navUserLoggedIn.jsp" %>
+   					</c:if>
+   					<c:if test="${user == null}">
+   					<%@include file="subview/navLogin.jsp" %>
+   					</c:if>
                 </ul>
             </div>
         </div>
@@ -103,7 +103,36 @@
 	      	</c:forEach>
         </div>
         
-      	
+        <div id="pageIndexNav" class="mt-4">
+        	<nav aria-label="Page navigation">
+			    <ul class="pagination justify-content-center">
+			        <li class="page-item disabled" id="prevBtn">
+			            <a class="page-link" href="#" onclick="gotoPrev()">Previous</a>
+			        </li>
+			        <li class="page-item active" id="pageIndex0"><a class="page-link" href="#" onclick="gotoPage(0)">1</a></li>
+			        
+			        <c:forEach begin="1" end="${pageCount - 1}" varStatus="loop">
+					<li class="page-item" id="pageIndex${loop.index}"><a class="page-link" href="#" onclick="gotoPage(${loop.index})">${loop.index + 1}</a></li>
+					</c:forEach>
+			        
+			        <c:choose>
+				    <c:when test="${pageCount == 1}">
+				    <li class="page-item disabled id="nextBtn">
+				    	 <a class="page-link" href="#" onclick="gotoNext()">Next</a>
+			        </li>
+				    </c:when>
+				    <c:otherwise>
+				    <li class="page-item" id="nextBtn">
+				    	 <a class="page-link" href="#" onclick="gotoNext()">Next</a>
+			        </li>
+				    </c:otherwise>
+					</c:choose>
+			           
+			    </ul>
+			</nav>
+        </div>
+        
+      	<input type="hidden" id="pageCount" value="${pageCount}">
       	<c:if test="${user != null}">
 		<input type="hidden" id="userEmailConfirmed" value="${user.emailConfirmed}">
 		</c:if>

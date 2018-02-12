@@ -7,7 +7,8 @@ create table users (
 	created_at timestamp without time zone NOT NULL,
 	email_confirmed boolean NOT NULL DEFAULT false,
 	salt varchar(32) NOT NULL,
-	role_id integer NOT NULL DEFAULT 99
+	role_id integer NOT NULL DEFAULT 99,
+	updated_by integer
 );
 
 create table images (
@@ -169,3 +170,5 @@ create table error_logs (
 --2. remove html option for editor
 
 alter table feeds add column updated_by integer;
+
+alter table users add column updated_by integer;
