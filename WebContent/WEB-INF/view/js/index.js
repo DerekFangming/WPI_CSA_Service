@@ -170,7 +170,7 @@ function gotoPage(pageIndex) {
 function processFeedList (feedList) {
 	var result = '';
 	for (var i = 0; i < feedList.length; i++) {
-		result += '<div class="card top-buffer"><div class="card-header"><h1 class="mb-0"><a href="./feed?id=';
+		result += '<div class="card mt-3"><div class="card-header"><h1 class="mb-0"><a href="./feed?id=';
 		result += feedList[i].id;
 		result += '">' + feedList[i].title;
 		result += '</a></h1><p class="mb-0"><span class="badge badge-secondary">' + feedList[i].type;

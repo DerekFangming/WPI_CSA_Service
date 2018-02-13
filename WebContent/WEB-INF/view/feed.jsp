@@ -71,7 +71,7 @@
             </center>
         </header>
         
-        <div class="card top-buffer">
+        <div class="card mt-3">
 			<div class="card-header">
 				<script type="text/javascript">
 					var body = '${fm.feed.body}';
@@ -82,7 +82,7 @@
 		</div>
 		
 		<c:if test="${fm.event != null}">
-    	<div class="card top-buffer">
+    	<div class="card mt-3">
 			<div class="card-header">
 				Event:
 			</div>

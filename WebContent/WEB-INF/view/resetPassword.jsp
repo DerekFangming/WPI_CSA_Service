@@ -39,8 +39,7 @@
     
     	<c:choose>
 		<c:when test="${changePwd}">
-		<div style="height:50px"></div>
-		<div class="card top-buffer" style="max-width:500px;margin:0 auto;">
+		<div class="card mt-3 mb-1" style="max-width:500px;margin:0 auto;">
 		    <div class="card-header">
 		        Reset password
 		    </div>

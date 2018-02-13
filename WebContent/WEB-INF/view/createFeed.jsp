@@ -56,14 +56,14 @@
     <!-- Page Content -->
     <div class="container">
 
-       <div class="card top-buffer">
+       <div class="card mt-3">
 			<div class="card-header" style="height:49px;">
 				<p class="lead" style="margin-top:-13px"><font size="6">Cover&emsp;</font>This will be the cover image and title of your article</p>
 			</div>
 			<div class="row">
 				<div class="col-lg-6 col-sm-12">
 					<div class="life-img-container">
-						<div id="img-picker" class="right-line aspect-fill" ondragover="allowDrop(event)"></div>
+						<div id="img-picker" class="aspect-fill border-right" ondragover="allowDrop(event)"></div>
 					</div>
 				</div>
 				<div class="col-lg-6 clm-sm-12">
@@ -105,7 +105,7 @@
 						</div>
 						</c:if>
 						
-						<div class="top-buffer"></div>
+						<div class="mt-3"></div>
 						<button type="button" id="submitBtn" class="btn btn-success pull-right">
 							<i id="submitSpinner" class="fa fa-refresh fa-spin" style="display: none"></i>&nbsp;Submit
 						</button>
@@ -117,7 +117,7 @@
 			</div>
 		</div>
         
-        <div class="card top-buffer">
+        <div class="card mt-3">
 			<div class="card-header" style="height:49px;">
 				<p class="lead" style="margin-top:-13px"><font size="6">Content&emsp;</font>This is the content of your article</p>
 			</div>
@@ -202,7 +202,7 @@
 						        <div>
 						        		<div style="float: left;">
 										<button class="btn btn-secondary" type="button" onclick="chooseFile(1);" id="ticketBgSBtn">Add background</button><br>
-								        <button class="btn btn-secondary top-buffer" type="button" onclick="chooseFile(2);" id="ticketThumBtn">Add thumbnail</button>
+								        <button class="btn btn-secondary mt-3" type="button" onclick="chooseFile(2);" id="ticketThumBtn">Add thumbnail</button>
 								        <div style="display:none;">
 									        	<input id="ticketImgInput" type="file" accept="image/jpeg, image/jpg, image/png"/>
 									        <input id="ticketImgOption" value="1">
@@ -211,7 +211,7 @@
 									<div class="ticket-bg-container" >
 										<img id="ticketBGImage" class="aspect-fill" width="300px" height="450px" style="position: absolute;"/>
 										<div class="ticket_blur"></div>
-										<div class="ticket-thum-container">
+										<div class="ticket-thum-container border">
 										<img id="ticketThumnImage" class="aspect-fill" width="150px" height="150px"/>
 										</div>
 									</div>

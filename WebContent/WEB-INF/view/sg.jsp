@@ -62,7 +62,7 @@
             <center><p class="lead">Coming soon</p></center>
         </header>-->
         
-        <div class="row top-buffer">
+        <div class="row mt-3">
 	    		<div class="col-lg-4 col-sm-12">
 	    			<div class="sg-menu">
 				${menuList}
@@ -75,7 +75,7 @@
 					<p><small class="text-muted" id="sgSubTitle"></small></p>
 					</div>
 				</div>
-				<div class="card top-buffer sg-body">
+				<div class="card mt-3 sg-body">
 					<div class="card-body" id="sgContent"></div>
 				</div>
 			</div>

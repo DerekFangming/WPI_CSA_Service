@@ -3,7 +3,7 @@
  * user_details    --- user_detail_hists
  * payments        --- payment_hists
  * survival_guides --- survival_guide_hists
- * users           --- User_hists
+ * users           --- user_hists
  */
 
 create table User_detail_hists (
@@ -74,6 +74,12 @@ CREATE TRIGGER Payment_trigger BEFORE UPDATE OR DELETE
 ON Payments FOR EACH ROW
 EXECUTE PROCEDURE Payment_func();
 
+/**
+
+The following triggers have not been deployed yet.
+
+
+*/
 
 create table Survival_guide_hists (
 	id integer,

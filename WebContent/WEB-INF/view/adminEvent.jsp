@@ -47,6 +47,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="./user">User</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./help">Help</a>
+                    </li>
                     <li class="nav-item dropdown">
 					    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					    	${user.name}
@@ -67,17 +70,17 @@
         	<div class="row">
         		
         		<c:forEach items="${eventList}" var="em">
-	        <div class="col-lg-4 col-md-6 col-sm-12 top-buffer">
+	        <div class="col-lg-4 col-md-6 col-sm-12 mt-3">
 	        		<div class="card card-event">
 	        			<div class="card-img-top event-img-container">
 					    <img class="aspect-fill" src="../../images/${em.coverImageId}.jpg">
 				    </div>
-				    <div class="card-body card-body-bottom-line">
+				    <div class="card-body border-bottom">
 				        <h5 id="titleLbl${em.event.id}" class="card-title">${em.event.title}</h5>
 				        <p id="statusLbl${em.event.id}" class="card-text">Status: ${em.event.active ? "Selling" : "Sold out"}</p>
 				        <p id="balanceLbl${em.event.id}" class="card-text">Ticket:  Sold ${em.registedUserCount}, remaining ${em.event.ticketBalance}</p>
 				    </div>
-					<div class="card-body card-body-bottom-line text-center">
+					<div class="card-body border-bottom text-center">
 					    	<button onclick="openEvent(${em.event.id});" type="button" class="btn btn-primary" data-toggle="tooltip-edit">
 							<i class="fa fa-pencil-square-o"></i>&nbsp;Edit
 						</button>
@@ -85,7 +88,7 @@
 							<i class="fa fa-list-ul"></i>&nbsp;View  Participants
 						</button>
 					    </div>
-					    <div class="card-body card-body-bottom-line input-group">
+					    <div class="card-body border-bottom input-group">
 				    		<input id="balanceIn${em.event.id}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
 				    		<span class="input-group-btn">
 					        <button id="balanceBtn${em.event.id}" onclick="setBalance(${em.event.id});" type="button" class="btn btn-primary" data-toggle="tooltip-remain">
@@ -93,7 +96,7 @@
 							</button>
 							</span>
 					    </div>
-					    <div class="card-body card-body-bottom-line text-center">
+					    <div class="card-body border-bottom text-center">
 				    		<c:choose>
 						<c:when test="${em.event.active}">
 					    		<button id="statusBtn${em.event.id}" onclick="toggleStatus(${em.event.id}, false);" type="button" class="btn btn-danger" data-toggle="tooltip-soldout">

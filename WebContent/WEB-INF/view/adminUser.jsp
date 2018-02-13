@@ -45,7 +45,10 @@
                         <a class="nav-link" href="./event">Event</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="./user">User</a>
+                        <a class="nav-link" href="#">User</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./help">Help</a>
                     </li>
                     <li class="nav-item dropdown">
 					    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -65,7 +68,7 @@
     <div class="container">
     
     	<div class="row">
-	    	<div class="col-lg-8 col-sm-12 top-buffer">
+	    	<div class="col-lg-8 col-sm-12 mt-3">
 	    		<table id="userTable" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 				    <thead>
 				        <tr>
@@ -110,7 +113,7 @@
 				    </tbody>
 				</table>
 			</div>
-			<div class="col-lg-4 col-sm-12 top-buffer">
+			<div class="col-lg-4 col-sm-12 mt-3">
 	    		<div class="card">
 				    <h5 class="card-header">User details</h5>
 				    <div class="card-body">
@@ -126,10 +129,10 @@
 				        <br><br>
 				        <button id="sendResetPasswordBtn" class="btn btn-primary" data-toggle="tooltip-pwd">Send password reset email</button>
 				        
-				        <div class="top-buffer card-body-bottom-line"></div>
+				        <div class="mt-3 border-bottom"></div>
 				        <input type="hidden" id="currentUserID" value="${currentUser.id}">
 				        <input type="hidden" id="currentUserRoleID" value="${currentUser.roleId}">
-				        <div class="dropdown top-buffer">
+				        <div class="dropdown mt-3">
 							<button class="btn btn-primary dropdown-toggle" type="button" id="currentRole" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								User Role
 							</button>

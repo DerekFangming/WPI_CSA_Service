@@ -37,9 +37,7 @@
 
     <!-- Page Content -->
     <div class="container">
-    
-		<div style="height:35px"></div>
-		<div class="card top-buffer" style="max-width:500px;margin:0 auto;">
+		<div class="card mt-4" style="max-width:500px;margin:0 auto;">
 		    <div class="card-header">
 		        Report Problem
 		    </div>

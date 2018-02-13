@@ -28,7 +28,6 @@ import com.fmning.util.PaymentType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.model.EventModel;
 import com.fmning.wcservice.utils.UserRole;
-import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class AdminController {
@@ -37,6 +36,11 @@ public class AdminController {
 	@Autowired private EventManager eventManager;
 	@Autowired private ImageManager imageManager;
 	@Autowired private PaymentManager paymentManager;
+	
+	@RequestMapping(value = "/admin", method = RequestMethod.GET)
+	public String adminRedirectController(HttpServletRequest request) {
+		return "redirect:/admin/event";
+	}
 	
 	@RequestMapping(value = "/admin/event", method = RequestMethod.GET)
     public String adminEventController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
@@ -153,17 +157,13 @@ public class AdminController {
 			String name = userManager.getUserDetail(user.getId()).getName();
 			if (name == null){name = "Unknown";}
 			user.setName(name);
-			model.addAttribute("currentUser", user);
+			model.addAttribute("user", user);
 			if (user.isTokenUpdated()) {
 				cookie = new Cookie("accessToken", user.getAccessToken());
 				cookie.setMaxAge(63113904);
 				cookie.setPath("/");
 			}
-		} catch (NotFoundException e) {
-			//TODO: Ask user to login
-			model.addAttribute("errorMessage", ErrorMessage.NO_USER_LOGGED_IN.getMsg());
-			return "errorview/403";
-		}
+		} catch (NotFoundException e) {}
 		
 		if (cookie != null) {
 			response.addCookie(cookie);

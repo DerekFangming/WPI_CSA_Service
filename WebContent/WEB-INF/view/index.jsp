@@ -80,7 +80,7 @@
         
         <div id="feedSearchResult">
 	        <c:forEach items="${feedList}" var="fm">
-	        <div class="card top-buffer">
+	        <div class="card mt-3">
 				<div class="card-header">
 					<h1 class="mb-0"><a href="./feed?id=${fm.feed.id}">${fm.feed.title}</a></h1>
 					<p class="mb-0">
@@ -133,9 +133,19 @@
         </div>
         
       	<input type="hidden" id="pageCount" value="${pageCount}">
+      	
       	<c:if test="${user != null}">
-		<input type="hidden" id="userEmailConfirmed" value="${user.emailConfirmed}">
+		
 		</c:if>
+		
+		<c:choose>
+	    <c:when test="${user != null}">
+	    <input type="hidden" id="userEmailConfirmed" value="${user.emailConfirmed}">
+	    </c:when>
+	    <c:otherwise>
+	    <input type="hidden" id="userEmailConfirmed" value="false">
+	    </c:otherwise>
+		</c:choose>
 		
 
     </div>
