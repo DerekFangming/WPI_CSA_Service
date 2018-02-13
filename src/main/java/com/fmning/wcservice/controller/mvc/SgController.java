@@ -23,7 +23,6 @@ import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.SGManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.Util;
-import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class SgController {
@@ -66,8 +65,6 @@ public class SgController {
 			model.addAttribute("menuList", generatedMenu);
 		}
 		
-		
-		
 		return "sg";
 	}
 	
@@ -96,8 +93,7 @@ public class SgController {
 			if (parentId == Util.nullInt) {
 				content = "<div class=\"card\">\n";
 				String collapseId = Integer.toString(parentId);
-				content += "<div class=\"card-header\"><a data-toggle=\"collapse\" href=\"#collapse"
-						+ collapseId + "\">Survival Guide</a></div>\n";
+				content += "<div class=\"card-header\">Survival Guide Menu</div>\n";
 				content += "<div id=\"collapse" + collapseId + "\" class=\"card-collapse collapse"
 						+ (parentId == Util.nullInt ? " show" : "") + "\">\n";
 			}
@@ -107,7 +103,7 @@ public class SgController {
 				String childContent = generateMenu(sg.getId(), prefix + "&emsp;");
 				if (childContent.equals("")) {
 					String jsFunc = "openSG(" + Integer.toString(sg.getId()) + ");";
-					content += "<div class=\"card-body sg-menu-item\"><a onclick=\"" + jsFunc + "\" href=\"#\">"
+					content += "<div class=\"card-body sg-menu-item border-bottom\"><a onclick=\"" + jsFunc + "\" href=\"#\">"
 							+ prefix + sg.getTitle() + "</a></div>\n";
 				} else {
 					String collapseId = Integer.toString(sg.getId());

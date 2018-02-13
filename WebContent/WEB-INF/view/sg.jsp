@@ -20,9 +20,9 @@
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="/resources/css/main.css?v=1" rel="stylesheet">
+    <link href="/resources/css/main.css?v=2" rel="stylesheet">
 	
-	<script src="/resources/js/common.js?v=1"></script>
+	<script src="/resources/js/common.js?v=2"></script>
 
 </head>
 
@@ -62,7 +62,7 @@
             <center><p class="lead">Coming soon</p></center>
         </header>-->
         
-        <div class="row top-buffer">
+        <div class="row mt-3">
 	    		<div class="col-lg-4 col-sm-12">
 	    			<div class="sg-menu">
 				${menuList}
@@ -72,10 +72,10 @@
 				<div class="card sg-title">
 					<div class="card-header sg-title">
 					<h1 class="lead"><big><big id="sgTitle"></big></big></h1>
-					<p><small class="text-muted" id="sgSubTitle">Last updated 3 mins ago</small></p>
+					<p><small class="text-muted" id="sgSubTitle"></small></p>
 					</div>
 				</div>
-				<div class="card top-buffer sg-body">
+				<div class="card mt-3 sg-body">
 					<div class="card-body" id="sgContent"></div>
 				</div>
 			</div>
@@ -98,15 +98,15 @@
     <script src="<%=BSjs %>"></script>
     
     <c:if test="${user == null || (user != null && !user.emailConfirmed)}">
-    <script src="/resources/js/verifyEmail.js?v=1"></script>
+    <script src="/resources/js/verifyEmail.js?v=2"></script>
     </c:if>
     
     <c:if test="${user == null}">
-    <script src="/resources/js/formLogin.js?v=1"></script>
+    <script src="/resources/js/formLogin.js?v=2"></script>
     </c:if>
     
-    <script src="/resources/js/sg.js?v=1"></script>
-    <script src="/resources/js/parser.js?v=1"></script>
+    <script src="/resources/js/sg.js?v=2"></script>
+    <script src="/resources/js/parser.js?v=2"></script>
 
 </body>
 

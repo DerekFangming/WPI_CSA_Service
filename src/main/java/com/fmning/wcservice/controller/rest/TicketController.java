@@ -140,8 +140,7 @@ public class TicketController {
                 System.out.println("the pass is NOT Valid man!!!");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("failed!");
+        	errorManager.logError(e);
         }
 
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -157,13 +156,14 @@ public class TicketController {
 	        response.setHeader("Content-Disposition", "attachment; filename=\"test.pkpass\"");
 	        response.flushBuffer();
 		} catch (Exception e) {
+			errorManager.logError(e);
 			try {
 				response.setStatus(200);
 				response.getWriter().write(e.getMessage());
 				response.getWriter().flush();
 				response.getWriter().close();
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				errorManager.logError(e1);
 			}
 		}
 

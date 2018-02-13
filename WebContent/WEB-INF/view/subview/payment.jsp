@@ -17,3 +17,20 @@
 
     </div>
 </div>
+
+
+<div class="modal fade" id="processingModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+            	<h4 class="modal-title">Processing... Do <span class="text-warning">NOT</span> close your browser.</h4>
+            </div>
+            <div class="modal-body">
+            	<center><i class="fa fa-refresh fa-3x fa-spin" style="color:black"></i></center>
+            </div>
+        </div>
+
+    </div>
+</div>

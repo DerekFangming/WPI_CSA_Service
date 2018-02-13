@@ -62,6 +62,7 @@
   </bean>
 
   <mvc:resources mapping="/favicon.ico" location="/WEB-INF/favicon.ico" />
+  <mvc:resources mapping="/apple-app-site-association" location="/WEB-INF/apple-app-site-association" />
   <mvc:resources mapping="/resources/**" location="/WEB-INF/view/" />
   <mvc:resources mapping="/images/**" location="file:/Volumes/Data/${imgDir}/" cache-period="31556926" />
 

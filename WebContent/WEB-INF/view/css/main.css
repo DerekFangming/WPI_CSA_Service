@@ -8,17 +8,10 @@ body {
 		max-width:1200px;
 	}
 }
+.modal { overflow: auto !important; }
 
 .tooltip {
     z-index: 0 !important;
-}
-
-.top-buffer { margin-top:20px; }
-
-.left-buffer { margin-left:20px; }
-
-.right-line {
-	border-right:1pt solid #DFDFDF;
 }
 
 .life-desc {
@@ -28,6 +21,30 @@ body {
 
 .life-img-container {
 	height: 300px;
+}
+
+.ticket-bg-container {
+	width: 300px;
+	height: 450px;
+	float: right;
+	position: relative;
+}
+
+.ticket_blur {
+	width: 300px;
+	height: 450px;
+	background-color:#b3b3b3;
+	opacity: 0.8;
+	position: relative;
+}
+
+.ticket-thum-container {
+	width: 150px;
+	height: 150px;
+	background-color: white;
+	top: 50px;
+	right: 20px;
+	position: absolute;
 }
 
 .feed-img-container {
@@ -45,7 +62,6 @@ body {
 .sg-menu-item {
 	height: 50px;
 	line-height: 10px;
-	border-bottom:1pt solid #DFDFDF;
 }
 
 .sg-title {
@@ -65,10 +81,6 @@ body {
 .imgtxt-img-container {
 	max-width: 300px;
 	min-width: 300px;
-}
-
-.card-body-bottom-line {
-	border-bottom:1px solid #DFDFDF;
 }
 
 .card-event {

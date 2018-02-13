@@ -11,6 +11,8 @@ $('#loginForm').submit(function (e) {
 				if ($('#refreshAfterLogin').length == 0) {
 					$('#loginModal').modal('toggle');
 					$('#loginNav').replaceWith(data);
+					
+					$('#userEmailConfirmed').val(data.includes('not') ? 'false' : 'true');
 				} else {
 					location.reload();
 				}
@@ -56,6 +58,8 @@ $('#registerForm').submit(function (e) {
 						$('#loginNav').replaceWith(data);
 						showPopup('Verification email sent', 'An email has been sent to your mail box with a link to confirm your email. '
 								+ 'Please click on the link in 24 hours. Please check your junk folder if you cannot see the email.');
+						
+						$('#userEmailConfirmed').val('false');
 					} else {
 						location.reload();
 					}

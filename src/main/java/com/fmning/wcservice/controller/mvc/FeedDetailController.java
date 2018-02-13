@@ -35,7 +35,9 @@ import com.fmning.service.manager.EventManager;
 import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.EventType;
+import com.fmning.util.FeedType;
 import com.fmning.util.Util;
+import com.fmning.wcservice.model.FeedModel;
 import com.fmning.wcservice.utils.Utils;
 
 @Controller
@@ -71,36 +73,22 @@ public class FeedDetailController {
 		String feedId = request.getParameter("id");
 		Feed feed = feedManager.getFeedById(Integer.parseInt(feedId));
 		
-		/*List<String> matchs = new ArrayList<>();
-		Matcher m = Pattern.compile("<img.*?>")
-                .matcher(feed.getBody());
-        while (m.find()) {
-            matchs.add(m.group(0));
-        }
-        String newBody = feed.getBody();
-        for (String s : matchs) {
-	        	try{
-		        	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		        	DocumentBuilder db = dbf.newDocumentBuilder();
-		        	InputSource is = new InputSource(new StringReader(s));
-		        	Document doc = db.parse(is);
-		        	Element e = (Element)(doc.getElementsByTagName("img").item(0));
-		        	String src = e.getAttribute("src");
-		        	String newTag = "<div class=\"feed-img-container\"><img class=\"aspect-fill\" src=\"./images/"
-		        	+ src.replace("WCImage_", "") + ".jpg\"></div>";
-		        	newBody = newBody.replace(s, newTag);
-	        	} catch (Exception e) {
-	        		continue;
-	        	}
-        }*/
-        feed.setBody(feed.getBody());
+		FeedModel fm = new FeedModel();
+		fm.setFeed(feed);
+		fm.setOwnerName(userManager.getUserDisplayedName(feed.getOwnerId()));
 		
-		model.addAttribute("feed", feed);
+		if (feed.getType().equals(FeedType.EVENT.getName())) {
+			try {
+				Event event = eventManager.getEventByType(EventType.FEED.getName(), feed.getId());
+				fm.setEvent(event);
+				//model.addAttribute("event", event);
+			} catch (NotFoundException e){}
+		}
 		
-		try {
-			Event event = eventManager.getEventByType(EventType.FEED.getName(), feed.getId());
-			model.addAttribute("event", event);
-		} catch (NotFoundException e){}
+		
+		model.addAttribute("fm", fm);
+		
+		
 		
 		
 		model.addAttribute("redirectPage", "feed");

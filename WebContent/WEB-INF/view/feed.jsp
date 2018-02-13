@@ -23,10 +23,10 @@
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="/resources/css/main.css?v=1" rel="stylesheet">
+    <link href="/resources/css/main.css?v=2" rel="stylesheet">
 	
-	<script src="/resources/js/common.js?v=1"></script>
-    <script src="/resources/js/parser.js?v=1"></script>
+	<script src="/resources/js/common.js?v=2"></script>
+    <script src="/resources/js/parser.js?v=2"></script>
 
 </head>
 
@@ -62,43 +62,49 @@
 
         <!-- Jumbotron Header -->
         <header class="jumbotron my-4">
-            <center><h1 class="display-4">${feed.title}</h1></center>
+            <center>
+            	<h1 class="display-4 mb-0">${fm.feed.title}</h1>
+            	<p class="mb-0">
+					<span class="badge badge-secondary">${fm.feed.type}</span>
+					<span class="text-muted">&nbsp; Created by <b>${fm.ownerName}</b> on <script> parseDate( '${fm.feed.createdAt}' ); </script></span>
+				</p>
+            </center>
         </header>
         
-        <div class="card top-buffer">
+        <div class="card mt-3">
 			<div class="card-header">
 				<script type="text/javascript">
-					var body = '${feed.body}';
+					var body = '${fm.feed.body}';
 					document.write(processContent(body));
 				</script>
 				
 			</div>
 		</div>
 		
-		<c:if test="${event != null}">
-    	<div class="card top-buffer">
+		<c:if test="${fm.event != null}">
+    	<div class="card mt-3">
 			<div class="card-header">
 				Event:
 			</div>
 			<div class="card-body">
-    			<h4 class="card-title">${event.title}</h4>
-    			<p class="card-text">Time: <script> parseDate( '${event.startTime}' ); </script> to <script> parseDate( '${event.endTime}' ); </script></p>
-    			<p class="card-text">Location: ${event.location}</p>
-    			<p class="card-text">Description: ${event.description}</p>
+    			<h4 class="card-title">${fm.event.title}</h4>
+    			<p class="card-text">Time: <script> parseDate( '${fm.event.startTime}' ); </script> to <script> parseDate( '${fm.event.endTime}' ); </script></p>
+    			<p class="card-text">Location: ${fm.event.location}</p>
+    			<p class="card-text">Description: ${fm.event.description}</p>
     			
-    			<c:if test="${event.active}">
+    			<c:if test="${fm.event.active}">
 		    	<c:choose>
-  				<c:when test="${event.fee == 0}">
+  				<c:when test="${fm.event.fee == 0}">
   				<a id="payButton" href="#" class="btn btn-primary"><i id="ticketSpinner" class=""></i>&nbsp;Free - Get ticket</a>
-  				<input type="hidden" id="eventId" value="${event.id}">
+  				<input type="hidden" id="eventId" value="${fm.event.id}">
   				</c:when>
   				<c:otherwise>
-  				<a id="payButton" href="#" class="btn btn-primary"><i id="ticketSpinner" class=""></i>&nbsp;$${event.fee} - Pay and get ticket</a>
-  				<input type="hidden" id="eventId" value="${event.id}">
+  				<a id="payButton" href="#" class="btn btn-primary"><i id="ticketSpinner" class=""></i>&nbsp;$${fm.event.fee} - Pay and get ticket</a>
+  				<input type="hidden" id="eventId" value="${fm.event.id}">
   				<input type="hidden" id="tokenKey" value="<%=tokenKey %>">
   				</c:otherwise>
 			</c:choose>
-    			<input type="hidden" id="ticketFee" value="${event.fee}">
+    			<input type="hidden" id="ticketFee" value="${fm.event.fee}">
 		    	</c:if>
     			
     			
@@ -131,15 +137,15 @@
 	<script src="<%=BSjs %>"></script>
     
     <c:if test="${user == null || (user != null && !user.emailConfirmed)}">
-    <script src="/resources/js/verifyEmail.js?v=1"></script>
+    <script src="/resources/js/verifyEmail.js?v=2"></script>
     </c:if>
     
     <c:if test="${user == null}">
     <input type="hidden" id="refreshAfterLogin" value="true">
-    <script src="/resources/js/formLogin.js?v=1"></script>
+    <script src="/resources/js/formLogin.js?v=2"></script>
     </c:if>
     
-    <script src="/resources/js/payment.js?v=1"></script>
+    <script src="/resources/js/payment.js?v=2"></script>
 
 </body>
 

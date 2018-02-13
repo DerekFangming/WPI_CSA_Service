@@ -20,7 +20,7 @@
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 	
-	<script src="/resources/js/common.js?v=1"></script>
+	<script src="/resources/js/common.js?v=2"></script>
 	
     <link href="/resources/css/main.css" rel="stylesheet">
 
@@ -39,8 +39,7 @@
     
     	<c:choose>
 		<c:when test="${changePwd}">
-		<div style="height:50px"></div>
-		<div class="card top-buffer" style="width:500px;margin:0 auto;">
+		<div class="card mt-3 mb-1" style="max-width:500px;margin:0 auto;">
 		    <div class="card-header">
 		        Reset password
 		    </div>

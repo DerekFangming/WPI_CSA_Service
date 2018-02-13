@@ -20,9 +20,9 @@
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="/resources/css/main.css?v=1" rel="stylesheet">
+    <link href="/resources/css/main.css?v=2" rel="stylesheet">
 	
-	<script src="/resources/js/common.js?v=1"></script>
+	<script src="/resources/js/common.js?v=2"></script>
 
 </head>
 
@@ -43,11 +43,11 @@
                         <a class="nav-link" href="./sg">Survival Guide</a>
                     </li>
                     <c:if test="${user != null}">
-    					<%@include file="subview/navUserLoggedIn.jsp" %>
-    					</c:if>
-    					<c:if test="${user == null}">
-    					<%@include file="subview/navLogin.jsp" %>
-    					</c:if>
+   					<%@include file="subview/navUserLoggedIn.jsp" %>
+   					</c:if>
+   					<c:if test="${user == null}">
+   					<%@include file="subview/navLogin.jsp" %>
+   					</c:if>
                 </ul>
             </div>
         </div>
@@ -57,32 +57,95 @@
     <div class="container">
 
         <!-- Jumbotron Header -->
-        <header class="jumbotron my-4">
-            <h1 class="display-3">A Warm Welcome!</h1>
-            <p class="lead">This site is created as web version of WPI CSA mobile apps. It has limited features for now comparing with mobile apps.</p>
-			<p class="lead">If you see any errors & bugs, don't forget to report to CSA!</p>
-        </header>
         
-        <!--  <div class="row"><button id="createArticleBtn" type="button" class="btn btn-primary">Create Article</button></div>-->
-        
-        <c:forEach items="${feedList}" var="fm">
-        <div class="card top-buffer">
-			<div class="card-header">
-				<h1><a href="./feed?id=${fm.feed.id}">${fm.feed.title}</a></h1>
-			</div>
-			<div class="row">
-				<div class="col-lg-6 col-sm-12">
-					<div class="life-img-container">
-						<img class="aspect-fill" src="./images/${fm.coverImageId}.jpg" />
-					</div>
-				</div>
-				<div class="col-lg-6 clm-sm-12">
-					<div class="card-body life-desc">${fm.feed.body}</div>
-				</div>
+        <div class="input-group my-4">
+		    <div class="input-group-prepend">
+		        <button class="btn btn-outline-secondary dropdown-toggle" id="searchType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All</button>
+		        <div class="dropdown-menu">
+		            <a class="dropdown-item" href="#" onclick="selectType(1);">All</a>
+		            <div role="separator" class="dropdown-divider"></div>
+		            <a class="dropdown-item" href="#" onclick="selectType(2);">Blog</a>
+		            <a class="dropdown-item" href="#" onclick="selectType(3);">Trade</a>
+		            <a class="dropdown-item" href="#" onclick="selectType(4);">Event</a>
+		        </div>
+		    </div>
+		    <input type="text" id="searchInput" placeholder="Enter some keyword or search by type" class="form-control">
+		    <div class="input-group-append">
+			    <button class="btn btn-outline-secondary" type="button" id="searchArticleBtn"><i class="fa fa-search" style="color:#6D767E;"></i>&nbsp;Search</button>
+			    <button class="btn btn-outline-secondary" type="button" id="createArticleBtn"><i class="fa fa-plus" style="color:#6D767E;"></i>&nbsp;Create New Article</button>
 			</div>
 		</div>
         
-      	</c:forEach>
+        <div id="feedLoading" class="col" align="center"></div>
+        
+        <div id="feedSearchResult">
+	        <c:forEach items="${feedList}" var="fm">
+	        <div class="card mt-3">
+				<div class="card-header">
+					<h1 class="mb-0"><a href="./feed?id=${fm.feed.id}">${fm.feed.title}</a></h1>
+					<p class="mb-0">
+						<span class="badge badge-secondary">${fm.feed.type}</span>
+						<span class="text-muted">&nbsp; Created by <b>${fm.ownerName}</b> on <script> parseDate( '${fm.feed.createdAt}' ); </script></span>
+					</p>
+				</div>
+				<div class="row">
+					<div class="col-lg-6 col-sm-12">
+						<div class="life-img-container">
+							<img class="aspect-fill" src="./images/${fm.coverImageId}.jpg" />
+						</div>
+					</div>
+					<div class="col-lg-6 clm-sm-12">
+						<div class="card-body life-desc">${fm.feed.body}</div>
+					</div>
+				</div>
+			</div>
+	        
+	      	</c:forEach>
+        </div>
+        
+        <div id="pageIndexNav" class="mt-4">
+        	<nav aria-label="Page navigation">
+			    <ul class="pagination justify-content-center">
+			        <li class="page-item disabled" id="prevBtn">
+			            <a class="page-link" href="#" onclick="gotoPrev()">Previous</a>
+			        </li>
+			        <li class="page-item active" id="pageIndex0"><a class="page-link" href="#" onclick="gotoPage(0)">1</a></li>
+			        
+			        <c:forEach begin="1" end="${pageCount - 1}" varStatus="loop">
+					<li class="page-item" id="pageIndex${loop.index}"><a class="page-link" href="#" onclick="gotoPage(${loop.index})">${loop.index + 1}</a></li>
+					</c:forEach>
+			        
+			        <c:choose>
+				    <c:when test="${pageCount == 1}">
+				    <li class="page-item disabled id="nextBtn">
+				    	 <a class="page-link" href="#" onclick="gotoNext()">Next</a>
+			        </li>
+				    </c:when>
+				    <c:otherwise>
+				    <li class="page-item" id="nextBtn">
+				    	 <a class="page-link" href="#" onclick="gotoNext()">Next</a>
+			        </li>
+				    </c:otherwise>
+					</c:choose>
+			           
+			    </ul>
+			</nav>
+        </div>
+        
+      	<input type="hidden" id="pageCount" value="${pageCount}">
+      	
+      	<c:if test="${user != null}">
+		
+		</c:if>
+		
+		<c:choose>
+	    <c:when test="${user != null}">
+	    <input type="hidden" id="userEmailConfirmed" value="${user.emailConfirmed}">
+	    </c:when>
+	    <c:otherwise>
+	    <input type="hidden" id="userEmailConfirmed" value="false">
+	    </c:otherwise>
+		</c:choose>
 		
 
     </div>
@@ -99,25 +162,15 @@
     <script src="<%=BSjs %>"></script>
     
     <c:if test="${user == null || (user != null && !user.emailConfirmed)}">
-    <script src="/resources/js/verifyEmail.js?v=1"></script>
+    <script src="/resources/js/verifyEmail.js?v=2"></script>
     </c:if>
     
     <c:if test="${user == null}">
-    <script src="/resources/js/formLogin.js?v=1"></script>
+    <script src="/resources/js/formLogin.js?v=2"></script>
     </c:if>
     
-    <script>
-    $("#createArticleBtn").click(function(){
-        var accessToken = getAccessToken();
-        
-        if (accessToken == "") {
-        	showErrorPopup('You have to login first before creating articles');
-        } else {
-        	window.location="./new_article";
-        }
-        
-    }); 
-    </script>
+    <script src="/resources/js/index.js?v=2"></script>
+    
 
 </body>
 

@@ -13,7 +13,7 @@ function processContent(content) {
 	var imgList = doc.getElementsByTagName('img');
 	for (var i=imgList.length - 1; i > -1; i--) {
 		var imgDiv = document.createElement('div');
-		imgDiv.setAttribute('class', 'row top-buffer');
+		imgDiv.setAttribute('class', 'row mt-2');
 		var imgId = imgList[i].getAttribute('src').replace('WCImage_', '');
 		var imgInner = '<div class="col"><img src="/images/' + imgId + '.jpg" class="aspect-fill"></div>';
 		imgDiv.innerHTML = imgInner;
@@ -24,7 +24,7 @@ function processContent(content) {
 	var imgtxtList = doc.getElementsByTagName('imgtxt');
 	for (var i=imgtxtList.length - 1; i > -1; i--) {
 		var imgtxtDiv = document.createElement('div');
-		imgtxtDiv.setAttribute('class', 'row top-buffer');
+		imgtxtDiv.setAttribute('class', 'row mt-2');
 		var imgId = imgtxtList[i].getAttribute('src').replace('WCImage_', '');
 		var imgtxtInner = '<div class="col imgtxt-img-container"><img class="fit-width" src="./images/' + imgId + '.jpg"></div><div class="col col-center">';
 		imgtxtInner += '<div class="card-body">' + imgtxtList[i].innerHTML + '</div></div>';

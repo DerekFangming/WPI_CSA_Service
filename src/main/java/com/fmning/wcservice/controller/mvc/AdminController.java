@@ -1,5 +1,6 @@
 package com.fmning.wcservice.controller.mvc;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,6 @@ import com.fmning.util.PaymentType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.model.EventModel;
 import com.fmning.wcservice.utils.UserRole;
-import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class AdminController {
@@ -37,6 +37,15 @@ public class AdminController {
 	@Autowired private EventManager eventManager;
 	@Autowired private ImageManager imageManager;
 	@Autowired private PaymentManager paymentManager;
+	
+	@RequestMapping(value = "/admin", method = RequestMethod.GET)
+	public void adminRedirectController(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			response.sendRedirect("/admin/event");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@RequestMapping(value = "/admin/event", method = RequestMethod.GET)
     public String adminEventController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
@@ -134,6 +143,40 @@ public class AdminController {
 		model.addAttribute("userList", userList);
 		model.addAttribute("extraPath", "./..");
 		return "adminUser";
+	}
+	
+	@RequestMapping(value = "/admin/help", method = RequestMethod.GET)
+    public String adminHelpController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+		
+		Cookie cookie = null;
+		try {
+			User user = userManager.validateAccessToken(request);
+			if (!user.getEmailConfirmed()) {
+				model.addAttribute("errorMessage", ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+				return "errorview/403";
+			}
+			if (!UserRole.isAdmin(user.getRoleId())) {
+				return "errorview/403";
+			}
+			
+			String name = userManager.getUserDetail(user.getId()).getName();
+			if (name == null){name = "Unknown";}
+			user.setName(name);
+			model.addAttribute("user", user);
+			if (user.isTokenUpdated()) {
+				cookie = new Cookie("accessToken", user.getAccessToken());
+				cookie.setMaxAge(63113904);
+				cookie.setPath("/");
+			}
+		} catch (NotFoundException e) {}
+		
+		if (cookie != null) {
+			response.addCookie(cookie);
+		}
+		
+		
+		model.addAttribute("extraPath", "./..");
+		return "adminHelp";
 	}
 	
 }

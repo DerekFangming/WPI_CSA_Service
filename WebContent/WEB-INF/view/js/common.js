@@ -48,3 +48,27 @@ function linkify(inputText) {
     return replacedText;
 }
 
+function validateInputNumber(evt) {
+	var theEvent = evt || window.event;
+	var key = theEvent.keyCode || theEvent.which;
+	key = String.fromCharCode( key );
+	var regex = /[0-9]|\./;
+	if( !regex.test(key) ) {
+		theEvent.returnValue = false;
+		if(theEvent.preventDefault) theEvent.preventDefault();
+	}
+}
+
+function formalizeFeeAmount(input) {
+	if (input.length == 0) {
+		return '0.00';
+	} else {
+		var list = input.split('.');
+		if (list.length == 1) {
+			return input + '.00';
+		} else {
+			var ending = list[1].length == 0 ? '00' : list[1].length == 1 ? '0' : '';
+			return list[0] + '.' + list[1].substring(0, 2) + ending;
+		}
+	}
+}

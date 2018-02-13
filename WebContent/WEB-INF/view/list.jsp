@@ -10,26 +10,9 @@
 </head>
 <body>
   <br/>
-  <h2>Dumpling Event tickets, total sale count : ${count}</h2>
+  <h2>This page no longer exists. If you believe you should have access, please contact csa.</h2>
 
-  <br/>
-  <table class="table table-striped table-bordered">
-    <thead class="thead-default">
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-      </tr>
-    </thead>
-    <tbody>
-      <c:forEach items="${nameList}" var="user">
-        <tr>
-          <th>${user.name}</th>
-          <th>${user.username}</th>
-        </tr>
-      </c:forEach>
-    </tbody>
-  </table>
-
+  
 
 </body>
 </html>
