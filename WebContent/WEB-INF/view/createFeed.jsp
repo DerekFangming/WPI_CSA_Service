@@ -22,12 +22,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_style.min.css" rel="stylesheet" type="text/css" />
 
-    <link href="/resources/css/main.css?v=1" rel="stylesheet">
+    <link href="/resources/css/main.css?v=2" rel="stylesheet">
 	
-	<script src="/resources/js/common.js?v=1"></script>
-	<script src="/resources/js/imagePicker.js?v=1"></script>
-	<script src="/resources/js/editor.js?v=1"></script>
-	<script src="/resources/js/froala.js"></script><!-- Replace this with online version -->
+	<script src="/resources/js/common.js?v=2"></script>
+	<script src="/resources/js/imagePicker.js?v=2"></script>
+	<script src="/resources/js/editor.js?v=2"></script>
+	<!-- <script src="/resources/js/froala.js"></script> -->
+	<script src="https://cdn.rawgit.com/DerekFangming/WPI_CSA_Service/609cd534/WebContent/WEB-INF/view/js/froala.js"></script>
 
 </head>
 
@@ -236,7 +237,7 @@
 
     <%@include file="subview/footer.jsp" %>
     
-    <script src="/resources/js/createFeed.js?v=1"></script>
+    <script src="/resources/js/createFeed.js?v=2"></script>
 
 	<script src="<%=BSjs %>"></script>
 

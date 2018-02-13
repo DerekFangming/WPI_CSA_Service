@@ -20,9 +20,9 @@
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="/resources/css/main.css?v=1" rel="stylesheet">
+    <link href="/resources/css/main.css?v=2" rel="stylesheet">
 	
-	<script src="/resources/js/common.js?v=1"></script>
+	<script src="/resources/js/common.js?v=2"></script>
 	
 	
 
@@ -92,18 +92,58 @@
 		</div>
 		</c:when>
 		<c:otherwise>
-		
+		<div class="row">
+			<div class="col-lg-6 col-sm-12 mt-3">
+				<div class="card">
+				    <div class="card-header"><h3>Go to Admin Portal and go back</h3></div>
+				    <div class="card-body">
+				        <img class="fit-width border" src="https://i.imgur.com/tVWSDh8.gif" alt="adminPortal.gif">
+				    </div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-sm-12 mt-3">
+				<div class="card">
+				    <div class="card-header"><h3>Check information of events</h3></div>
+				    <div class="card-body">
+				        <img class="fit-width border" src="https://i.imgur.com/CNGITA6.gif" alt="checkEventInfo.gif">
+				    </div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-sm-12 mt-3">
+				<div class="card">
+				    <div class="card-header"><h3>Control and edit events</h3></div>
+				    <div class="card-body">
+				        <img class="fit-width border" src="https://i.imgur.com/dROGJxz.gif" alt="controlEvent.gif">
+				    </div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-sm-12 mt-3">
+				<div class="card">
+				    <div class="card-header"><h3>Manage users</h3></div>
+				    <div class="card-body">
+				        <img class="fit-width border" src="https://i.imgur.com/fZsNbIQ.gif" alt="controlUser.gif">
+				    </div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-sm-12 mt-3">
+				<div class="card">
+				    <div class="card-header"><h3>Create article with event and ticket</h3></div>
+				    <div class="card-body">
+				        <img class="fit-width border" src="https://i.imgur.com/T4YSQXJ.gif" alt="createEvent.gif">
+				    </div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-sm-12 mt-3">
+				<div class="card">
+				    <div class="card-header"><h3>Intended left blank</h3></div>
+				    <div class="card-body">
+				        <img class="fit-width border" src="https://i.imgur.com/m826wT6.gif" alt="intendedBlank.gif">
+				    </div>
+				</div>
+			</div>
+		</div>
 		</c:otherwise>
 		</c:choose>
-		
-
-        	<div class="row">
-		
-		
-        		
-        		
-
-        	</div>
         	
 
     </div>

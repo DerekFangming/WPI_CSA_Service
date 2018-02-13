@@ -1,5 +1,6 @@
 package com.fmning.wcservice.controller.mvc;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +39,12 @@ public class AdminController {
 	@Autowired private PaymentManager paymentManager;
 	
 	@RequestMapping(value = "/admin", method = RequestMethod.GET)
-	public String adminRedirectController(HttpServletRequest request) {
-		return "redirect:/admin/event";
+	public void adminRedirectController(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			response.sendRedirect("/admin/event");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@RequestMapping(value = "/admin/event", method = RequestMethod.GET)

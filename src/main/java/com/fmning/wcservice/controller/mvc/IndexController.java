@@ -114,7 +114,7 @@ public class IndexController {
 			
 			String veriCode = helperManager.getEmailConfirmCode(username);
 			userManager.updateVeriCode(username, veriCode);
-			String message = Utils.createVerificationEmail(veriCode);
+			String message = Utils.createVerificationEmail(user.getName(), veriCode);
 			if (Utils.prodMode){
 				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
 			} else {

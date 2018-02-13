@@ -51,8 +51,8 @@ public class Utils {
 	
 	@Autowired private HelperManager helperManager;
 	
-	public static String createVerificationEmail(String veriCode) {
-		String message = "Hi there,";
+	public static String createVerificationEmail(String name, String veriCode) {
+		String message = "Hi " + name + ",";
 		message += "\n";
 		message += "Thank you for creating an account at fmning.com domain. Please click on the following link to confirm your email address.";
 		message += "\n\n";
@@ -64,8 +64,8 @@ public class Utils {
 		return message;
 	}
 	
-	public static String createChangePwdEmail(String veriCode) {
-		String message = "Hi there,";
+	public static String createChangePwdEmail(String name, String veriCode) {
+		String message = "Hi " + name + ",";
 		message += "\n";
 		message += "Here is the link to reset your password. It will expire in one day. Please report to CSA if you didn't make this request.";
 		message += "\n\n";
@@ -77,15 +77,15 @@ public class Utils {
 		return message;
 	}
 	
-	public static String createRoleChangeEmail(int roleId) {
-		String message = "Hi there,";
+	public static String createRoleChangeEmail(String name, int roleId) {
+		String message = "Hi " + name + ",";
 		message += "\n";
 		message += "The role of your account is changed to " + UserRole.getRoleName(roleId) + ". Please report to CSA if you believe this is not correct.";
 		
 		if (UserRole.isAdmin(roleId)) {
 			message += "\n\n";
-			message += "Here is the demo about how to access Admin Portal and manager events and users.\n";
-			message += "SOME HTTP PATH HERE";
+			message += "Here is the demo page about how to access Admin Portal and manager events and users.\n";
+			message += "http://csa.fmning.com/admin/help";
 		} else {
 			message += "\n\n";
 			message += "You will no longer have access to Admin Portal.\n";

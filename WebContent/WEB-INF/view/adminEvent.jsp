@@ -23,9 +23,9 @@
     
     <link href="<%=DTcss %>" rel="stylesheet">
 
-    <link href="/resources/css/main.css?v=1" rel="stylesheet">
+    <link href="/resources/css/main.css?v=2" rel="stylesheet">
 	
-	<script src="/resources/js/common.js?v=1"></script>
+	<script src="/resources/js/common.js?v=2"></script>
 	
 	
 
@@ -159,7 +159,7 @@
         });
     </script>
     
-    <script src="/resources/js/adminEvent.js?v=1"></script>
+    <script src="/resources/js/adminEvent.js?v=2"></script>
     
     
     <script src="<%=DTJjs %>"></script>

@@ -169,6 +169,3 @@ create table error_logs (
 --1. use raw git for editor
 --2. remove html option for editor
 
-alter table feeds add column updated_by integer;
-
-alter table users add column updated_by integer;

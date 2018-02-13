@@ -62,9 +62,12 @@ public class UserController {
 		try{
 			String username = (String)request.get("username");
 			String password = (String)request.get("password");
+			String name = (String)request.get("name");
+			if (name == null) {name = "there";}
+			
 			User user = userManager.webRegister(username, password);
 			
-			String message = Utils.createVerificationEmail(user.getVeriToken());
+			String message = Utils.createVerificationEmail(name, user.getVeriToken());
 			if (Utils.prodMode) {
 				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
 			} else {
@@ -261,8 +264,9 @@ public class UserController {
 			}
 			
 			userManager.setUserRole(requestedUser.getId(), roleId, user.getId());
+			String name = userManager.getUserDisplayedName(requestedUser.getId());
 			
-			String message = Utils.createRoleChangeEmail(roleId);
+			String message = Utils.createRoleChangeEmail(name, roleId);
 			
 			if (Utils.prodMode){
 				helperManager.sendEmail("no-reply@fmning.com", requestedUser.getUsername(), "Role Changed Notification", message);

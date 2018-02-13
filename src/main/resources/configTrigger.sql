@@ -74,13 +74,6 @@ CREATE TRIGGER Payment_trigger BEFORE UPDATE OR DELETE
 ON Payments FOR EACH ROW
 EXECUTE PROCEDURE Payment_func();
 
-/**
-
-The following triggers have not been deployed yet.
-
-
-*/
-
 create table Survival_guide_hists (
 	id integer,
 	title varchar(30) not null,
@@ -110,8 +103,6 @@ LANGUAGE 'plpgsql';
 CREATE TRIGGER Survival_guide_trigger BEFORE UPDATE OR DELETE
 ON Survival_guides FOR EACH ROW
 EXECUTE PROCEDURE Survival_guide_func();
-
-/*The followings are not on PROD yet*/
 
 create table User_hists (
 	id integer,
@@ -144,3 +135,10 @@ LANGUAGE 'plpgsql';
 CREATE TRIGGER User_trigger BEFORE UPDATE OR DELETE
 ON Users FOR EACH ROW
 EXECUTE PROCEDURE User_func();
+
+/**
+
+The following triggers have not been deployed yet.
+
+
+*/

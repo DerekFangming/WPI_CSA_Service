@@ -68,7 +68,8 @@ public class EmailController {
 			
 			String veriCode = helperManager.getEmailConfirmCode(username);
 			userManager.updateVeriCode(username, veriCode);
-			String message = Utils.createVerificationEmail(veriCode);
+			String name = userManager.getUserDisplayedName(user.getId());
+			String message = Utils.createVerificationEmail(name, veriCode);
 			if (Utils.prodMode) {
 				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
 			} else {
@@ -105,7 +106,9 @@ public class EmailController {
 			}else{
 				veriCode = helperManager.getEmailConfirmCode(username);
 				userManager.updateVeriCode(username, veriCode);
-				String message = Utils.createVerificationEmail(veriCode);
+				User user = userManager.getUserByUsername(username);
+				String name = userManager.getUserDisplayedName(user.getId());
+				String message = Utils.createVerificationEmail(name, veriCode);
 				if (Utils.prodMode) {
 					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
 				} else {
@@ -146,7 +149,8 @@ public class EmailController {
 			if (!user.getEmailConfirmed()) {
 				String veriCode = helperManager.getEmailConfirmCode(username);
 				userManager.updateVeriCode(username, veriCode);
-				String message = Utils.createVerificationEmail(veriCode);
+				String name = userManager.getUserDisplayedName(user.getId());
+				String message = Utils.createVerificationEmail(name, veriCode);
 				if (Utils.prodMode) {
 					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
 				} else {
@@ -157,7 +161,8 @@ public class EmailController {
 			
 			String veriCode = helperManager.getChangePasswordCode(username);
 			userManager.updateVeriCode(username, veriCode);
-			String message = Utils.createChangePwdEmail(veriCode);
+			String name = userManager.getUserDisplayedName(user.getId());
+			String message = Utils.createChangePwdEmail(name, veriCode);
 			if (Utils.prodMode) {
 				helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
 			} else {
@@ -191,7 +196,9 @@ public class EmailController {
 			}else{
 				veriCode = helperManager.getChangePasswordCode(username);
 				userManager.updateVeriCode(username, veriCode);
-				String message = Utils.createChangePwdEmail(veriCode);
+				User user = userManager.getUserByUsername(username);
+				String name = userManager.getUserDisplayedName(user.getId());
+				String message = Utils.createChangePwdEmail(name, veriCode);
 				if (Utils.prodMode) {
 					helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
 				} else {
