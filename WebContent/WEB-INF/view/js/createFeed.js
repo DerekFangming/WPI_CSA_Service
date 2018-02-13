@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$('#img-picker').imagePicker({name: 'images'});
+	$('#img-picker').imagePicker();
 })
 
 function selectType(typeId) {

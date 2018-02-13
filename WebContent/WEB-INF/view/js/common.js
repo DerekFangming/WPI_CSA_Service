@@ -72,3 +72,13 @@ function formalizeFeeAmount(input) {
 		}
 	}
 }
+
+function startBtnLoading(btn) {
+	$(btn).prop('disabled', true);
+	$(btn).prepend('<i class="fa fa-refresh fa-spin mr-1"></i>');
+}
+
+function stopBtnLoading(btn) {
+	$(btn).prop('disabled', false);
+	$(btn).find('i').first().remove();
+}

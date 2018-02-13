@@ -51,7 +51,6 @@ import com.fmning.util.PaymentStatusType;
 import com.fmning.util.PaymentType;
 import com.fmning.util.TicketType;
 import com.fmning.util.Util;
-import com.fmning.wcservice.utils.UserRole;
 import com.fmning.wcservice.utils.Utils;
 
 import de.brendamour.jpasskit.PKBarcode;

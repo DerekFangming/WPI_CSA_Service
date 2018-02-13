@@ -27,8 +27,8 @@
 	<script src="/resources/js/common.js?v=2"></script>
 	<script src="/resources/js/imagePicker.js?v=2"></script>
 	<script src="/resources/js/editor.js?v=2"></script>
-	<!-- <script src="/resources/js/froala.js"></script> -->
-	<script src="https://cdn.rawgit.com/DerekFangming/WPI_CSA_Service/609cd534/WebContent/WEB-INF/view/js/froala.js"></script>
+	<script src="/resources/js/froala.js"></script>
+	<!-- <script src="https://cdn.rawgit.com/DerekFangming/WPI_CSA_Service/609cd534/WebContent/WEB-INF/view/js/froala.js"></script> -->
 
 </head>
 

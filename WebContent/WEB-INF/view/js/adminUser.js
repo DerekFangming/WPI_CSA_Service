@@ -26,7 +26,8 @@ $(document).ready(function() {
 
 $("#resendEmailConfirmBtn").click(function(){
     var accessToken = getAccessToken();
-    $("#resendEmailConfirmBtn").prop('disabled', true);
+    var btn = this;
+    startBtnLoading(btn);
     
     $.ajax({
         type: "POST",
@@ -35,7 +36,7 @@ $("#resendEmailConfirmBtn").click(function(){
         contentType: "application/json",
         dataType: "json",
         success: function(data){
-        	$("#resendEmailConfirmBtn").prop('disabled', false);
+        		stopBtnLoading(btn);
 			if (data['error'] == "" ) {
 				showPopup('Done', 'Verification email sent for ' + $('#userDispName').text());
 			} else {

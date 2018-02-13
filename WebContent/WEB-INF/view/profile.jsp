@@ -13,15 +13,15 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>WPI CSA - Survival Guide</title>
+    <title>WPI CSA - Profile</title>
 	
     <link href="<%=BScss %>" rel="stylesheet">
-	<script src="<%=JQjs %>"></script>
+    <script src="<%=JQjs %>"></script>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
     <link href="/resources/css/main.css?v=2" rel="stylesheet">
-	
+	<script src="/resources/js/imagePicker.js?v=2"></script>
 	<script src="/resources/js/common.js?v=2"></script>
 
 </head>
@@ -39,15 +39,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="./">Life</a>
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Survival Guide</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./sg">Survival Guide</a>
                     </li>
-                    <c:if test="${user != null}">
-    					<%@include file="subview/navUserLoggedIn.jsp" %>
-    					</c:if>
-    					<c:if test="${user == null}">
-    					<%@include file="subview/navLogin.jsp" %>
-    					</c:if>
+                    <%@include file="subview/navUserLoggedIn.jsp" %>
                 </ul>
             </div>
         </div>
@@ -56,52 +51,61 @@
     <!-- Page Content -->
     <div class="container">
         
-        <div class="row mt-3">
-	    		<div class="col-lg-4 col-sm-12">
-	    			<div class="sg-menu">
-				${menuList}
+        <div class="row">
+        		<div class="col-lg-4 col-md-6 col-sm-12 mt-3">
+        			<div class="card">
+				    <div class="card-header">
+				        Account & profile
+				    </div>
+				    <div class="card-body">
+				    		<div class="profile-img-container">
+							<div id="img-picker" class="aspect-fill" ondragover="allowDrop(event)"></div>
+						</div>
+				    </div>
 				</div>
-			</div>
-			<div class="col-lg-8 clm-sm-12">
-				<div class="card sg-title">
-					<div class="card-header sg-title">
-					<h1 class="lead"><big><big id="sgTitle"></big></big></h1>
-					<p><small class="text-muted" id="sgSubTitle"></small></p>
-					</div>
+        		</div>
+        		<div class="col-lg-8 col-md-6 col-sm-12 mt-3">
+        			<div class="card">
+				    <div class="card-header">
+				        Posted articles
+				    </div>
+				    <div class="card-body">
+				    		
+				    </div>
 				</div>
-				<div class="card mt-3 sg-body">
-					<div class="card-body" id="sgContent"></div>
+				<div class="card mt-3">
+				    <div class="card-header">
+				        Edited Survival Guide articles
+				    </div>
+				    <div class="card-body">
+				    </div>
 				</div>
-			</div>
-	    </div>
-        
+        		</div>
+        </div>
+		
+		<c:choose>
+	    <c:when test="${user != null}">
+	    <input type="hidden" id="userEmailConfirmed" value="${user.emailConfirmed}">
+	    </c:when>
+	    <c:otherwise>
+	    <input type="hidden" id="userEmailConfirmed" value="false">
+	    </c:otherwise>
+		</c:choose>
+		
+
     </div>
-    
-    
-    
     <!-- /.container -->
 
-    <c:if test="${user == null}">
-    <%@include file="subview/formLogin.jsp" %>
-    	</c:if>
-    
+
     <%@include file="subview/popup.jsp" %><!-- This must be placed below all other modals -->
 
     <%@include file="subview/footer.jsp" %>
 
     <script src="<%=BSjs %>"></script>
     
-    <c:if test="${user == null || (user != null && !user.emailConfirmed)}">
+    <c:if test="${!user.emailConfirmed}">
     <script src="/resources/js/verifyEmail.js?v=2"></script>
     </c:if>
-    
-    <c:if test="${user == null}">
-    <script src="/resources/js/formLogin.js?v=2"></script>
-    </c:if>
-    
-    <script src="/resources/js/sg.js?v=2"></script>
-    <script src="/resources/js/parser.js?v=2"></script>
-
+    <script src="/resources/js/profile.js?v=2"></script>
 </body>
-
 </html>

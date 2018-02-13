@@ -1,10 +1,9 @@
 (function ( $ ) {
- 
     $.fn.imagePicker = function( options ) {
         var settings = $.extend({
-            name: "",
-            class: "btn btn-default btn-block",
-            icon: "Not used"
+        		removeBtn : '<button class="btn btn-light" style="margin-top:-160px;"><i class="fa fa-2x fa-trash"></i></button>',
+            icon: '<img src="/resources/img/plus.png">',
+            iconText: '<p>Click or drop an image here</p>'
         }, options );
         
         return this.each(function() {
@@ -14,9 +13,9 @@
     };
  
     function create_btn(that, settings) {
-        var picker_btn_icon = $('<div class="text-center" style="margin-top:100px;"><img src="/resources/img/plus.png"><p>Click or drop an image here</p></div>');
-        var picker_btn_input = $('<input type="file" accept="image/jpeg, image/jpg, image/png" name="'+settings.name+'" />');
-        var picker_btn = $('<div class="'+settings.class+' img-upload-btn life-img-container"></div>')
+        var picker_btn_icon = $('<div class="center-child"><div >' + settings.icon + settings.iconText + '</div></div>');
+        var picker_btn_input = $('<input type="file" accept="image/jpeg, image/jpg, image/png" />');
+        var picker_btn = $('<div class="btn btn-default btn-block img-upload-btn life-img-container"></div>')
             .append(picker_btn_icon)
             .append(picker_btn_input);
             
@@ -43,8 +42,8 @@
     		return create_btn(that, settings);
     	}
     	
-        var picker_preview_image = $('<img src="'+src+'" class="aspect-fill" />');
-        var picker_preview_remove = $('<button class="btn btn-primary" style="margin-top:-160px;">Remove</button>');
+        var picker_preview_image = $('<img src="'+src+'" class="aspect-fill" >');
+        var picker_preview_remove = $(settings.removeBtn);
         var picker_preview = $('<div class="life-img-container text-center"></div>')
             .append(picker_preview_image)
             .append(picker_preview_remove);

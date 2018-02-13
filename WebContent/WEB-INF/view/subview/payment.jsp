@@ -19,7 +19,7 @@
 </div>
 
 
-<div class="modal fade" id="processingModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="processingModal" data-backdrop="static" tabindex="-1" role="dialog" data-keyboard="false">
 	<div class="modal-dialog modal-dialog-centered">
 
         <!-- Modal content-->

@@ -68,6 +68,7 @@ public class EmailController {
 			
 			String veriCode = helperManager.getEmailConfirmCode(username);
 			userManager.updateVeriCode(username, veriCode);
+			user = userManager.getUserByUsername(username);
 			String name = userManager.getUserDisplayedName(user.getId());
 			String message = Utils.createVerificationEmail(name, veriCode);
 			if (Utils.prodMode) {

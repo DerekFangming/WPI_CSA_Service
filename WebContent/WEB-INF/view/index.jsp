@@ -133,11 +133,7 @@
         </div>
         
       	<input type="hidden" id="pageCount" value="${pageCount}">
-      	
-      	<c:if test="${user != null}">
-		
-		</c:if>
-		
+
 		<c:choose>
 	    <c:when test="${user != null}">
 	    <input type="hidden" id="userEmailConfirmed" value="${user.emailConfirmed}">
