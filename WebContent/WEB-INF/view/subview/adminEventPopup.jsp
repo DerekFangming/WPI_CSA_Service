@@ -29,7 +29,7 @@
 				</form>
             </div>
             <div class="modal-footer">
-            	<button onclick="editEvent();" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+            	<button id="updateEventBtn" onclick="editEvent();" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>

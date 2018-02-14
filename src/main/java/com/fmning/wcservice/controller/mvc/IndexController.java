@@ -22,6 +22,7 @@ import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
+import com.fmning.util.ImageType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.controller.rest.FeedController;
 import com.fmning.wcservice.model.FeedModel;
@@ -173,7 +174,7 @@ public class IndexController {
 			}
 			
 			try{
-				imageManager.getTypeUniqueImage("Avatar", user.getId()).getId();
+				imageManager.getTypeUniqueImage(ImageType.AVATAR.getName(), user.getId()).getId();
 				model.addAttribute("hasAvatar", true);
 			}catch(Exception e){}
 		} catch (NotFoundException e) {

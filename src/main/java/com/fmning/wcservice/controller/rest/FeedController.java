@@ -139,7 +139,7 @@ public class FeedController {
 			}catch(Exception e) {}
 			
 			try {
-				int avatarId = imageManager.getTypeUniqueImage("Avatar", m.getOwnerId()).getId();
+				int avatarId = imageManager.getTypeUniqueImage(ImageType.AVATAR.getName(), m.getOwnerId()).getId();
 				processedFeed.put("avatarId", avatarId);
 			}catch(Exception e) {}
 			

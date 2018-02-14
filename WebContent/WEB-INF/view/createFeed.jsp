@@ -63,9 +63,7 @@
 			</div>
 			<div class="row">
 				<div class="col-lg-6 col-sm-12">
-					<div class="life-img-container">
-						<div id="img-picker" class="aspect-fill border-right" ondragover="allowDrop(event)"></div>
-					</div>
+					<div id="img-picker" class="aspect-fill border-right" ondragover="allowDrop(event)"></div>
 				</div>
 				<div class="col-lg-6 clm-sm-12">
 					<div class="card-body">
@@ -107,9 +105,7 @@
 						</c:if>
 						
 						<div class="mt-3"></div>
-						<button type="button" id="submitBtn" class="btn btn-success pull-right">
-							<i id="submitSpinner" class="fa fa-refresh fa-spin" style="display: none"></i>&nbsp;Submit
-						</button>
+						<button type="button" id="submitBtn" class="btn btn-success pull-right">Submit</button>
 						<button type="button" id="checkFormatBtn" class="btn btn-secondary">Check formatting</button>
 						<button type="button" id="instructionBtn" class="btn btn-secondary">Instruction</button>
 						

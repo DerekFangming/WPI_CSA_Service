@@ -97,7 +97,7 @@
 		} else if (!passwordRegex.test(password)) {
 			showErrorPopup('Password needs to have at least one letter and one number');
 		} else {
-			$("#resetPwdBtn").prop('disabled', true);
+			startBtnLoading('#resetPwdBtn');
 		    
 		    $.ajax({
 		        type: "POST",
@@ -106,7 +106,7 @@
 		        contentType: "application/json",
 		        dataType: "json",
 		        success: function(data){
-		        	$("#resetPwdBtn").prop('disabled', false);
+		        	stopBtnLoading('#resetPwdBtn');
 					if (data['error'] == "" ) {
 						showPopup('Done', 'Your password change is done. You will be redirected in 5 seconds.');
 						window.setTimeout(function(){
@@ -118,7 +118,7 @@
 					}
 		        },
 		        failure: function(errMsg) {
-		        	$("#resetPwdBtn").prop('disabled', false);
+		        	stopBtnLoading('#resetPwdBtn');
 		        	showErrorPopup('Unknown error occured. Please contact support');
 		        }
 		    });

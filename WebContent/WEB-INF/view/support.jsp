@@ -76,47 +76,7 @@
 		window.setTimeout(function(){
 			window.location.href = "<%=rootDir %>";
 		}, 5000);
-		
-		
-		
-	    var accessToken = getAccessToken();
-	    var passwordRegex = /([0-9].*[a-zA-Z])|([a-zA-Z].*[0-9])/;
-	    var password = $("#newPassword").val().trim();
-		var confirm = $("#confirmPassword").val().trim();
-	    
-		if (password != confirm) {
-			showErrorPopup('The two passwords you entered are not the same');
-		} else if (password.length < 6) {
-			showErrorPopup('Password needs to have more than 6 characters');
-		} else if (!passwordRegex.test(password)) {
-			showErrorPopup('Password needs to have at least one letter and one number');
-		} else {
-			$("#resetPwdBtn").prop('disabled', true);
-		    
-		    $.ajax({
-		        type: "POST",
-		        url: "../../update_password",
-		        data: JSON.stringify({accessToken : accessToken, newPwd : password, veriToken : $('#veriToken').val()}),
-		        contentType: "application/json",
-		        dataType: "json",
-		        success: function(data){
-		        	$("#resetPwdBtn").prop('disabled', false);
-					if (data['error'] == "" ) {
-						showPopup('Done', 'Your password change is done. You will be redirected in 5 seconds.');
-						window.setTimeout(function(){
-							window.location.href = "<%=rootDir %>";
-						}, 5000);
 
-					} else {
-						showErrorPopup(data['error']);
-					}
-		        },
-		        failure: function(errMsg) {
-		        	$("#resetPwdBtn").prop('disabled', false);
-		        	showErrorPopup('Unknown error occured. Please contact support');
-		        }
-		    });
-		}
 	    
 	}); 
 	</script>

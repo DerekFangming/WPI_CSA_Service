@@ -36,6 +36,7 @@ $('#adminEventEditModal').on('hidden.bs.modal', function () {
 function editEvent() {
 	var accessToken = getAccessToken();
 	var id = parseInt($('#eventId').val());
+	startBtnLoading('#updateEventBtn');
 	
 	var params = {accessToken : accessToken, id : id};
 	if ($("#eventTitle").val().trim() != '') {
@@ -58,7 +59,8 @@ function editEvent() {
         contentType: "application/json",
         dataType: "json",
 		success: function (data) {
-			$("#statusBtn" + id).prop('disabled', false);
+			stopBtnLoading('#updateEventBtn');
+			$('#adminEventEditModal').modal('toggle');
 			if (data['error'] != "" ) {
 	    		showErrorPopup(data['error']);
 	    	} else {
@@ -67,7 +69,8 @@ function editEvent() {
 	    	}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			$("#statusBtn" + id).prop('disabled', false);
+			stopBtnLoading('#updateEventBtn');
+			$('#adminEventEditModal').modal('toggle');
 			showErrorPopup('Unknown error occured. Please contact support');
 		}
 	});
@@ -81,7 +84,7 @@ function setBalance(id) {
 		showErrorPopup('Ticket balance has to be in range 0 to 500.');
 	} else {
 		var accessToken = getAccessToken();
-		$("#balanceBtn" + id).prop('disabled', true);
+		startBtnLoading('#balanceBtn' + id);
 		$.ajax({
 			type: "POST",
 			url: "../../update_event_balance",
@@ -89,16 +92,17 @@ function setBalance(id) {
 	        contentType: "application/json",
 	        dataType: "json",
 			success: function (data) {
-				$("#balanceBtn" + id).prop('disabled', false);
+				stopBtnLoading('#balanceBtn' + id);
 				if (data['error'] != "" ) {
 		    		showErrorPopup(data['error']);
 		    	} else {
+		    		$('#balanceIn' + id).val('');
 		    		$("#balanceLbl" + id).html($("#balanceLbl" + id).html().split("remaining")[0] + 'remaining ' + balance);
 		    		showPopup('Done', 'Ticket remaining count has been updated');
 				}
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				$("#balanceBtn" + id).prop('disabled', false);
+				stopBtnLoading('#balanceBtn' + id);
 				showErrorPopup('Unknown error occured. Please contact support');
 			}
 		});
@@ -107,7 +111,7 @@ function setBalance(id) {
 
 function toggleStatus(id, newStatus) {
 	var accessToken = getAccessToken();
-	$("#statusBtn" + id).prop('disabled', true);
+	startBtnLoading('#statusBtn' + id);
 	$.ajax({
 		type: "POST",
 		url: "../../update_event_status",
@@ -115,7 +119,7 @@ function toggleStatus(id, newStatus) {
         contentType: "application/json",
         dataType: "json",
 		success: function (data) {
-			$("#statusBtn" + id).prop('disabled', false);
+			stopBtnLoading('#statusBtn' + id);
 			$("#statusBtn" + id).attr("class", newStatus ? "btn btn-danger" : "btn btn-success");
 			$("#statusBtn" + id).attr("onclick", 'toggleStatus(' + id + ',' + !newStatus +');');
 			//$("#statusBtn" + id).attr("data-toggle", (newStatus ? 'tooltip-soldout' : 'tooltip-selling')); this is not working
@@ -128,7 +132,7 @@ function toggleStatus(id, newStatus) {
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			$("#statusBtn" + id).prop('disabled', false);
+			stopBtnLoading('#statusBtn' + id);
 			showErrorPopup('Unknown error occured. Please contact support');
 		}
 	});
@@ -159,7 +163,6 @@ function openPartiList(id) {
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			$("#statusBtn" + id).prop('disabled', false);
 			showErrorPopup('Unknown error occured. Please contact support');
 		}
 	});

@@ -8,8 +8,7 @@ $('#payButton').on('click', function (e) {
     } else if ($('#userEmailConfirmed').val() != 'true') {
     	showErrorPopup('Please verify your email first');
     } else if (fee > 0) {
-    	$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
-    	$("#payButton").prop('disabled', true);
+    	startBtnLoading('#payButton');
     	var accessToken = getAccessToken();
     	var eventId = parseInt($('#eventId').val());
     	
@@ -20,8 +19,7 @@ $('#payButton').on('click', function (e) {
             contentType: "application/json",
             dataType: "json",
     		success: function (data) {
-    			$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
-    	    	$("#payButton").prop('disabled', false);
+    			stopBtnLoading('#payButton');
     	    	if (data['error'] != "" ) {
     	    		showErrorPopup(data['error']);
     	    	} else if (data['status'] == "AlreadyPaid") {
@@ -61,8 +59,7 @@ $('#payButton').on('click', function (e) {
     			}
     		},
     		error: function (jqXHR, textStatus, errorThrown) {
-    			$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
-    	    	$("#payButton").prop('disabled', false);
+    			stopBtnLoading('#payButton');
     			showErrorPopup('Unknown error occured. Please contact support');
     		}
     	});
@@ -81,8 +78,7 @@ $('#payButton').on('click', function (e) {
 });
 
 function makePaymentRequest(fee, method, nonce) {
-	$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
-	$("#payButton").prop('disabled', true);
+	startBtnLoading('#payButton');
 	$('#processingModal').modal('toggle');
 	var accessToken = getAccessToken();
     var eventId = parseInt($('#eventId').val());
@@ -100,8 +96,7 @@ function makePaymentRequest(fee, method, nonce) {
         contentType: "application/json",
         dataType: "json",
 		success: function (data) {
-			$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
-	    	$("#payButton").prop('disabled', false);
+			stopBtnLoading('#payButton');
 	    	$('#processingModal').modal('toggle');
 	    	if (data['error'] != "" ) {
 	    		showErrorPopup(data['error']);
@@ -120,8 +115,7 @@ function makePaymentRequest(fee, method, nonce) {
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			$("#ticketSpinner").toggleClass("fa fa-refresh fa-spin");
-	    	$("#payButton").prop('disabled', false);
+			stopBtnLoading('#payButton');
 	    	$('#processingModal').modal('toggle');
 			showErrorPopup('Unknown error occured. Please contact support');
 		}

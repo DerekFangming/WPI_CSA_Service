@@ -57,8 +57,7 @@ $("#submitBtn").click(function(){
 		var type = $("#currentType").html();
 		var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
 		var accessToken = getAccessToken();
-		$("#submitBtn").prop('disabled', true);
-		$("#submitSpinner").show();
+		startBtnLoading('#submitBtn');
 		
 		var params = {accessToken : accessToken, title : title, type : type, body : content, coverImage : cover };
 		
@@ -97,8 +96,7 @@ $("#submitBtn").click(function(){
 	        contentType: "application/json",
 	        dataType: "json",
 	        success: function(data){
-	        	$("#submitBtn").prop('disabled', false);
-	        	$("#submitSpinner").hide();
+	        	stopBtnLoading('#submitBtn');
 				if (data['error'] == "" ) {
 					showPopup('Done', 'Article created. You will be redirected in 5 seconds.');
 					window.setTimeout(function(){
@@ -109,8 +107,7 @@ $("#submitBtn").click(function(){
 				}
 	        },
 	        failure: function(errMsg) {
-	        	$("#submitBtn").prop('disabled', false);
-	        	$("#submitSpinner").hide();
+	        	stopBtnLoading('#submitBtn');
 	        	showErrorPopup('Unknown error occured. Please contact support');
 	        }
 	    });

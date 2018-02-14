@@ -95,11 +95,11 @@
     			<c:if test="${fm.event.active}">
 		    	<c:choose>
   				<c:when test="${fm.event.fee == 0}">
-  				<a id="payButton" href="#" class="btn btn-primary"><i id="ticketSpinner" class=""></i>&nbsp;Free - Get ticket</a>
+  				<a id="payButton" href="#" class="btn btn-primary">Free - Get ticket</a>
   				<input type="hidden" id="eventId" value="${fm.event.id}">
   				</c:when>
   				<c:otherwise>
-  				<a id="payButton" href="#" class="btn btn-primary"><i id="ticketSpinner" class=""></i>&nbsp;$${fm.event.fee} - Pay and get ticket</a>
+  				<a id="payButton" href="#" class="btn btn-primary">$${fm.event.fee} - Pay and get ticket</a>
   				<input type="hidden" id="eventId" value="${fm.event.id}">
   				<input type="hidden" id="tokenKey" value="<%=tokenKey %>">
   				</c:otherwise>

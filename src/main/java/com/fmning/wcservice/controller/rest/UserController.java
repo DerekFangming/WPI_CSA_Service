@@ -18,6 +18,7 @@ import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
+import com.fmning.util.ImageType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.UserRole;
 import com.fmning.wcservice.utils.Utils;
@@ -79,7 +80,7 @@ public class UserController {
 			
 			String base64 = (String)request.get("avatar");
 			if(base64 != null){
-				int imgId = imageManager.saveTypeUniqueImage(base64, "Avatar", Util.nullInt, user.getId(), null);
+				int imgId = imageManager.saveTypeUniqueImage(base64, ImageType.AVATAR.getName(), Util.nullInt, user.getId(), null);
 				respond.put("imageId", imgId);
 			}
 			
@@ -120,7 +121,7 @@ public class UserController {
 			}catch(NotFoundException e){}
 			
 			try{
-				int avatarId = imageManager.getTypeUniqueImage("Avatar", user.getId()).getId();
+				int avatarId = imageManager.getTypeUniqueImage(ImageType.AVATAR.getName(), user.getId()).getId();
 				respond.put("avatarId", avatarId);
 			}catch(Exception e){}
 			
@@ -173,7 +174,7 @@ public class UserController {
 			
 			String base64 = (String)request.get("avatar");
 			if(base64 != null){
-				int imgId = imageManager.saveTypeUniqueImage(base64, "Avatar", Util.nullInt, userId, null);
+				int imgId = imageManager.saveTypeUniqueImage(base64, ImageType.AVATAR.getName(), Util.nullInt, userId, null);
 				respond.put("imageId", imgId);
 			}
 			if (user.isTokenUpdated()) {

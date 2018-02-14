@@ -26,8 +26,7 @@ $(document).ready(function() {
 
 $("#resendEmailConfirmBtn").click(function(){
     var accessToken = getAccessToken();
-    var btn = this;
-    startBtnLoading(btn);
+    startBtnLoading('#resendEmailConfirmBtn');
     
     $.ajax({
         type: "POST",
@@ -36,7 +35,7 @@ $("#resendEmailConfirmBtn").click(function(){
         contentType: "application/json",
         dataType: "json",
         success: function(data){
-        		stopBtnLoading(btn);
+        	stopBtnLoading('#resendEmailConfirmBtn');
 			if (data['error'] == "" ) {
 				showPopup('Done', 'Verification email sent for ' + $('#userDispName').text());
 			} else {
@@ -44,7 +43,7 @@ $("#resendEmailConfirmBtn").click(function(){
 			}
         },
         failure: function(errMsg) {
-        	$("#resendEmailConfirmBtn").prop('disabled', false);
+        	stopBtnLoading('#resendEmailConfirmBtn');
         	showErrorPopup('Unknown error occured. Please contact support');
         }
     });
@@ -52,7 +51,7 @@ $("#resendEmailConfirmBtn").click(function(){
 
 $("#sendResetPasswordBtn").click(function(){
     var accessToken = getAccessToken();
-    $("#sendResetPasswordBtn").prop('disabled', true);
+    startBtnLoading('#sendResetPasswordBtn');
     
     $.ajax({
         type: "POST",
@@ -61,7 +60,7 @@ $("#sendResetPasswordBtn").click(function(){
         contentType: "application/json",
         dataType: "json",
         success: function(data){
-        	$("#sendResetPasswordBtn").prop('disabled', false);
+        	stopBtnLoading('#sendResetPasswordBtn');
 			if (data['error'] == "" ) {
 				showPopup('Done', 'Password reset email sent for ' + $('#userDispName').text());
 			} else if (data['error'].startsWith('You have to confirm your email before changing password.')) {
@@ -71,7 +70,7 @@ $("#sendResetPasswordBtn").click(function(){
 			}
         },
         failure: function(errMsg) {
-        	$("#sendResetPasswordBtn").prop('disabled', false);
+        	stopBtnLoading('#sendResetPasswordBtn');
         	showErrorPopup('Unknown error occured. Please contact support');
         }
     });
@@ -121,7 +120,7 @@ $("#setUserRoleBtn").click(function(){
 		
 		var currentUserRoleId = parseInt($('#currentUserRoleID').val())
 		var accessToken = getAccessToken();
-	    $("#setUserRoleBtn").prop('disabled', true);
+		startBtnLoading('#setUserRoleBtn');
 	    
 	    $.ajax({
 	        type: "POST",
@@ -130,7 +129,7 @@ $("#setUserRoleBtn").click(function(){
 	        contentType: "application/json",
 	        dataType: "json",
 	        success: function(data){
-	        	$("#setUserRoleBtn").prop('disabled', false);
+	        	stopBtnLoading('#setUserRoleBtn');
 				if (data['error'] == "" ) {
 					showPopup('Done', 'An email has been sent to ' + $('#userDispName').text() + ' with this role change, and related instructions, if any.');
 				} else {
@@ -138,7 +137,7 @@ $("#setUserRoleBtn").click(function(){
 				}
 	        },
 	        failure: function(errMsg) {
-	        	$("#setUserRoleBtn").prop('disabled', false);
+	        	stopBtnLoading('#setUserRoleBtn');
 	        	showErrorPopup('Unknown error occured. Please contact support');
 	        }
 	    });

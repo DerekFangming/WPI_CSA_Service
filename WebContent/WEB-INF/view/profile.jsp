@@ -58,8 +58,58 @@
 				        Account & profile
 				    </div>
 				    <div class="card-body">
-				    		<div class="profile-img-container">
-							<div id="img-picker" class="aspect-fill" ondragover="allowDrop(event)"></div>
+				    	<label class="lead">Avatar:</label>
+				    	<!--  <div id="img-picker" class="aspect-fill" ondragover="allowDrop(event)"></div>-->
+				    	<c:choose>
+					    <c:when test="${um.userAvatarId == 0}">
+					    <div class="life-img-container border">
+					    	<img class="aspect-fill" src="/resources/img/defaultAvatar.png">
+					    </div>
+					    </c:when>
+					    <c:otherwise>
+					    <div class="life-img-container border">
+					    	<img class="aspect-fill" src="./images/${um.userAvatarId}.jpg">
+					    </div>
+					    </c:otherwise>
+						</c:choose>
+						
+						<label class="lead mt-3">Account:&nbsp;
+							<c:choose>
+						    <c:when test="${user.emailConfirmed}">
+						    	<span class="badge badge-success"><small>Confirmed</small></span>
+						    </c:when>
+						    <c:otherwise>
+						    	<span class="badge badge-danger"><small>Not confirmed</small></span>
+						    </c:otherwise>
+							</c:choose>
+							</label>
+						<div class="input-group">
+						    <div class="input-group-prepend"><span class="input-group-text profile-lable">Account</span></div>
+						    <input type="text" class="form-control bg-white" placeholder="Your name" value="${user.username}" disabled>
+						    <c:if test="${!user.emailConfirmed}">
+						    <div class="input-group-append">
+							    <button class="btn btn-outline-secondary" type="button" onclick="sendVerificationEmail(event, this)">Re-send</button>
+							</div>
+						    </c:if>
+						    
+						</div>
+				    	
+				    	<label class="lead mt-3">Profile details:</label>
+				    	<div class="input-group">
+						    <div class="input-group-prepend"><span class="input-group-text profile-lable">Name</span></div>
+						    <input type="text" class="form-control bg-white" id="userName" placeholder="Your name" value="${um.userName}" disabled>
+						</div>
+						<div class="input-group mt-2">
+						    <div class="input-group-prepend"><span class="input-group-text profile-lable">Birthday</span></div>
+						    <input type="text" class="form-control bg-white" id="userBirthday" placeholder="Your birthday" value="${um.userBirthday}" disabled>
+						</div>
+						<div class="input-group mt-2">
+						    <div class="input-group-prepend"><span class="input-group-text profile-lable">Class of</span></div>
+						    <input type="text" class="form-control bg-white" id="userClassof" placeholder="Graduation year, like 2020" value="${um.userClassof}" disabled>
+						</div>
+						<div class="input-group mt-2">
+						    <div class="input-group-prepend"><span class="input-group-text profile-lable">Major</span></div>
+						    <input type="text" class="form-control bg-white" id="userMajor" placeholder="Abbreviation of your major" value="${um.userMajor}" disabled>
 						</div>
 				    </div>
 				</div>
