@@ -105,7 +105,7 @@
 						</c:if>
 						
 						<div class="mt-3"></div>
-						<button type="button" id="submitBtn" class="btn btn-success pull-right">Submit</button>
+						<button type="button" id="submitBtn" class="btn btn-success float-right">Submit</button>
 						<button type="button" id="checkFormatBtn" class="btn btn-secondary">Check formatting</button>
 						<button type="button" id="instructionBtn" class="btn btn-secondary">Instruction</button>
 						

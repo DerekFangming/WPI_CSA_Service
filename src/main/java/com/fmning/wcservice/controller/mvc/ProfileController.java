@@ -1,8 +1,13 @@
 package com.fmning.wcservice.controller.mvc;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -63,10 +68,25 @@ public class ProfileController {
 		try{
 			UserDetail detail = userManager.getUserDetail(um.getUser().getId());
 			um.setUserName(Util.nullToEmptyString(detail.getName()));
-			um.setUserBirthday(Util.nullToEmptyString(detail.getBirthday()));
 			um.setUserClassof(Util.nullToEmptyString(detail.getYear()));
 			um.setUserMajor(Util.nullToEmptyString(detail.getMajor()));
 			um.getUser().setName(um.getUserName());
+			
+			String bDay = Util.nullToEmptyString(detail.getBirthday());
+			if (bDay.equals("")) {
+				um.setUserBirthday("");
+			} else {
+				try {
+					DateFormat df1 = new SimpleDateFormat("MM/DD/yy", Locale.ENGLISH);
+					Date date = df1.parse(bDay);
+					DateFormat df2 = new SimpleDateFormat("yyyy-MM-DD", Locale.ENGLISH);
+					String reportDate = df2.format(date);
+					um.setUserBirthday(reportDate);
+				} catch (ParseException e) {
+					um.setUserBirthday("");
+				}
+			}
+			
 			
 		}catch(NotFoundException e){
 			um.setUserName("Unknown");
