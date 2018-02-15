@@ -1,8 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import = "java.util.ResourceBundle" %>
 <% ResourceBundle resource = ResourceBundle.getBundle("dataSource");
-  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs"); %>
+  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs");
+  String DTcss=resource.getString("DTcss");String DTJjs=resource.getString("DTJjs");String DTBjs=resource.getString("DTBjs");%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 
@@ -17,7 +19,7 @@
 	
     <link href="<%=BScss %>" rel="stylesheet">
     <script src="<%=JQjs %>"></script>
-    
+    <link href="<%=DTcss %>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
     <link href="/resources/css/main.css?v=2" rel="stylesheet">
@@ -52,7 +54,7 @@
     <div class="container">
         
         <div class="row">
-        		<div class="col-lg-4 col-md-6 col-sm-12 mt-3">
+        		<div class="col-lg-4 col-md-12 mt-3">
         			<div class="card">
 				    <div class="card-header">
 				        Account & profile
@@ -125,13 +127,59 @@
 				    </div>
 				</div>
         		</div>
-        		<div class="col-lg-8 col-md-6 col-sm-12 mt-3">
+        		<div class="col-lg-8 col-md-12 mt-3">
         			<div class="card">
 				    <div class="card-header">
 				        Posted articles
 				    </div>
 				    <div class="card-body">
-				    		
+				    	<c:choose>
+					    <c:when test="${fn:length(feedList) gt 0}">
+						    <table id="feedTable" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+							    <thead>
+							        <tr>
+							        	<th style="display:none;">ID</th>
+							            <th>Name</th>
+							            <th>Created at</th>
+							            <th>Actions</th>
+							        </tr>
+							    </thead>
+							    <tbody>
+							        <c:forEach items="${feedList}" var="feed">
+							            <tr>
+							            	<th style="display:none;">${feed.id}</th>
+							                <th>
+							                	<div class="profile-article-title ">${feed.title}</div>
+							                	<c:if test="${feed.ownerId == 2}">
+											    <span class="badge badge-pill badge-secondary mt-1 ml-2">By CSA</span>
+											    </c:if>
+							                </th>
+							                <th><script>parseDate('${feed.createdAt}');</script></th>
+											<th>
+												<button type="button" class="btn btn-outline-primary">
+													<i class="fa fa-edit"></i>
+												</button>
+												<button type="button" class="btn btn-danger">
+													<i class="fa fa-times"></i>
+												</button>
+											</th>
+							            </tr>
+							        </c:forEach>
+							    </tbody>
+							</table>
+					    </c:when>
+					    <c:otherwise>
+					    	<c:choose>
+						    <c:when test="${user.emailConfirmed}">
+						    <p class="card-text">You haven't created any articles yet.</p>
+						    <button type="button" class="btn btn-outline-primary" onclick="location.href='./new_article';">Create one</button>
+						    </c:when>
+						    <c:otherwise>
+						    <p class="card-text">You haven't created any articles yet. You need to confirm your email before creating articles. You can click on the re-send button on the Profile section to re-send confirmation email.</p>
+						    </c:otherwise>
+							</c:choose>
+					    </c:otherwise>
+						</c:choose>
 				    </div>
 				</div>
 				<div class="card mt-3">
@@ -163,6 +211,8 @@
     <%@include file="subview/footer.jsp" %>
 
     <script src="<%=BSjs %>"></script>
+    <script src="<%=DTJjs %>"></script>
+    <script src="<%=DTBjs %>"></script>
     
     <c:if test="${!user.emailConfirmed}">
     <script src="/resources/js/verifyEmail.js?v=2"></script>

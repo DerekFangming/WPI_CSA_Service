@@ -244,7 +244,9 @@ public class PaymentController {
 							} else {
 								System.out.println(emailMsg);
 							}
-						} catch (Exception e1){}
+						} catch (Exception e1){
+							errorManager.createErrorRespondFromException(e1, Utils.rootDir + "/make_payment", request);
+						}
 					} else {
 						paymentRejected = true;
 						status = PaymentStatusType.REJECTED.getName();
@@ -270,7 +272,9 @@ public class PaymentController {
 						} else {
 							System.out.println(emailMsg);
 						}
-					} catch (Exception e1){}
+					} catch (Exception e1){
+						errorManager.createErrorRespondFromException(e1, Utils.rootDir + "/make_payment", request);
+					}
 					respond.put("error", "");
 					respond.put("status", PaymentStatusType.DONE.getName());
 				}

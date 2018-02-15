@@ -4,7 +4,7 @@
         var settings = $.extend({
         		container: 'life-img-container',
         		src: '',
-        		removeBtn : '<button class="btn btn-danger" style="margin-top:-160px;"><i class="fa fa-2x fa-trash"></i></button>',
+        		removeBtn : '<button class="btn btn-danger" style="margin-top:-160px;"><i class="fa fa-2x fa-times"></i></button>',
             icon: '<img src="/resources/img/plus.png">',
             iconText: '<p>Click or drop an image here</p>'
         }, options );

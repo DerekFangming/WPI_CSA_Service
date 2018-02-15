@@ -30,6 +30,7 @@ import com.fmning.service.domain.WcAppVersion;
 import com.fmning.service.domain.WcArticle;
 import com.fmning.service.domain.WcReport;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.Util;
@@ -43,6 +44,7 @@ public class SgMobileController {
 	@Autowired private WcArticleDao wcArticleDao;
 	@Autowired private WcAppVersionDao wcAppVersionDao;
 	@Autowired private UserManager userManager;
+	@Autowired private ErrorManager errorManager;
 	@Autowired private HelperManager helperManager;
 	
 	
@@ -147,8 +149,10 @@ public class SgMobileController {
 				}
 			}
 		}catch(NotFoundException e){
+			errorManager.createErrorRespondFromException(e, request);
 			respond.put("error", "Version does not exist");
 		}catch(Exception e){
+			errorManager.createErrorRespondFromException(e, request);
 			respond.put("error", "Unknown error");
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -193,10 +197,8 @@ public class SgMobileController {
 				System.out.println(emailContent);
 			}
 			respond.put("error", "");
-		}catch(IllegalStateException e){
-			respond.put("error", e.getMessage());
-		}catch(Exception e){
-			respond.put("error", e.getMessage());
+		} catch (Exception e){
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/create_sg_report", request);
 		}
 	
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -225,10 +227,8 @@ public class SgMobileController {
 			if (user.isTokenUpdated()) {
 				respond.put("accessToken", user.getAccessToken());
 			}
-		}catch(IllegalStateException e){
-			respond.put("error", e.getMessage());
 		}catch(Exception e){
-			respond.put("error", e.getMessage());
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/create_sg_article", request);
 		}
 	
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);

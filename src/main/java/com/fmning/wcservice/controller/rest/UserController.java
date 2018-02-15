@@ -173,9 +173,17 @@ public class UserController {
 					(String)request.get("birthday"), (String)request.get("year"), (String)request.get("major"));
 			
 			String base64 = (String)request.get("avatar");
+			String removeAvatarId = (String)request.get("removeAvatarId");
 			if(base64 != null){
 				int imgId = imageManager.saveTypeUniqueImage(base64, ImageType.AVATAR.getName(), Util.nullInt, userId, null);
 				respond.put("imageId", imgId);
+			} else if (removeAvatarId != null) {
+				try {
+					int avatarId = Integer.parseInt(removeAvatarId);
+					imageManager.softDeleteImage(avatarId, user.getId());
+				} catch (Exception e) {
+					errorManager.createErrorRespondFromException(e, Utils.rootDir + "/save_user_detail", request);
+				}
 			}
 			if (user.isTokenUpdated()) {
 				respond.put("accessToken", user.getAccessToken());

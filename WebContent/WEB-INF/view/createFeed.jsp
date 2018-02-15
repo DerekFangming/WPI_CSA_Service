@@ -70,7 +70,7 @@
 						<c:choose>
 						<c:when test="${hasAvatar == null}">
 					    <div class="alert alert-warning" role="alert" id ="alertMsg">
-							You do not have an avatar and it will show as the default panda. We strongly recommend you to add an avatar from mobile end before posting articles.
+							You do not have an avatar and it will show as the default panda. We strongly recommend you to add an avatar from <a href="./profile" target="blank" >profile page</a> before posting articles.
 						</div>
 						<input type="hidden" id="hasAvatar" value="false">
 						</c:when>

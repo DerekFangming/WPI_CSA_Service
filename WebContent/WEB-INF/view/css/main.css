@@ -142,3 +142,10 @@ body {
 .profile-lable {
 	width:85px;
 }
+
+.profile-article-title {
+	float:left;
+	max-width: 200px;
+	overflow: hidden;
+	white-space: nowrap;
+}

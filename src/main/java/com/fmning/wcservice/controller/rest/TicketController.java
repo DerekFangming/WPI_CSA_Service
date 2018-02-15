@@ -140,7 +140,7 @@ public class TicketController {
                 System.out.println("the pass is NOT Valid man!!!");
             }
         } catch (Exception e) {
-        	errorManager.logError(e);
+        	respond = errorManager.createErrorRespondFromException(e, request);
         }
 
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
@@ -156,14 +156,14 @@ public class TicketController {
 	        response.setHeader("Content-Disposition", "attachment; filename=\"test.pkpass\"");
 	        response.flushBuffer();
 		} catch (Exception e) {
-			errorManager.logError(e);
+			errorManager.createErrorRespondFromException(e, request);
 			try {
 				response.setStatus(200);
 				response.getWriter().write(e.getMessage());
 				response.getWriter().flush();
 				response.getWriter().close();
 			} catch (IOException e1) {
-				errorManager.logError(e1);
+				errorManager.createErrorRespondFromException(e, request);
 			}
 		}
 

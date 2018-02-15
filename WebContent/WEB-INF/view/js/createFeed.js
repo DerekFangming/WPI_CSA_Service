@@ -15,7 +15,7 @@ function selectType(typeId) {
 			$('#alertMsg').html('Don\'t forget to check format to make sure your article look good in all platforms.');
 		} else {
 			$('#alertMsg').attr("class",  'alert alert-warning');
-			$('#alertMsg').html('You do not have an avatar and it will show as the default panda. We strongly recommend you to add an avatar from mobile end before posting articles.');
+			$('#alertMsg').html('You do not have an avatar and it will show as the default panda. We strongly recommend you to add an avatar from <a href="./profile" target="blank" >profile page</a> before posting articles.');
 		}
 		if ($('#eventInput').length) {
 			$("#eventInput").fadeOut();

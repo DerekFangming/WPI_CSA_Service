@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.util.Util;
 import com.fmning.wcservice.controller.rest.TestController;
@@ -49,6 +50,7 @@ public class DatabaseBackupScheduler {
 	private static Drive drive;
 	
 	@Autowired private HelperManager helperManager;
+	@Autowired private ErrorManager errorManager;
 
 	//@Scheduled(cron = "*/5 * * * * *") //Every 5 seconds, for testing only
 	@Scheduled(cron = "0 0 6 * * ?") //6 am in est time to simulate 1 am in UTC time
@@ -119,6 +121,7 @@ public class DatabaseBackupScheduler {
 					    insert.execute();
 						
 					} catch (Exception e) {
+						errorManager.logError(e);
 						String report = "Error during google drive backup of the database:\n\n";
 						helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
 								"WPI CSA scheduler error report", report + e.getMessage());
@@ -126,6 +129,7 @@ public class DatabaseBackupScheduler {
 				}
 				
 			} catch (IOException | InterruptedException e) {
+				errorManager.logError(e);
 				String report = "Error during backup of the database:\n\n";
 				helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
 						"WPI CSA scheduler error report", report + e.getMessage());

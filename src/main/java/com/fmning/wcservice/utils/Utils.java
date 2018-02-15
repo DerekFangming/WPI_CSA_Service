@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.util.Util;
 import com.fmning.wcservice.scheduler.DatabaseBackupScheduler;
@@ -50,6 +51,7 @@ public class Utils {
 	public static final int CSA_ID = 2;
 	
 	@Autowired private HelperManager helperManager;
+	@Autowired private ErrorManager errorManager;
 	
 	public static String createVerificationEmail(String name, String veriCode) {
 		String message = "Hi " + name + ",";
@@ -162,6 +164,7 @@ public class Utils {
 			}
 			
 		} catch (IOException | InterruptedException e) {
+			errorManager.logError(e);
 			String report = "Error during startup of the service:\n\n";
 			helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
 					"WPI CSA scheduler error report", report + e.getMessage());

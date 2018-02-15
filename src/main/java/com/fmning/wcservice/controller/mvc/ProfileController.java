@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.Event;
+import com.fmning.service.domain.Feed;
 import com.fmning.service.domain.Image;
 import com.fmning.service.domain.User;
 import com.fmning.service.domain.UserDetail;
@@ -35,6 +36,7 @@ import com.fmning.util.Util;
 import com.fmning.wcservice.model.EventModel;
 import com.fmning.wcservice.model.UserModel;
 import com.fmning.wcservice.utils.UserRole;
+import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class ProfileController {
@@ -99,6 +101,18 @@ public class ProfileController {
 			um.setUserAvatarId(0);
 		}
 		
+		List<Feed> feedList = new ArrayList<>();
+		try{
+			feedList.addAll(feedManager.getRecentFeedByCreator(um.getUser().getId(), 0));
+		} catch (NotFoundException e) {}
+		
+		if (UserRole.isAdmin(um.getUser().getRoleId())) {
+			try{
+				feedList.addAll(feedManager.getRecentFeedByCreator(Utils.CSA_ID, 0));
+			} catch (NotFoundException e) {}
+		}
+		
+		model.addAttribute("feedList", feedList);
 		model.addAttribute("user", um.getUser());//For nav bar
 		model.addAttribute("um", um);
 		
