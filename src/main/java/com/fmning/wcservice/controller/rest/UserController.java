@@ -182,7 +182,7 @@ public class UserController {
 					int avatarId = Integer.parseInt(removeAvatarId);
 					imageManager.softDeleteImage(avatarId, user.getId());
 				} catch (Exception e) {
-					errorManager.createErrorRespondFromException(e, Utils.rootDir + "/save_user_detail", request);
+					errorManager.logError(e, Utils.rootDir + "/save_user_detail", request);
 				}
 			}
 			if (user.isTokenUpdated()) {

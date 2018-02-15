@@ -1,5 +1,11 @@
 $(document).ready(function() {
-	$('#img-picker').imagePicker();
+	var imgSrc = '';
+	if ($('#feedCoverImageId').val() != '') {
+		imgSrc = './images/' + $('#feedCoverImageId').val() + '.jpg';
+	}
+	$('#img-picker').imagePicker({
+		src: imgSrc
+	});
 })
 
 function selectType(typeId) {

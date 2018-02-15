@@ -3,9 +3,28 @@ function showErrorPopup(message) {
 }
 
 function showPopup(title, message) {
-	document.getElementById('popupTitle').innerHTML = title;
-	document.getElementById('popupMessage').innerHTML = message;
+	$('#popupTitle').html(title);
+	$('#popupMessage').html(message);
 	$('#popupModal').modal('toggle');
+}
+
+function showConfirmPopup(message, action) {
+	$('#confirmMessage').html(message);
+	$('#confirmActionBtn').attr('onclick', action);
+	$('#confirmModal').modal('toggle');
+}
+
+function loadingConfirmPopup() {
+	startBtnLoading('#confirmActionBtn');
+	$('#confirmCancelBtn').prop('disabled', true);
+	$('#confirmNoBtn').prop('disabled', true);
+}
+
+function hideAndStopLoadingConfirmPopup() {
+	stopBtnLoading('#confirmActionBtn');
+	$('#confirmCancelBtn').prop('disabled', false);
+	$('#confirmNoBtn').prop('disabled', false);
+	$('#confirmModal').modal('hide');
 }
 
 function parseDate(date) {

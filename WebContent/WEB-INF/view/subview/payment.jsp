@@ -25,7 +25,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-            	<h4 class="modal-title">Processing... Do <span class="text-warning">NOT</span> close your browser.</h4>
+            	<h4 class="modal-title">Processing... Do not close your browser.</h4>
             </div>
             <div class="modal-body">
             	<center><i class="fa fa-refresh fa-3x fa-spin" style="color:black"></i></center>

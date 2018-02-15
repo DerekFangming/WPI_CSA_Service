@@ -149,10 +149,10 @@ public class SgMobileController {
 				}
 			}
 		}catch(NotFoundException e){
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 			respond.put("error", "Version does not exist");
 		}catch(Exception e){
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 			respond.put("error", "Unknown error");
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);

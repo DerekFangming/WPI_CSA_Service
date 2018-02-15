@@ -147,19 +147,21 @@
 							    <tbody>
 							        <c:forEach items="${feedList}" var="feed">
 							            <tr>
-							            	<th style="display:none;">${feed.id}</th>
+							            		<th style="display:none;" id="feedWithId${feed.id}">${feed.id}</th>
 							                <th>
-							                	<div class="profile-article-title ">${feed.title}</div>
+							                	<div class="profile-article-title ">
+							                		<a href="./feed?id=${feed.id}" target="_blank">${feed.title}</a>
+							                	</div>
 							                	<c:if test="${feed.ownerId == 2}">
 											    <span class="badge badge-pill badge-secondary mt-1 ml-2">By CSA</span>
 											    </c:if>
 							                </th>
 							                <th><script>parseDate('${feed.createdAt}');</script></th>
 											<th>
-												<button type="button" class="btn btn-outline-primary">
+												<button type="button" class="btn btn-outline-primary" onclick="editFeed(${feed.id});">
 													<i class="fa fa-edit"></i>
 												</button>
-												<button type="button" class="btn btn-danger">
+												<button type="button" class="btn btn-danger" onclick="showConfirmPopup('You are going to delete this article.', 'deleteFeed(${feed.id})')">
 													<i class="fa fa-times"></i>
 												</button>
 											</th>

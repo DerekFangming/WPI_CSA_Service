@@ -118,16 +118,16 @@ public class EmailController {
 				respond = "resend";
 			}
 		}catch(IllegalStateException e){
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 			respond = e.getMessage();
 		}catch(DateTimeParseException e){
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 			respond = "Expiration date format incorrect";
 		}catch(NotFoundException e){
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 			respond = e.getMessage();
 		}catch(Exception e) {
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 		}
 		
 		if (respond.equals("success")) {
@@ -213,16 +213,16 @@ public class EmailController {
 				respond = "resend";
 			}
 		}catch(IllegalStateException e){
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 			respond = "The token is not in correct format. Please copy and paste the url in browser and try again.";
 		}catch(DateTimeParseException e){
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 			respond = "Expiration date format incorrect";
 		}catch(NotFoundException e){
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 			respond = e.getMessage();
 		}catch(Exception e) {
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 		}
 		
 		if (respond.equals("success")) {

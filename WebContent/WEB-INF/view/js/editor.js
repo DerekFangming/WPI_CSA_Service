@@ -1,7 +1,7 @@
 $(function() {
     $('textarea').froalaEditor({
     	height: 300,
-		toolbarButtons: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '|', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen'],//html
+		toolbarButtons: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '|', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen', 'html'],//html
 		toolbarButtonsMD: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '|', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen'],
 		toolbarButtonsSM: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '-', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen'],
 		toolbarButtonsXS: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '-', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen'],
@@ -19,6 +19,11 @@ $(function() {
 		colorsBackground: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
 		quickInsertButtons: ['image']
 	});
+    
+    if($('#editorDefaultText').html() != '') {
+    		$('textarea').froalaEditor('html.set', getEditableHTML($('#editorDefaultText').html()));
+    }
+    
 });
 
 function checkContentFormat(content) {
@@ -145,6 +150,37 @@ function getAcceptableHTML(content) {
 	
 	//Removing the close tag for table new lines
 	return doc.body.innerHTML.replace(/<tbr><\/tbr>/g, '<tbr>');
+}
+
+function getEditableHTML(content) {
+	var parser = new DOMParser();
+	var doc = parser.parseFromString(content.replace(/<tbr>/g, '<tbr></tbr>'), "text/html");
+	
+	//Processing tables
+	var tabList = doc.getElementsByTagName('tab');
+	for (var i=tabList.length - 1; i > -1; i--) {
+		var newTab = '<table style="width: 100%;"><tbody>';
+		var rows = tabList[i].innerHTML.split('<tbr></tbr>');
+		for (var j=0; j < rows.length; j++) {
+			newTab += '<tr><td>' + rows[j] + '</td></tr>';
+		}
+		newTab += '</tbody></table>';
+		tabList[i].outerHTML = newTab;
+	}
+	
+	//Processing font colors
+	var fontList = doc.getElementsByTagName('font');
+	for (var i=fontList.length - 1; i > -1; i--) {
+		
+		var span = document.createElement('span');
+		span.setAttribute('style', 'color:' + fontList[i].color);
+		
+		span.innerHTML = fontList[i].innerHTML;
+		
+		fontList[i].outerHTML = span.outerHTML;
+	}
+		
+	return doc.body.innerHTML;
 }
 
 function rgb2hex(rgb) {

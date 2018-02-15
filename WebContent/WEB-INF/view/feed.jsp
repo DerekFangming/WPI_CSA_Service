@@ -59,8 +59,18 @@
 
     <!-- Page Content -->
     <div class="container">
-
-        <!-- Jumbotron Header -->
+    		
+    		<c:choose>
+		<c:when test="${notFound}">
+		<header class="jumbotron my-4">
+            <center>
+            	<h1 class="display-4 mb-0">The article you are looking for does not exist</h1>
+            	<p class="lead mt-2 mb-0">If you believe this is an error, please contact admin@fmning.com</p>
+            </center>
+        </header>
+		</c:when>
+		<c:otherwise>
+			<!-- Jumbotron Header -->
         <header class="jumbotron my-4">
             <center>
             	<h1 class="display-4 mb-0">${fm.feed.title}</h1>
@@ -82,7 +92,7 @@
 		</div>
 		
 		<c:if test="${fm.event != null}">
-    	<div class="card mt-3">
+    		<div class="card mt-3">
 			<div class="card-header">
 				Event:
 			</div>
@@ -118,6 +128,13 @@
   			</div>
 		</div>
     	</c:if>
+		
+		
+		
+		
+		</c:otherwise>
+		</c:choose>
+        
         
     </div>
     <!-- /.container -->

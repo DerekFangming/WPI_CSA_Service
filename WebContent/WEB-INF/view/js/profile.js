@@ -1,5 +1,6 @@
+var feedTable;
 $(document).ready(function() {
-	var table = $('#feedTable').DataTable({
+	feedTable = $('#feedTable').DataTable({
 		"order": [[ 2, "desc" ]]
 	});
 	
@@ -112,7 +113,7 @@ $('#profileSaveBtn').click(function(){
 	        dataType: "json",
 	        success: function(data){
 	        	stopBtnLoading('#profileSaveBtn');
-	        	$('#profileCancelBtn').prop('disabled', false);
+	        		$('#profileCancelBtn').prop('disabled', false);
 				if (data['error'] == "" ) {
 					var imgSrc = '/resources/img/defaultAvatar.png';
 					if ($('#img-picker').children().children('img').length != 0) {
@@ -138,11 +139,52 @@ $('#profileSaveBtn').click(function(){
 				}
 	        },
 	        failure: function(errMsg) {
-	        	stopBtnLoading('#profileSaveBtn');
-	        	$('#profileCancelBtn').prop('disabled', false);
-	        	showErrorPopup('Unknown error occured. Please contact support');
+		        	stopBtnLoading('#profileSaveBtn');
+		        	$('#profileCancelBtn').prop('disabled', false);
+		        	showErrorPopup('Unknown error occured. Please contact support');
 	        }
 	    });
 	}
 	
 });
+
+
+function deleteFeed(feedId) {
+	loadingConfirmPopup();
+	var accessToken = getAccessToken();
+	
+	$.ajax({
+        type: "POST",
+        url: "./delete_feed",
+        data: JSON.stringify({accessToken : accessToken, feedId : feedId}),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data){
+        		hideAndStopLoadingConfirmPopup();
+			if (data['error'] == "" ) {
+				feedTable.row($('#feedWithId' + feedId).parents('tr') ).remove().draw();
+			} else {
+				showErrorPopup(data['error']);
+			}
+        },
+        failure: function(errMsg) {
+        		hideAndStopLoadingConfirmPopup();
+	        	showErrorPopup('Unknown error occured. Please contact support');
+        }
+    });
+}
+
+function editFeed(feedId) {
+	
+	
+	/*feedTable.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+		var data = this.data();
+		if (data[0] == feedId) {
+			feedTable.row(this).remove().draw();
+			break;
+		}
+	    var data = this.data();
+	    //alert(data[0] + ' ' + rowIdx);
+	    
+	});*/
+}

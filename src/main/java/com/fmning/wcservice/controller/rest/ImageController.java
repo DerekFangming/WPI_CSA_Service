@@ -171,7 +171,7 @@ public class ImageController {
 	        org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
 	        response.flushBuffer();
 		} catch (Exception e) {
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 			try {
 				response.setStatus(200);
 				response.getWriter().write(e.getMessage());
@@ -179,7 +179,31 @@ public class ImageController {
 				response.getWriter().close();
 				
 			} catch (IOException e1) {
-				errorManager.createErrorRespondFromException(e1, request);
+				errorManager.logError(e1, request);
+			}
+		}
+
+	}
+	
+	@RequestMapping(value = "/WCImage_**", method = RequestMethod.GET)
+	public void getWcImage(HttpServletRequest request, HttpServletResponse response) {
+		try{
+			int imageId = Integer.parseInt(request.getRequestURI().split("WCImage_")[1]);
+			Image image = imageManager.getImageById(imageId);
+			File file = new File(image.getLocation());
+			InputStream is = new FileInputStream(file);
+	        org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+	        response.flushBuffer();
+		} catch (Exception e) {
+			errorManager.logError(e, request);
+			try {
+				response.setStatus(200);
+				response.getWriter().write(e.getMessage());
+				response.getWriter().flush();
+				response.getWriter().close();
+				
+			} catch (IOException e1) {
+				errorManager.logError(e1, request);
 			}
 		}
 

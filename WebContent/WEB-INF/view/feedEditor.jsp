@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import = "java.util.ResourceBundle" %>
 <% ResourceBundle resource = ResourceBundle.getBundle("dataSource");
-  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs"); %>
+  String BScss=resource.getString("BScss");String BSjs=resource.getString("BSjs");String JQjs=resource.getString("JQjs");
+  String Fjs=resource.getString("Fjs");%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -13,7 +14,15 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>WPI CSA - New Article</title>
+	<c:choose>
+		<c:when test="${editMode}">
+		<title>WPI CSA - Edit Article</title>
+		</c:when>
+		<c:otherwise>
+		<title>WPI CSA - New Article</title>
+		</c:otherwise>
+	</c:choose>
+    
 	
     <link href="<%=BScss %>" rel="stylesheet">
     <script src="<%=JQjs %>"></script>
@@ -27,8 +36,7 @@
 	<script src="/resources/js/common.js?v=2"></script>
 	<script src="/resources/js/imagePicker.js?v=2"></script>
 	<script src="/resources/js/editor.js?v=2"></script>
-	<script src="/resources/js/froala.js"></script>
-	<!-- <script src="https://cdn.rawgit.com/DerekFangming/WPI_CSA_Service/609cd534/WebContent/WEB-INF/view/js/froala.js"></script> -->
+	<script src="<%=Fjs %>"></script>
 
 </head>
 
@@ -56,6 +64,17 @@
 
     <!-- Page Content -->
     <div class="container">
+    
+    		<c:choose>
+		<c:when test="${notFound}">
+		<header class="jumbotron my-4">
+            <center>
+            	<h1 class="display-4 mb-0">The article you are looking for does not exist</h1>
+            	<p class="lead mt-2 mb-0">If you believe this is an error, please contact admin@fmning.com</p>
+            </center>
+        </header>
+		</c:when>
+		<c:otherwise>
 
        <div class="card mt-3">
 			<div class="card-header" style="height:49px;">
@@ -64,10 +83,23 @@
 			<div class="row">
 				<div class="col-lg-6 col-sm-12">
 					<div id="img-picker" class="aspect-fill border-right" ondragover="allowDrop(event)"></div>
+					<input type="hidden" id="feedCoverImageId" value="${fm.coverImageId}">
 				</div>
 				<div class="col-lg-6 clm-sm-12">
 					<div class="card-body">
 						<c:choose>
+						<c:when test="${fm.feed != null && fm.feed.type == 'Event'}">
+					    <div class="alert alert-success role="alert" id ="alertMsg">
+							You will be editing this article as CSA Official.
+						</div>
+						<input type="hidden" id="hasAvatar" value="false">
+						</c:when>
+						<c:when test="${fm.feed != null}">
+					    <div class="alert alert-success role="alert" id ="alertMsg">
+							Don't forget to check format to make sure your article look good in all platforms.
+						</div>
+						<input type="hidden" id="hasAvatar" value="false">
+						</c:when>
 						<c:when test="${hasAvatar == null}">
 					    <div class="alert alert-warning" role="alert" id ="alertMsg">
 							You do not have an avatar and it will show as the default panda. We strongly recommend you to add an avatar from <a href="./profile" target="blank" >profile page</a> before posting articles.
@@ -76,14 +108,21 @@
 						</c:when>
 						<c:otherwise>
 					    <div class="alert alert-success" role="alert" id ="alertMsg">
-					    	Don't forget to check format to make sure your article look good in all platforms.
+					    		Don't forget to check format to make sure your article look good in all platforms.
 					    </div>
 					    <input type="hidden" id="hasAvatar" value="true">
 						</c:otherwise>
 						</c:choose>
 						<div class="input-group mb-3">
 						    <div class="input-group-prepend">
-						        <button class="btn btn-outline-secondary dropdown-toggle" id="currentType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</button>
+						    		<c:choose>
+								<c:when test="${fm == null}">
+								<button class="btn btn-outline-secondary dropdown-toggle" id="currentType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</button>
+								</c:when>
+								<c:otherwise>
+								<button class="btn btn-outline-secondary dropdown-toggle" id="currentType" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>${fm.feed.type}</button>
+						        </c:otherwise>
+						        </c:choose>
 						        <div class="dropdown-menu">
 						            <a class="dropdown-item" href="#" onclick="selectType(1);">Blog</a>
 						            <a class="dropdown-item" href="#" onclick="selectType(2);">Trade</a>
@@ -92,7 +131,7 @@
 			    						</c:if>
 						        </div>
 						    </div>
-						    <input type="text" id="title" placeholder="Enter title and select article type" class="form-control" aria-label="Text input with dropdown button">
+						    <input type="text" id="title" placeholder="Enter title and select article type" class="form-control" value="${fm.feed.title}">
 						</div>
 						
 						<c:if test="${user.roleId <= 2}">
@@ -120,10 +159,14 @@
 			</div>
 			<div style="min-height:300px">
 				<textarea></textarea>
+				
+				<div id="editorDefaultText" style="display:none">${fm.feed.body}</div>
+				<input type="hidden" id="editorHTMLOption" value="">
 			</div>
 		</div>
 
-		
+		</c:otherwise>
+		</c:choose>
 
     </div>
     <!-- /.container -->
@@ -233,7 +276,7 @@
 
     <%@include file="subview/footer.jsp" %>
     
-    <script src="/resources/js/createFeed.js?v=2"></script>
+    <script src="/resources/js/feedEditor.js?v=2"></script>
 
 	<script src="<%=BSjs %>"></script>
 

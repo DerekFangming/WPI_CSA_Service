@@ -134,7 +134,7 @@ public class FeedController {
 			processedFeed.put("ownerName", userManager.getUserDisplayedName(m.getOwnerId()));
 			processedFeed.put("createdAt", m.getCreatedAt().toString());
 			try {
-				int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
+				int imgId = imageManager.getImageByTypeAndMapping(ImageType.FEED_COVER.getName(), m.getId()).getId();
 				processedFeed.put("coverImgId", imgId);
 			}catch(Exception e) {}
 			
@@ -373,6 +373,32 @@ public class FeedController {
 		} catch (IOException e) {
 			errorManager.logError(e);
 		}
+	}
+	
+	@RequestMapping(value = "/delete_feed")
+    public ResponseEntity<Map<String, Object>> deleteFeed(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			User user = userManager.validateAccessToken(request);
+			
+			Feed feed = feedManager.getFeedById((int)request.get("feedId"));
+			
+			if (feed.getOwnerId() == user.getId()) {
+				feedManager.softDeleteFeed(feed.getId(), user.getId());
+			} else if (UserRole.isAdmin(user.getRoleId())) {
+				feedManager.softDeleteFeed(feed.getId(), feed.getOwnerId(), user.getId());
+			} else {
+				throw new IllegalStateException(ErrorMessage.UNAUTHORIZED_FEED_DELETE.getMsg());
+			}
+			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
+			respond.put("error", "");
+		} catch (Exception e) {
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/delete_feed", request);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 
 }

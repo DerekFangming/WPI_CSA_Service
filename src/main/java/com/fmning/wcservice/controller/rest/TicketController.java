@@ -156,14 +156,14 @@ public class TicketController {
 	        response.setHeader("Content-Disposition", "attachment; filename=\"test.pkpass\"");
 	        response.flushBuffer();
 		} catch (Exception e) {
-			errorManager.createErrorRespondFromException(e, request);
+			errorManager.logError(e, request);
 			try {
 				response.setStatus(200);
 				response.getWriter().write(e.getMessage());
 				response.getWriter().flush();
 				response.getWriter().close();
 			} catch (IOException e1) {
-				errorManager.createErrorRespondFromException(e, request);
+				errorManager.logError(e, request);
 			}
 		}
 
