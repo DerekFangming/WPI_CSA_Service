@@ -1,10 +1,12 @@
 $(function() {
+	var htmlOption = $('#editorHTMLOption').val() == 'true' ? 'html' : '';
+	
     $('textarea').froalaEditor({
     	height: 300,
-		toolbarButtons: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '|', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen', 'html'],//html
-		toolbarButtonsMD: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '|', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen'],
-		toolbarButtonsSM: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '-', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen'],
-		toolbarButtonsXS: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '-', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen'],
+		toolbarButtons: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '|', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen', htmlOption],
+		toolbarButtonsMD: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '|', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen', htmlOption],
+		toolbarButtonsSM: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '-', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen', htmlOption],
+		toolbarButtonsXS: ['bold', 'italic', 'underline', '|', 'color', 'paragraphFormat', 'align', '-', 'insertImage', 'insertTable', '|', 'undo', 'redo', 'spellChecker', 'selectAll', 'clearFormatting', '|', 'print', 'fullscreen', htmlOption],
 		paragraphFormat: {
 			H1: 'Heading 1',
 			H2: 'Heading 2',
@@ -72,7 +74,11 @@ function getAcceptableHTML(content) {
 		
 		
 		if (imgList[i].parentNode.innerHTML.length == imgList[i].outerHTML.length) {
-			imgList[i].parentNode.replaceWith(img);
+			if (imgList[i].src.includes('WCImage_')) {
+				imgList[i].parentNode.replaceWith(imgList[i]);
+			} else {
+				imgList[i].parentNode.replaceWith(img);
+			}
 		} else {
 			var otherChildren = imgList[i].parentNode.innerHTML.split(imgList[i].outerHTML);
 			var newImgStr = '';
@@ -81,7 +87,12 @@ function getAcceptableHTML(content) {
 				newChild.innerHTML = otherChildren[0];
 				newImgStr += newChild.outerHTML;
 			}
-			newImgStr += img.outerHTML;
+			if (imgList[i].src.includes('WCImage_')) {
+				newImgStr += imgList[i].outerHTML;
+			} else {
+				newImgStr += img.outerHTML;
+			}
+			
 			if (otherChildren[1].length != 0) {
 				var newChild = document.createElement(imgList[i].parentNode.nodeName);
 				newChild.innerHTML = otherChildren[1];
@@ -133,6 +144,17 @@ function getAcceptableHTML(content) {
 		elm.removeAttribute("style");
 	});
 	
+	//Processing alignments in tables (in div)
+	var divList = doc.getElementsByTagName('div');
+	for (var i=divList.length - 1; i > -1; i--) {
+		var paragraph = document.createElement('p');
+		if (divList[i].hasAttribute('align')) {
+			paragraph.setAttribute('align', divList[i].align);
+		}
+		paragraph.innerHTML = divList[i].innerHTML;
+		divList[i].outerHTML = paragraph.outerHTML;
+	}
+	
 	//Processing colors
 	elms = doc.querySelectorAll('span[style]');
 	Array.prototype.forEach.call(elms, function(elm) {
@@ -154,7 +176,7 @@ function getAcceptableHTML(content) {
 
 function getEditableHTML(content) {
 	var parser = new DOMParser();
-	var doc = parser.parseFromString(content.replace(/<tbr>/g, '<tbr></tbr>'), "text/html");
+	var doc = parser.parseFromString(content.replace(/<\/tbr>/g, '').replace(/<tbr>/g, '<tbr></tbr>'), "text/html");
 	
 	//Processing tables
 	var tabList = doc.getElementsByTagName('tab');

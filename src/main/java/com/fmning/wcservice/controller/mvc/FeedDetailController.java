@@ -25,6 +25,7 @@ import com.fmning.util.FeedType;
 import com.fmning.util.ImageType;
 import com.fmning.wcservice.model.FeedModel;
 import com.fmning.wcservice.utils.UserRole;
+import com.fmning.wcservice.utils.Utils;
 
 @Controller
 public class FeedDetailController {
@@ -116,6 +117,11 @@ public class FeedDetailController {
 			response.addCookie(cookie);
 		}
 		
+		if (Utils.prodMode) {
+			model.addAttribute("editorHTMLOption", false);
+		} else {
+			model.addAttribute("editorHTMLOption", true);
+		}
 		return "feedEditor";
 	}
 	
@@ -166,7 +172,11 @@ public class FeedDetailController {
 			errorManager.logError(e, request);
 			model.addAttribute("notFound", true);
 		}
-		model.addAttribute("editorHTMLOption", true);
+		if (Utils.prodMode) {
+			model.addAttribute("editorHTMLOption", false);
+		} else {
+			model.addAttribute("editorHTMLOption", true);
+		}
 		model.addAttribute("editMode", true);
 		return "feedEditor";
 	}

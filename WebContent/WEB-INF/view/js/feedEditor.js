@@ -270,3 +270,9 @@ function checkEventFormat() {
 	return '';
 }
 
+
+$("#saveChangeBtn").click(function(){
+	alert($('#editorDefaultText').html());
+	var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
+	alert(content);
+});

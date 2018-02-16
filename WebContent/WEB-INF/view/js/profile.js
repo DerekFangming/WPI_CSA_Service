@@ -3,24 +3,6 @@ $(document).ready(function() {
 	feedTable = $('#feedTable').DataTable({
 		"order": [[ 2, "desc" ]]
 	});
-	
-	$('#feedTable tbody').on('click','tr', function() {
-		/*var row = table.row(this).data();
-	    $('#selectedUserId').val(row[0]);
-	    $('#userDispName').text(row[1]);
-	    $('#userUsername').text(row[2]);
-	    $("#currentRole").html(row[4]);
-	    $("#selectedUserRoleId").val(getUserRoleId(row[4]));
-	    $('#userCreated').text(row[5].substring(0,10));
-	    
-	    if (row[3].includes('0')) {
-	    	$("#resendEmailConfirmBtn").prop('disabled', false);
-	    } else {
-	    	$("#resendEmailConfirmBtn").prop('disabled', true);
-	    }
-	    $("#sendResetPasswordBtn").prop('disabled', false);
-		$("#setUserRoleBtn").prop('disabled', true);*/
-	});
 })
 
 $('#profileEditBtn').click(function(){
