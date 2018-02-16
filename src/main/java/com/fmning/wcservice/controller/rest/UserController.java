@@ -70,7 +70,11 @@ public class UserController {
 			
 			String message = Utils.createVerificationEmail(name, user.getVeriToken());
 			if (Utils.prodMode) {
-				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				try {
+					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				} catch (Exception e) {
+					errorManager.logError(e);
+				}
 			} else {
 				System.out.println(message);
 			}
@@ -278,7 +282,11 @@ public class UserController {
 			String message = Utils.createRoleChangeEmail(name, roleId);
 			
 			if (Utils.prodMode){
-				helperManager.sendEmail("no-reply@fmning.com", requestedUser.getUsername(), "Role Changed Notification", message);
+				try {
+					helperManager.sendEmail("no-reply@fmning.com", requestedUser.getUsername(), "Role Changed Notification", message);
+				} catch (Exception e) {
+					errorManager.logError(e);
+				}
 			} else {
 				System.out.println(message);
 			}

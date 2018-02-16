@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.fmning.service.domain.Feed;
 import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.ImageManager;
@@ -35,6 +36,7 @@ public class IndexController {
 	@Autowired private UserManager userManager;
 	@Autowired private FeedManager feedManager;
 	@Autowired private ImageManager imageManager;
+	@Autowired private ErrorManager errorManager;
 	@Autowired private HelperManager helperManager;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -116,7 +118,11 @@ public class IndexController {
 			userManager.updateVeriCode(username, veriCode);
 			String message = Utils.createVerificationEmail(user.getName(), veriCode);
 			if (Utils.prodMode){
-				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				try {
+					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				} catch (Exception e) {
+					errorManager.logError(e);
+				}
 			} else {
 				System.out.println(message);
 			}

@@ -119,6 +119,8 @@
 											</div>
 										</div>
 										<input type="text" id="title" placeholder="Enter title and select article type" class="form-control" value="${fm.feed.title}">
+										<input type="hidden" id="origTitle" value="${fm.feed.title}">
+										<input type="hidden" id="feedId" value="${fm.feed.id}">
 									</div>
 									<c:if test="${user.roleId <= 2}">
 										<div class="input-group mb-3" id="eventInput" style="display: none">
@@ -233,19 +235,20 @@
 									<div class="form-group">
 										<label for="message-text" class="col-form-label">Ticket design:</label>
 										<div>
-											<div style="float: left;">
-												<button class="btn btn-secondary" type="button" onclick="chooseFile(1);" id="ticketBgSBtn">Add background</button><br>
-												<button class="btn btn-secondary mt-3" type="button" onclick="chooseFile(2);" id="ticketThumBtn">Add thumbnail</button>
-												<div style="display:none;">
-													<input id="ticketImgInput" type="file" accept="image/jpeg, image/jpg, image/png"/>
-													<input id="ticketImgOption" value="1">
-												</div>
-											</div>
-											<div class="ticket-bg-container" >
+											<div class="ticket-bg-container" style="float: left;">
 												<img id="ticketBGImage" class="aspect-fill" width="300px" height="450px" style="position: absolute;"/>
 												<div class="ticket_blur"></div>
 												<div class="ticket-thum-container border">
 													<img id="ticketThumnImage" class="aspect-fill" width="150px" height="150px"/>
+												</div>
+											</div>
+											<div>
+												<button class="btn btn-outline-secondary ml-3" type="button" onclick="chooseFile(1);" id="ticketBgSBtn">Add background</button><br>
+												<button class="btn btn-outline-secondary ml-3 mt-3" type="button" onclick="chooseFile(2);" id="ticketThumBtn">Add thumbnail</button>
+												<button class="btn btn-outline-secondary ml-3 mt-3" type="button" id="ticketPreviewBtn" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom">Preview</button>
+												<div style="display:none;">
+													<input id="ticketImgInput" type="file" accept="image/jpeg, image/jpg, image/png"/>
+													<input id="ticketImgOption" value="1">
 												</div>
 											</div>
 										</div>

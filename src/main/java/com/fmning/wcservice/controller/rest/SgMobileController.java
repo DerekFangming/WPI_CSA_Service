@@ -192,7 +192,11 @@ public class SgMobileController {
 			emailContent += "\nReport: " + report;
 			emailContent += "\n\n\n\n\nPlease reply this email to unsubscribe";
 			if (Utils.prodMode) {
-				helperManager.sendEmail("admin@fmning.com", emailList, "WPI CSA app user report", emailContent);
+				try {
+					helperManager.sendEmail("admin@fmning.com", emailList, "WPI CSA app user report", emailContent);
+				} catch (Exception e) {
+					errorManager.logError(e);
+				}
 			} else {
 				System.out.println(emailContent);
 			}

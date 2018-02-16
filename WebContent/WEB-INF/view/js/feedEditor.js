@@ -104,10 +104,7 @@ $("#submitBtn").click(function(){
 	        success: function(data){
 	        	stopBtnLoading('#submitBtn');
 				if (data['error'] == "" ) {
-					showPopup('Done', 'Article created. You will be redirected in 5 seconds.');
-					window.setTimeout(function(){
-						window.location.href = "./";
-					}, 5000);
+					window.location.href = "./";
 				} else {
 					showErrorPopup(data['error']);
 				}
@@ -266,13 +263,95 @@ function checkEventFormat() {
 		}
 	}
 	
-	
 	return '';
 }
 
 
+
+$("#ticketPreviewBtn").click(function(){
+	var attr = $('#ticketBGImage').attr('src');
+	if(typeof attr == typeof undefined || attr == false) {
+		showErrorPopup('Please select a ticket background image. Note that the image will be blurred and we recommand a dark colorred image for better effect.');
+		return;
+	}
+	attr = $('#ticketThumnImage').attr('src');
+	if(typeof attr == typeof undefined || attr == false) {
+		showErrorPopup('Please select a ticket thumbnail image.');
+		return;
+	}
+	
+	startBtnLoading('#ticketPreviewBtn');
+	var accessToken = getAccessToken();
+	$.ajax({
+        type: "POST",
+        url: "./preview_ticket",
+        data: JSON.stringify({accessToken : accessToken, ticketBgImage: $('#ticketBGImage').attr('src'), ticketThumbImage: $('#ticketThumnImage').attr('src')}),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data){
+        		stopBtnLoading('#ticketPreviewBtn');
+			if (data['error'] == "" ) {
+				showPopup('Done', 'We have emailed you the ticket sample. Check junk or trash folder if you cannot find it.');
+			} else {
+				showErrorPopup(data['error']);
+			}
+        },
+        failure: function(errMsg) {
+	        	stopBtnLoading('#ticketPreviewBtn');
+	        	showErrorPopup('Unknown error occured. Please contact support');
+        }
+    });
+});
+
+
 $("#saveChangeBtn").click(function(){
-	alert($('#editorDefaultText').html());
-	var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
-	alert(content);
+	
+	var error = checkFormat();
+	if (error != '' ) {
+		showErrorPopup(error);
+	} else {
+		var cover = $('#img-picker').children().children('img').attr('src');
+		var title = $('#title').val().trim();
+		var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
+		var accessToken = getAccessToken();
+		var params = {accessToken : accessToken, feedId : parseInt($('#feedId').val())};
+		
+		if (!cover.includes('/images/')) {
+			params.coverImage = cover;
+		}
+		
+		if (title != $('#origTitle').val().trim()) {
+			params.title = title;
+		}
+
+		if (content != $('#editorDefaultText').html().replace(/<\/tbr>/g, '')) {
+			params.body = content;
+		}
+		
+		if (Object.keys(params).length == 2) {
+			showErrorPopup('Nothing is changed. Please update something before saving');
+		} else {
+			startBtnLoading('#saveChangeBtn');
+			$.ajax({
+		        type: "POST",
+		        url: "./update_feed",
+		        data: JSON.stringify(params),
+		        contentType: "application/json",
+		        dataType: "json",
+		        success: function(data){
+		        		stopBtnLoading('#saveChangeBtn');
+					if (data['error'] == "" ) {
+						window.location.href = "./feed?id=" + $('#feedId').val();
+					} else {
+						showErrorPopup(data['error']);
+					}
+		        },
+		        failure: function(errMsg) {
+			        	stopBtnLoading('#saveChangeBtn');
+			        	showErrorPopup('Unknown error occured. Please contact support');
+		        }
+		    });
+		}
+		
+	}
 });

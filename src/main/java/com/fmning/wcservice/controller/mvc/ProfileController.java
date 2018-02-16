@@ -3,7 +3,6 @@ package com.fmning.wcservice.controller.mvc;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,21 +18,16 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.fmning.service.domain.Event;
 import com.fmning.service.domain.Feed;
-import com.fmning.service.domain.Image;
 import com.fmning.service.domain.User;
 import com.fmning.service.domain.UserDetail;
 import com.fmning.service.exceptions.NotFoundException;
-import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
 import com.fmning.util.ImageType;
-import com.fmning.util.PaymentType;
 import com.fmning.util.Util;
-import com.fmning.wcservice.model.EventModel;
 import com.fmning.wcservice.model.UserModel;
 import com.fmning.wcservice.utils.UserRole;
 import com.fmning.wcservice.utils.Utils;
@@ -44,7 +38,6 @@ public class ProfileController {
 	@Autowired private UserManager userManager;
 	@Autowired private ImageManager imageManager;
 	@Autowired private FeedManager feedManager;
-	@Autowired private ErrorManager errorManager;
 	
 	@RequestMapping(value = "/profile", method = RequestMethod.GET)
     public String adminEventController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {

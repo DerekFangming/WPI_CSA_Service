@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,23 +15,30 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -43,118 +52,150 @@ import com.fmning.service.manager.ImageManager;
 import com.fmning.util.ImageType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.FileContent;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.Drive.Files.Create;
-import com.google.api.services.drive.Drive.Files.Delete;
-import com.google.api.services.drive.DriveScopes;
-import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.FileList;
+
+import de.brendamour.jpasskit.PKBarcode;
+import de.brendamour.jpasskit.PKField;
+import de.brendamour.jpasskit.PKLocation;
+import de.brendamour.jpasskit.PKPass;
+import de.brendamour.jpasskit.enums.PKBarcodeFormat;
+import de.brendamour.jpasskit.enums.PKDateStyle;
+import de.brendamour.jpasskit.passes.PKEventTicket;
+import de.brendamour.jpasskit.signing.PKFileBasedSigningUtil;
+import de.brendamour.jpasskit.signing.PKSigningInformation;
+import de.brendamour.jpasskit.signing.PKSigningInformationUtil;
 
 @SuppressWarnings("unused")
 @Controller
 public class TestController {
-	
-private String backupScriptPath;
 
 	@Autowired private ImageManager imageManager;
 	
-	private HttpTransport httpTransport;
-	private FileDataStoreFactory dataStoreFactory;
-	private JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-	private static Drive drive;
-	
-	@RequestMapping(value = "/ttt", method = RequestMethod.GET)
-	public ResponseEntity<String> testMethods(HttpServletRequest request) {
+	@RequestMapping(value = "/test_pass", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
 		
 		ClassLoader classLoader = getClass().getClassLoader();
-		backupScriptPath = classLoader.getResource("dbBackup.sh").getFile();
-
-		try {
-			Calendar calendar = Calendar.getInstance();
-			int dayOfWeek = calendar.get(Calendar.DAY_OF_MONTH);
-			
-			Process process = Runtime.getRuntime().exec(backupScriptPath + " " 
-														+ Utils.dbBackupFolder + " "
-														+ Utils.dbBackupFilePrefix + dayOfWeek + " "
-														+ Utils.dbBackupToolLocation + " "
-														+ Utils.dbName + " "
-														+ Utils.dbUsername);
-			
-			BufferedReader in = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-			String errors = "";
-			String line;
-			while ((line = in.readLine()) != null) {
-			    errors += line + "\n";
-			}
-			
-			int exitValue = process.waitFor();
-			if (exitValue != 0)
-				errors += "Execution of script failed!";
-			
-			if (errors.length() > 0){
-				String report = "Error during backup of the database:\n\n";
-				sendScheduleErrorReportEmail(report + errors);
-			} else {
-				try {
-					httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-					dataStoreFactory = new FileDataStoreFactory(new java.io.File(Utils.credentialFolder));
-					
-					GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(jsonFactory,
-							new InputStreamReader(TestController.class.getResourceAsStream("/client_secret.json")));
-					GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-							httpTransport, jsonFactory, clientSecrets,
-					        Collections.singleton(DriveScopes.DRIVE_FILE)).setDataStoreFactory(dataStoreFactory)
-					        .build();
-					
-					Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver())
-							.authorize("user");
-					drive = new Drive.Builder(httpTransport, jsonFactory, credential)
-							.setApplicationName("WPI_CSA").build();
-					
-					FileList list = drive.files().list()
-				    		  .setQ("name contains '" + Utils.dbBackupFilePrefix + dayOfWeek + "'")
-				    		  .execute();
-
-					for(File file: list.getFiles()) {
-						Delete delete = drive.files().delete(file.getId());
-					    delete.execute();
-					}
-					
-					java.io.File UPLOAD_FILE = new java.io.File(Utils.dbBackupFolder + "/" + Utils.dbBackupFilePrefix + dayOfWeek + ".gz" );
-					
-					File fileMetadata = new File();
-				    fileMetadata.setName(UPLOAD_FILE.getName());
-
-				    FileContent mediaContent = new FileContent("application/gzip", UPLOAD_FILE);
-				    Create insert = drive.files().create(fileMetadata, mediaContent);
-				    //MediaHttpUploader uploader = insert.getMediaHttpUploader();
-				    //uploader.setDirectUploadEnabled(useDirectUpload);
-				    //uploader.setProgressListener(new FileUploadProgressListener());
-				    insert.execute();
-					
-				} catch (Exception e) {
-					String report = "Error during google drive backup of the database:\n\n";
-					sendScheduleErrorReportEmail(report + e.getMessage());
-				}
-			}
-			
-		} catch (IOException | InterruptedException e) {
-			String report = "Error during backup of the database:\n\n";
-			sendScheduleErrorReportEmail(report + e.getMessage());
-		}
+		String privateKeyPath = classLoader.getResource("passCertificate.p12").getFile();
+		String appleWWDRCA = classLoader.getResource("AppleWWDRCA.cer").getFile();
 		
-		return new ResponseEntity<String>("ok", HttpStatus.OK);
+		String privateKeyPassword = "fmning123!"; // the password you used to export
+        try {
+          
+            PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
+                    privateKeyPath, privateKeyPassword, appleWWDRCA);
+           
+            PKPass pass = new PKPass();
+            pass.setPassTypeIdentifier("pass.com.fmning.WPI-CSA");
+            //pass.setAuthenticationToken("vxwxd7J8AlNNFPS8k0a0FfUFtq0ewzFdcdc");
+            pass.setSerialNumber("123456780003");
+            pass.setTeamIdentifier("NK4455562X"); // replace this with your team ID
+            pass.setOrganizationName("fmning.com");
+            pass.setDescription("WPI CSA Event6");
+            pass.setLogoText("WPI CSA");
+            pass.setForegroundColor("#630C0C");
+            pass.setBackgroundColor("#212121");
+            pass.setLabelColor("#2D3681");
+            
+
+            PKBarcode barcode = new PKBarcode();
+            barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
+            barcode.setMessageEncoding(Charset.forName("iso-8859-1"));
+            barcode.setMessage("Some very long message oh my fuck god hahahahahahah");
+            pass.setBarcodes(Collections.singletonList(barcode));
+
+            //PKGenericPass generic = new PKGenericPass();
+            PKEventTicket event = new PKEventTicket();
+            PKField member = new PKField();
+            member.setKey("name");
+            member.setValue("11/11 Singles' Day Formal");
+            event.setPrimaryFields(Collections.singletonList(member));
+            
+            List<PKField> secondField = new ArrayList<PKField>();
+            PKField loc = new PKField();
+            loc.setKey("location"); // some unique key for primary field
+            loc.setLabel("Location");
+            loc.setValue("Campus Center Odeum");
+            secondField.add(loc);
+            event.setSecondaryFields(secondField);
+            
+            List<PKField> auxilField = new ArrayList<PKField>();
+            PKField date = new PKField();
+            date.setKey("date");
+            date.setLabel("Start time");
+            date.setDateStyle(PKDateStyle.PKDateStyleMedium);
+            date.setTimeStyle(PKDateStyle.PKDateStyleMedium);
+            date.setValue("2017-11-11T23:00:00Z");
+            auxilField.add(date);
+            
+            PKField att = new PKField();
+            att.setKey("participant");
+            att.setLabel("Participant");
+            att.setValue("Fangming Ning");
+            auxilField.add(att);
+            
+            event.setAuxiliaryFields(auxilField);
+            
+            pass.setEventTicket(event);
+            
+            PKLocation location = new PKLocation();
+            location.setLatitude(37.33182); // replace with some lat
+            location.setLongitude(-122.03118); // replace with some long
+            List<PKLocation> locations = new ArrayList<PKLocation>();
+            locations.add(location);
+            pass.setLocations(locations);
+           
+            if (pass.isValid()) {
+                String pathToTemplateDirectory = "/Volumes/Data/passTemplates/test"; // replace with your folder with the icons
+                byte[] passZipAsByteArray = new PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
+                //respond.put("data", passZipAsByteArray);
+                
+                String outputFile = "/Volumes/Data/testTickets/test.pkpass"; // change the name of the pass
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(passZipAsByteArray);
+                IOUtils.copy(inputStream, new FileOutputStream(outputFile));
+                System.out.println("Done!");
+            } else {
+                System.out.println("the pass is NOT Valid man!!!");
+            }
+        } catch (Exception e) {
+        		e.printStackTrace();
+        }
+
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/get_pass", method = RequestMethod.GET)
+	public void getPass(HttpServletRequest request, HttpServletResponse response) {
+		try{
+			
+			InputStream is = new FileInputStream("/Volumes/Data/testTickets/test.pkpass");
+	        IOUtils.copy(is, response.getOutputStream());
+	        response.setContentType("application/pkpass");
+	        response.setHeader("Content-Disposition", "attachment; filename=\"test.pkpass\"");
+	        response.flushBuffer();
+		} catch (Exception e) {
+			
+			try {
+				response.setStatus(200);
+				response.getWriter().write(e.getMessage());
+				response.getWriter().flush();
+				response.getWriter().close();
+			} catch (IOException e1) {
+				
+			}
+		}
+
+	}
+	
+	@RequestMapping(value = "/dtt", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> downloadTestTicket(HttpServletRequest request) throws IOException {
+		File file = new File("/Volumes/Data/testTickets/test.pkpass");
+		
+		HttpHeaders respHeaders = new HttpHeaders();
+		respHeaders.add("Content-Type", "application/pkpass");
+		respHeaders.setContentDispositionFormData("attachment", "ticket.pkpass");
+		
+		InputStreamResource isr = new InputStreamResource(new FileInputStream(file));
+		return new ResponseEntity<InputStreamResource>(isr, respHeaders, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
@@ -222,11 +263,5 @@ private String backupScriptPath;
 		System.out.println(Util.imagePath);
 	}
 
-	private void sendScheduleErrorReportEmail(String report){
-		//String emailList = "fning@wpi.edu,sxie@wpi.edu";
-		//System.out.println(report);
-		//helperManager.sendEmail("admin@fmning.com", emailList, 
-		//		"WPI CSA scheduler error report", report);
-	}
 	
 }

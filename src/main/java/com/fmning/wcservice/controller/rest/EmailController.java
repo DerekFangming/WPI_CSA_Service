@@ -72,7 +72,11 @@ public class EmailController {
 			String name = userManager.getUserDisplayedName(user.getId());
 			String message = Utils.createVerificationEmail(name, veriCode);
 			if (Utils.prodMode) {
-				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				try {
+					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				} catch (Exception e) {
+					errorManager.logError(e);
+				}
 			} else {
 				System.out.println(message);
 			}
@@ -111,7 +115,11 @@ public class EmailController {
 				String name = userManager.getUserDisplayedName(user.getId());
 				String message = Utils.createVerificationEmail(name, veriCode);
 				if (Utils.prodMode) {
-					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+					try {
+						helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+					} catch (Exception e) {
+						errorManager.logError(e);
+					}
 				} else {
 					System.out.println(message);
 				}
@@ -158,7 +166,11 @@ public class EmailController {
 				String name = userManager.getUserDisplayedName(user.getId());
 				String message = Utils.createVerificationEmail(name, veriCode);
 				if (Utils.prodMode) {
-					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+					try {
+						helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
+					} catch (Exception e) {
+						errorManager.logError(e);
+					}
 				} else {
 					System.out.println(message);
 				}
@@ -170,7 +182,11 @@ public class EmailController {
 			String name = userManager.getUserDisplayedName(user.getId());
 			String message = Utils.createChangePwdEmail(name, veriCode);
 			if (Utils.prodMode) {
-				helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
+				try {
+					helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
+				} catch (Exception e) {
+					errorManager.logError(e);
+				}
 			} else {
 				System.out.println(message);
 			}
@@ -206,7 +222,11 @@ public class EmailController {
 				String name = userManager.getUserDisplayedName(user.getId());
 				String message = Utils.createChangePwdEmail(name, veriCode);
 				if (Utils.prodMode) {
-					helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
+					try {
+						helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
+					} catch (Exception e) {
+						errorManager.logError(e);
+					}
 				} else {
 					System.out.println(message);
 				}
