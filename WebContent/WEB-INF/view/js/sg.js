@@ -1,3 +1,7 @@
+$(document).ready(function() {
+	openSG(1);
+});
+
 function openSG(id) {
 	$.ajax({
 		type: "GET",
@@ -20,7 +24,7 @@ function openSG(id) {
 	});
 }
 
-
-
-window.onload = openSG(1);
+$("#searchSGBtn").click(function(){
+	
+});
 

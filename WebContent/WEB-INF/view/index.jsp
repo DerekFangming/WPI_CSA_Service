@@ -59,8 +59,8 @@
 				</div>
 				<input type="text" id="searchInput" placeholder="Enter some keyword or search by type" class="form-control">
 				<div class="input-group-append">
-					<button class="btn btn-outline-secondary" type="button" id="searchArticleBtn"><i class="fa fa-search" style="color:#6D767E;"></i>&nbsp;Search</button>
-					<button class="btn btn-outline-secondary" type="button" id="createArticleBtn"><i class="fa fa-plus" style="color:#6D767E;"></i>&nbsp;Create New Article</button>
+					<button class="btn btn-outline-secondary" type="button" id="searchArticleBtn"><i class="fa fa-search"></i>&nbsp;Search</button>
+					<button class="btn btn-outline-secondary" type="button" id="createArticleBtn"><i class="fa fa-plus"></i>&nbsp;Create New Article</button>
 				</div>
 			</div>
 			<div id="feedLoading" class="col" align="center"></div>

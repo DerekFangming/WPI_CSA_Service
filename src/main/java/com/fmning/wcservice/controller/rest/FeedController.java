@@ -257,13 +257,12 @@ public class FeedController {
 						}
 						
 						//Creating ticket template
-						String location = "/Volumes/Data/passTemplates/";
 						String folderName = eventTitle.replaceAll("\\s+","");
 						folderName = folderName.length() < 20 ? folderName : folderName.substring(0, 20);
 						folderName += new SimpleDateFormat("yyyyMMddss").format(new Date());
-						location += folderName;
 						
-						int templateId = ticketManager.createTicketTemplate(location, "WPI CSA Event", "WPI CSA", null, userId);
+						int templateId = ticketManager.createTicketTemplate(Utils.ticketTemplatePath + folderName,
+								"WPI CSA Event", "WPI CSA", null, userId);
 						try {
 							TicketController.createTicketTemplate(ticketBgImage, ticketThumbImage, folderName);
 						} catch (IOException e) {
@@ -272,7 +271,7 @@ public class FeedController {
 						
 						eventManager.createEvent(EventType.FEED.getName(), feedId, eventTitle, eventDesc, Instant.parse(startTime),
 								Instant.parse(endTime), eventLocation, ticketFee, userId, templateId, ticketActive,
-								"", ticketBalance);
+								"", ticketBalance, user.getId());
 						
 						
 					} catch (NullPointerException | ClassCastException | NumberFormatException e) {
@@ -284,7 +283,7 @@ public class FeedController {
 					// Adding calendar only event with default fee and no ticket design
 					eventManager.createEvent(EventType.FEED.getName(), feedId, eventTitle, eventDesc, Instant.parse(startTime),
 							Instant.parse(endTime), eventLocation, 0, userId, Util.nullInt, false,
-							"", 0);
+							"", 0, user.getId());
 				}
 				
 			}

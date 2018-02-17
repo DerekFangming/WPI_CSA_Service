@@ -192,7 +192,7 @@ public class PaymentController {
 				if(event.getTicketBalance() < 1) {
 					throw new IllegalStateException(ErrorMessage.TICKET_SOLD_OUT.getMsg());
 				} else {
-					eventManager.setBalance(event.getId(), event.getTicketBalance() - 1);
+					eventManager.setBalance(event.getId(), event.getTicketBalance() - 1, Util.nullInt);
 				}
 				
 				

@@ -85,7 +85,7 @@ public class TicketController {
 			template.setDescription("WPI CSA Event Preview");
 			template.setLogoText("WPI CSA");
 			template.setSerialNumber(1234567890);
-			template.setLocation("/Volumes/Data/passTemplates/preview");
+			template.setLocation(Utils.ticketTemplatePath + "preview");
 
 
 			Event event = new Event();
@@ -96,11 +96,15 @@ public class TicketController {
 			byte[] ticket = createTicket(event, template, "Participant preview");
 			
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(ticket);
-			IOUtils.copy(inputStream, new FileOutputStream("/Volumes/Data/passTemplates/pewview.pkpass"));
+			IOUtils.copy(inputStream, new FileOutputStream(Utils.ticketTemplatePath + "preview.pkpass"));
 			
 			try {
-				helperManager.sendEmail("no-reply@fmning.com", user.getUsername(), "Ticket preview", "Here is the ticket preview you just created",
-						"/Volumes/Data/passTemplates/pewview.pkpass", "pewview.pkpass");
+				String message = "Hi " + userManager.getUserDisplayedName(user.getId()) + ",\n\n";
+				message += "Here is the ticket preview. Please make sure you can see fields clearly.\n";
+				message += "For better performace, please make sure ticket size is smaller than 1 MB by using smaller images.\n\n";
+				message += "Thank you \n\n";
+				helperManager.sendEmail("no-reply@fmning.com", user.getUsername(), "Ticket preview", message,
+						Utils.ticketTemplatePath + "preview.pkpass", "preview.pkpass");
 			} catch (Exception e) {
 				errorManager.logError(e);
 			}
@@ -159,8 +163,8 @@ public class TicketController {
 	}
 	
 	public static void createTicketTemplate(String background, String thumbnail, String folderName) throws IOException {
-		File srcDir = new File("/Volumes/Data/passTemplates/base");
-		File destDir = new File("/Volumes/Data/passTemplates/" + folderName);
+		File srcDir = new File(Utils.ticketTemplatePath + "base");
+		File destDir = new File(Utils.ticketTemplatePath + folderName);
 
 		//Creating base folder
 		FileUtils.copyDirectory(srcDir, destDir);
@@ -179,7 +183,7 @@ public class TicketController {
 			g.drawImage(bg, 0, 0, newWidth, newHeight, null);
 			g.dispose();
 			ImageIO.write(newImage, "png",
-					new File("/Volumes/Data/passTemplates/" + folderName + "/background@" + Integer.toString(i) + "x.png"));
+					new File(Utils.ticketTemplatePath + folderName + "/background@" + Integer.toString(i) + "x.png"));
 		}
 		
 		if(thumbnail.contains(",")){thumbnail = thumbnail.split(",")[1];}
@@ -195,7 +199,7 @@ public class TicketController {
 			g.drawImage(th, 0, 0, newWidth, newHeight, null);
 			g.dispose();
 			ImageIO.write(newImage, "png",
-					new File("/Volumes/Data/passTemplates/" + folderName + "/thumbnail@" + Integer.toString(i) + "x.png"));
+					new File(Utils.ticketTemplatePath + folderName + "/thumbnail@" + Integer.toString(i) + "x.png"));
 		}
 	}
 	

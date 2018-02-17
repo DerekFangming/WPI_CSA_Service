@@ -38,7 +38,7 @@ import com.fmning.wcservice.utils.Utils;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
-public class SgMobileController {
+public class AboutController {
 //	@Autowired private SgDao sgDao;
 	@Autowired private WcReportDao wcReportDao;
 	@Autowired private WcArticleDao wcArticleDao;
@@ -46,59 +46,6 @@ public class SgMobileController {
 	@Autowired private UserManager userManager;
 	@Autowired private ErrorManager errorManager;
 	@Autowired private HelperManager helperManager;
-	
-	
-//	@RequestMapping(value = "/get_sg", method = RequestMethod.GET)
-//	public ResponseEntity<Map<String, Object>> getSg(HttpServletRequest request) {
-//		Map<String, Object> respond = new HashMap<String, Object>();
-//		try{
-//			int menuId = Integer.parseInt(request.getParameter("menuId"));
-//			
-//			QueryBuilder qb = QueryType.getQueryBuilder(CoreTableType.SG, QueryType.FIND);
-//		    qb.addFirstQueryExpression(new QueryTerm(SgDao.Field.MENU_ID.name, menuId));
-//		    qb.setOrdering(SgDao.Field.CREATED_AT.name, ResultsOrderType.DESCENDING);
-//		    qb.setLimit(1);
-//		    Sg sg = sgDao.findAllObjects(qb.createQuery()).get(0);
-//		    respond.put("title", sg.getTitle());
-//		    respond.put("content", sg.getContent());
-//		    respond.put("error", "");
-//		}catch(NumberFormatException e){
-//			respond.put("error", "Incorrect request format. Please use menuId as key and put number only as value");
-//		}catch(NotFoundException e){
-//			respond.put("error", "Article does not exist");
-//		}catch(Exception e){
-//			respond.put("error", e.getStackTrace());
-//		}
-//		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
-//	}
-	
-	
-//	@RequestMapping(value = "/add_sg", method = RequestMethod.POST)
-//    public ResponseEntity<Map<String, Object>> addSg(@RequestBody Map<String, Object> request) {
-//		Map<String, Object> respond = new HashMap<String, Object>();
-//		try{
-//			int menuId = (Integer)request.get("menuId");
-//			String title = (String)request.get("title");
-//			String content = (String)request.get("content");
-//			
-//			if (title == null || content == null) throw new IllegalStateException("Need a valid title and content");
-//			
-//			Sg sg = new Sg();
-//			sg.setMenuId(menuId);
-//			sg.setTitle(title);
-//			sg.setContent(content);
-//			sg.setCreatedAt(Instant.now());
-//			sgDao.persist(sg);
-//			respond.put("error", "");
-//		}catch(IllegalStateException e){
-//			respond.put("error", e.getMessage());
-//		}catch(Exception e){
-//			respond.put("error", e.getMessage());
-//		}
-//	
-//		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
-//		
-//	}
 	
 	@RequestMapping(value = "/get_version_info", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getVersionInfo(HttpServletRequest request) {

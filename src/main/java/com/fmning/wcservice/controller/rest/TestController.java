@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.util.ImageType;
 import com.fmning.util.Util;
@@ -69,6 +70,7 @@ import de.brendamour.jpasskit.signing.PKSigningInformationUtil;
 public class TestController {
 
 	@Autowired private ImageManager imageManager;
+	@Autowired private HelperManager helperManager;
 	
 	@RequestMapping(value = "/test_pass", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
@@ -202,17 +204,12 @@ public class TestController {
 	public ResponseEntity<Map<String, Object>> getFeedPreviewImage(HttpServletRequest request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			BufferedImage img = ImageIO.read(new URL("https://i.froala.com/download/42cdda3be793cf46535be199bf5f5c65fc72e9a9.png?1517849552"));
-			imageManager.createImage(img, ImageType.FEED.getName(), Util.nullInt, 1, null);
+			helperManager.sendEmail("no-reply@fmning.com", "fning@wpi.edu", "Some title", "message",
+					"/Volumes/Data/passTemplates/preview.pkpass", "filename");
 			
 		}catch(Exception e){
-			
 			e.printStackTrace();
-			
-			//respond = Util.createErrorRespondFromException(e);
 		}
-
-		
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	

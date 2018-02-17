@@ -109,7 +109,8 @@ create table events (
 	ticket_template_id integer,
 	active boolean not null default true,
 	message varchar(100),
-	ticket_balance integer not null default 0
+	ticket_balance integer not null default 0,
+	updated_by integer
 );
 
 create table ticket_templates (
@@ -169,3 +170,4 @@ create table error_logs (
 --1. use raw git for editor
 --2. remove html option for editor
 
+alter table events add column updated_by integer

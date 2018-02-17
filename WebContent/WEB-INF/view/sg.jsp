@@ -47,7 +47,14 @@
 		<div class="container">
 			<div class="row mt-3">
 				<div class="col-lg-4 col-sm-12">
-					<div class="sg-menu">
+					<div class="input-group">
+						<input type="text" id="searchInput" placeholder="Enter some keyword" class="form-control">
+						<div class="input-group-append">
+							<button class="btn btn-outline-secondary" type="button" id="searchSGBtn"><i class="fa fa-search"></i></button>
+							<button class="btn btn-outline-secondary" type="button" id="createSGBtn"><i class="fa fa-plus"></i></button>
+						</div>
+					</div>
+					<div class="sg-menu mt-3">
 						${menuList}
 					</div>
 				</div>

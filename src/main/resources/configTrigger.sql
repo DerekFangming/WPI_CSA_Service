@@ -4,6 +4,8 @@
  * payments        --- payment_hists
  * survival_guides --- survival_guide_hists
  * users           --- user_hists
+ * feeds           --- feed_hists
+ * events          --- event_hists
  */
 
 create table User_detail_hists (
@@ -142,3 +144,75 @@ The following triggers have not been deployed yet.
 
 
 */
+
+create table Feed_hists (
+	id integer,
+	title varchar(100),
+	type varchar(10),
+	body text,
+	owner_id integer not null,
+	enabled boolean not null default true,
+	created_at timestamp without time zone not null,
+	updated_by integer,
+	action varchar(1) not null default 'U',
+	action_date timestamp without time zone not null default now()
+);
+
+CREATE OR REPLACE FUNCTION Feed_func() RETURNS trigger AS
+$$
+BEGIN
+	INSERT INTO Feed_hists
+	VALUES (OLD.id, OLD.title, OLD.type, OLD.body, OLD.owner_id, OLD.enabled, OLD.created_at, OLD.updated_by, substring(TG_OP,1,1), NOW());
+	IF TG_OP = 'DELETE' THEN
+		RETURN OLD;
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$$
+LANGUAGE 'plpgsql';
+
+CREATE TRIGGER Feed_trigger BEFORE UPDATE OR DELETE
+ON Feeds FOR EACH ROW
+EXECUTE PROCEDURE Feed_func();
+
+create table Event_hists (
+	id integer,
+	type varchar(10),
+	mapping_id integer,
+	title varchar(100),
+	description varchar(1000),
+	start_time timestamp without time zone,
+	end_time timestamp without time zone,
+	location varchar(300),
+	fee decimal(10, 2),
+	owner_id integer not null,
+	created_at timestamp without time zone not null,
+	ticket_template_id integer,
+	active boolean not null default true,
+	message varchar(100),
+	ticket_balance integer not null default 0,
+	updated_by integer,
+	action varchar(1) not null default 'U',
+	action_date timestamp without time zone not null default now()
+);
+
+CREATE OR REPLACE FUNCTION Event_func() RETURNS trigger AS
+$$
+BEGIN
+	IF OLD.ticket_balance - NEW.ticket_balance != 1 THEN
+		INSERT INTO Event_hists
+		VALUES (OLD.id, OLD.type, OLD.mapping_id, OLD.title, OLD.description, OLD.start_time, OLD.end_time, OLD.location, OLD.fee, OLD.owner_id, OLD.created_at, OLD.ticket_template_id, OLD.active, OLD.message, OLD.ticket_balance, OLD.updated_by, substring(TG_OP,1,1), NOW());
+	END IF;
+	IF TG_OP = 'DELETE' THEN
+		RETURN OLD;
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$$
+LANGUAGE 'plpgsql';
+
+CREATE TRIGGER Event_trigger BEFORE UPDATE OR DELETE
+ON Events FOR EACH ROW
+EXECUTE PROCEDURE Event_func();

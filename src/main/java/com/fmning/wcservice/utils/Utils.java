@@ -48,6 +48,7 @@ public class Utils {
 	
 	/*Ticket parameters*/
 	public static String ticketPath = "";
+	public static String ticketTemplatePath = "";
 	
 	/*For error logging, to get the request URL*/
 	public static String rootDir = "";
@@ -108,6 +109,7 @@ public class Utils {
 	@Value("${emailVerificationPath}") private String emailVerificationPathProp;
 	@Value("${emailChangePwdPath}") private String emailChangePwdPathProp;
 	@Value("${ticketPath}") private String ticketPathProp;
+	@Value("${templatePath}") private String ticketTemplatePathProp;
 	@Value("${rootDir}") private String rootDirProp;
 	@Value("${ticketPKPassword}") private String ticketPKPasswordProp;
 
@@ -127,6 +129,7 @@ public class Utils {
 		emailVerificationPath = emailVerificationPathProp;
 		emailChangePwdPath = emailChangePwdPathProp;
 		ticketPath = ticketPathProp;
+		ticketTemplatePath = ticketTemplatePathProp;
 		rootDir = rootDirProp;
 		privateKeyPassword = ticketPKPasswordProp;
 		

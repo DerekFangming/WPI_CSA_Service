@@ -89,7 +89,7 @@ public class EventController {
 			}
 			
 			//message will get ignored if new status is enable
-			eventManager.setStatus(id, newStatus, ErrorMessage.TICKET_SOLD_OUT.getMsg());
+			eventManager.setStatus(id, newStatus, ErrorMessage.TICKET_SOLD_OUT.getMsg(), user.getId());
 			
 			if (user.isTokenUpdated()) {
 				respond.put("accessToken", user.getAccessToken());
@@ -121,7 +121,7 @@ public class EventController {
 				throw new IllegalStateException(ErrorMessage.CHANGE_BALANCE_NOT_ALLOWED.getMsg());
 			}
 			
-			eventManager.setBalance(id, balance);
+			eventManager.setBalance(id, balance, user.getId());
 			
 			if (user.isTokenUpdated()) {
 				respond.put("accessToken", user.getAccessToken());
@@ -154,7 +154,7 @@ public class EventController {
 			String location = (String)request.get("location");
 			
 			eventManager.updateEventDetails(id, title, null, startTime == null ? null : Instant.parse(startTime),
-					endTime == null ? null :Instant.parse(endTime), location, Util.nullInt);
+					endTime == null ? null :Instant.parse(endTime), location, Util.nullInt, user.getId());
 			
 			
 			if (user.isTokenUpdated()) {
