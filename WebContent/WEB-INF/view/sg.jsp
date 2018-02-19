@@ -48,13 +48,13 @@
 			<div class="row mt-3">
 				<div class="col-lg-4 col-sm-12">
 					<div class="input-group">
-						<input type="text" id="searchInput" placeholder="Enter some keyword" class="form-control">
+						<input type="text" id="sgSearchInput" placeholder="Enter some keyword" class="form-control">
 						<div class="input-group-append">
 							<button class="btn btn-outline-secondary" type="button" id="searchSGBtn"><i class="fa fa-search"></i></button>
 							<button class="btn btn-outline-secondary" type="button" id="createSGBtn"><i class="fa fa-plus"></i></button>
 						</div>
 					</div>
-					<div class="sg-menu mt-3">
+					<div class="sg-menu mt-3" id="sgMenuDiv">
 						${menuList}
 					</div>
 				</div>
@@ -70,6 +70,14 @@
 					</div>
 				</div>
 			</div>
+			<c:choose>
+				<c:when test="${user != null}">
+					<input type="hidden" id="userEmailConfirmed" value="${user.emailConfirmed}">
+				</c:when>
+				<c:otherwise>
+					<input type="hidden" id="userEmailConfirmed" value="false">
+				</c:otherwise>
+			</c:choose>
 		</div>
 		<!-- /.container -->
 		<c:if test="${user == null}">

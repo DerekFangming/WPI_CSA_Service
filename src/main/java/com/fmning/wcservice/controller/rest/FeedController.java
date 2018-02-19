@@ -117,22 +117,22 @@ public class FeedController {
 	
 	private List<Map<String, Object>> processFeedList (List<Feed> feedList, boolean sendBody) {
 		List<Map<String, Object>> processedFeedList = new ArrayList<Map<String, Object>>();
-		for(Feed m : feedList){
+		for(Feed f : feedList){
 			Map<String, Object> processedFeed = new HashMap<String, Object>();
-			processedFeed.put("id", m.getId());
-			processedFeed.put("title", m.getTitle());
-			processedFeed.put("type", m.getType());
-			if (sendBody) processedFeed.put("body", m.getBody());
-			processedFeed.put("ownerId", m.getOwnerId());
-			processedFeed.put("ownerName", userManager.getUserDisplayedName(m.getOwnerId()));
-			processedFeed.put("createdAt", m.getCreatedAt().toString());
+			processedFeed.put("id", f.getId());
+			processedFeed.put("title", f.getTitle());
+			processedFeed.put("type", f.getType());
+			if (sendBody) processedFeed.put("body", f.getBody());
+			processedFeed.put("ownerId", f.getOwnerId());
+			processedFeed.put("ownerName", userManager.getUserDisplayedName(f.getOwnerId()));
+			processedFeed.put("createdAt", f.getCreatedAt().toString());
 			try {
-				int imgId = imageManager.getImageByTypeAndMapping(ImageType.FEED_COVER.getName(), m.getId()).getId();
+				int imgId = imageManager.getImageByTypeAndMapping(ImageType.FEED_COVER.getName(), f.getId()).getId();
 				processedFeed.put("coverImgId", imgId);
 			}catch(Exception e) {}
 			
 			try {
-				int avatarId = imageManager.getTypeUniqueImage(ImageType.AVATAR.getName(), m.getOwnerId()).getId();
+				int avatarId = imageManager.getTypeUniqueImage(ImageType.AVATAR.getName(), f.getOwnerId()).getId();
 				processedFeed.put("avatarId", avatarId);
 			}catch(Exception e) {}
 			

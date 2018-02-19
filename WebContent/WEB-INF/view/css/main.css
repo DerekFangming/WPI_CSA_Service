@@ -149,3 +149,18 @@ body {
 	overflow: hidden;
 	white-space: nowrap;
 }
+
+.editor-header {
+	margin-top:-0.5em;
+	margin-bottom:-0.5em;
+}
+
+.menu-block {
+	width:1.5em;
+	height:1em;
+	float:left;
+}
+
+.one-line {
+	float:left
+}

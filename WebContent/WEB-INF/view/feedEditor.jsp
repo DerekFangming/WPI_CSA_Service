@@ -64,8 +64,8 @@
 				</c:when>
 				<c:otherwise>
 					<div class="card mt-3">
-						<div class="card-header" style="height:49px;">
-							<p class="lead" style="margin-top:-13px"><font size="6">Cover&emsp;</font>This will be the cover image and title of your article</p>
+						<div class="card-header">
+							<p class="lead editor-header"><font size="6">Cover&emsp;</font>Select cover image and enter title and type for your article</p>
 						</div>
 						<div class="row">
 							<div class="col-lg-6 col-sm-12">
@@ -154,8 +154,8 @@
 						</div>
 					</div>
 					<div class="card mt-3">
-						<div class="card-header" style="height:49px;">
-							<p class="lead" style="margin-top:-13px"><font size="6">Content&emsp;</font>This is the content of your article</p>
+						<div class="card-header">
+							<p class="lead editor-header"><font size="6">Content&emsp;</font>Rich text editor. Press <i class="fa fa-expand" style="font-size:18px;"></i> to enter full screen mode.</p>
 						</div>
 						<div style="min-height:300px">
 							<textarea></textarea>

@@ -103,7 +103,7 @@
 								<input type="text" class="form-control bg-white" id="userMajor" placeholder="Abbreviation of your major" value="${um.userMajor}" maxlength="10" disabled>
 							</div>
 							<button class="btn btn-success mt-3" type="button" id="profileSaveBtn" style="display:none;">Save</button>
-							<div class="mt-3" style="height:38px;float:left;"></div>
+							<div class="one-line mt-3" style="height:38px;"></div>
 							<button class="btn btn-secondary float-right mt-3" type="button" id="profileCancelBtn" style="display:none;">Cancel</button>
 							<button class="btn btn-outline-primary float-right mt-3" type="button" id="profileEditBtn">Edit Profile</button>
 							<input type="hidden" id="userOrigAvatarId" value="${um.userAvatarId}">
