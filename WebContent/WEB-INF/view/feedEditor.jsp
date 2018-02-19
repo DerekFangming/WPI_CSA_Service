@@ -83,7 +83,7 @@
 										</c:when>
 										<c:when test="${fm.feed != null}">
 											<div class="alert alert-success role="alert" id ="alertMsg">
-												Don't forget to check format to make sure your article look good in all platforms.
+												Don't forget to check format to make sure your article looks good in all platforms.
 											</div>
 											<input type="hidden" id="hasAvatar" value="false">
 										</c:when>
@@ -95,12 +95,12 @@
 										</c:when>
 										<c:otherwise>
 											<div class="alert alert-success" role="alert" id ="alertMsg">
-												Don't forget to check format to make sure your article look good in all platforms.
+												Don't forget to check format to make sure your article looks good in all platforms.
 											</div>
 											<input type="hidden" id="hasAvatar" value="true">
 										</c:otherwise>
 									</c:choose>
-									<div class="input-group mb-3">
+									<div class="input-group">
 										<div class="input-group-prepend">
 											<c:choose>
 												<c:when test="${fm == null}">
@@ -123,7 +123,7 @@
 										<input type="hidden" id="feedId" value="${fm.feed.id}">
 									</div>
 									<c:if test="${user.roleId <= 2}">
-										<div class="input-group mb-3" id="eventInput" style="display: none">
+										<div class="input-group mt-3" id="eventInput" style="display: none">
 											<div class="input-group-prepend">
 												<button class="btn btn-outline-secondary" id="eventInputBtn" type="button">Add an event</button>
 											</div>
@@ -131,24 +131,23 @@
 										</div>
 									</c:if>
 									<c:if test="${fm.feed != null && fm.feed.type == 'Event'}">
-										<div class="input-group mb-3">
+										<div class="input-group mt-3">
 											<div class="input-group-prepend">
 												<button class="btn btn-outline-secondary" id="eventInputBtn" type="button" disabled>Event</button>
 											</div>
 											<input type="text" class="form-control" value="Please go to Admin Portal to edit event" disabled>
 										</div>
 									</c:if>
-									<div class="mt-3"></div>
 									<c:choose>
 										<c:when test="${editMode}">
-											<button type="button" id="saveChangeBtn" class="btn btn-success float-right">Save changes</button>
+											<button type="button" id="saveChangeBtn" class="btn btn-success float-right mt-3">Save changes</button>
 										</c:when>
 										<c:otherwise>
-											<button type="button" id="submitBtn" class="btn btn-success float-right">Submit</button>
+											<button type="button" id="submitBtn" class="btn btn-success float-right mt-3">Submit</button>
 										</c:otherwise>
 									</c:choose>
-									<button type="button" id="checkFormatBtn" class="btn btn-secondary">Check formatting</button>
-									<button type="button" id="instructionBtn" class="btn btn-secondary">Instruction</button>
+									<button type="button" id="checkFormatBtn" class="btn btn-secondary mt-3">Check formatting</button>
+									<button type="button" id="instructionBtn" class="btn btn-secondary mt-3">Instruction</button>
 								</div>
 							</div>
 						</div>

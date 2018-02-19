@@ -164,3 +164,8 @@ body {
 .one-line {
 	float:left
 }
+
+.sg-menu-preview {
+    height: 250px;
+    overflow-y: auto;
+}

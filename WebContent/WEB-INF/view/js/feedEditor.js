@@ -18,7 +18,7 @@ function selectType(typeId) {
 	} else {
 		if ($('#hasAvatar').val() == 'true') {
 			$('#alertMsg').attr("class", 'alert alert-success');
-			$('#alertMsg').html('Don\'t forget to check format to make sure your article look good in all platforms.');
+			$('#alertMsg').html('Don\'t forget to check format to make sure your article looks good in all platforms.');
 		} else {
 			$('#alertMsg').attr("class",  'alert alert-warning');
 			$('#alertMsg').html('You do not have an avatar and it will show as the default panda. We strongly recommend you to add an avatar from <a href="./profile" target="blank" >profile page</a> before posting articles.');
@@ -45,13 +45,11 @@ function getFeedTypeText(typeId) {
 $("#checkFormatBtn").click(function(){
 	var error = checkFormat();
 	if (error == '' ) {
-		showPopup('<span style="color:green"> No errors found<i class="fa fa-check"></i></span>', 'The format has no problems and should look good in all platforms.');
+		showPopup('<span style="color:green"> No errors found<i class="fa fa-check"></i></span>', 'The format has no problems and should looks good in all platforms.');
 	} else {
 		showErrorPopup(error);
 	}
 });
-
-
 
 $("#submitBtn").click(function(){
 	var error = checkFormat();
@@ -305,7 +303,6 @@ $("#ticketPreviewBtn").click(function(){
 
 
 $("#saveChangeBtn").click(function(){
-	
 	var error = checkFormat();
 	if (error != '' ) {
 		showErrorPopup(error);

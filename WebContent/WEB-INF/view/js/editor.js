@@ -1,5 +1,6 @@
 $(function() {
 	var htmlOption = $('#editorHTMLOption').val() == 'true' ? 'html' : '';
+	var tabSize = $('#allowImgTxt').val() == 'true' ? 2 : 1;
 	
     $('textarea').froalaEditor({
     	height: 300,
@@ -17,7 +18,7 @@ $(function() {
 		imageInsertButtons: ['imageBack', '|', 'imageUpload'],
 		imageEditButtons: ['imageReplace', 'imageSize', 'imageRemove'],
 		tableEditButtons: ['tableRows', 'tableRemove'],
-		tableInsertMaxSize: 1,
+		tableInsertMaxSize: tabSize,
 		colorsBackground: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
 		quickInsertButtons: ['image']
 	});
@@ -32,9 +33,9 @@ function checkContentFormat(content) {
 	var parser = new DOMParser();
 	var doc = parser.parseFromString(content, "text/html");
 	
-	if (content.replace(/<\/?[^>]+(>|$)/g, "").length < 30) {
+	/*if (content.replace(/<\/?[^>]+(>|$)/g, "").length < 30) {
 		return 'Content is too short. Please at least have 30 charactors.';
-	}
+	}*/
 	
 	var tableList = doc.getElementsByTagName('table');
 	for (var i=tableList.length - 1; i > -1; i--) {
@@ -43,12 +44,39 @@ function checkContentFormat(content) {
 			tabElement.setAttribute( 'class', 'table table-bordered');
 			return 'You cannot have one table inside another. Please remove the following table <br><br>' + tabElement.outerHTML;
 		}
-		if (tableList[i].getElementsByTagName('IMG').length > 0) {
-			var imgElement = tableList[i].getElementsByTagName('IMG')[0];
-			imgElement.removeAttribute("style");
-			imgElement.setAttribute( 'class', 'aspect-fill');
-			return 'You cannot have images inside table. Please remove the following image <br><br>' + imgElement.outerHTML;
+		if ($('#allowImgTxt').val() == 'true') {
+			for (var j = 0, row; row = tableList[i].rows[j]; j++) {
+				if (row.cells.length == 1) {
+					if (row.cells[0].getElementsByTagName('img').length > 0) {
+						var imgElement = row.cells[0].getElementsByTagName('img')[0];
+						imgElement.removeAttribute("style");
+						imgElement.setAttribute( 'class', 'aspect-fill');
+						return 'You cannot have images inside table. Please remove the following image <br><br>' + imgElement.outerHTML;
+					}
+				} else if (row.cells.length == 2) {
+					if (row.cells[0].getElementsByTagName('img').length != 1) {
+						return 'You need to place one and only one image inside the left table cell for image inline mode. Please refer to Instruction.<br>'
+						+ 'Please modify the following table cell <br><br><div class="border" style="width:100%">' + row.cells[0].outerHTML + '</div>';
+					}
+					if (row.cells[1].getElementsByTagName('img').length > 0) {
+						return 'You cannot have images inside the right table cell for image inline mode. Please refer to Instruction.<br>'
+						+ 'Please modify the following table cell <br><br><div class="border" style="width:100%">' + row.cells[1].outerHTML + '</div>';
+					}
+				} else {
+					return 'Invalid table column count.';
+				}
+			}
+		} else {
+			if (tableList[i].getElementsByTagName('img').length > 0) {
+				var imgElement = tableList[i].getElementsByTagName('img')[0];
+				imgElement.removeAttribute("style");
+				imgElement.setAttribute( 'class', 'aspect-fill');
+				return 'You cannot have images inside table. Please remove the following image <br><br>' + imgElement.outerHTML;
+			} else if (tableList[i].rows[0].cells.length != 1) {
+				return 'Invalid table column count.';
+			}
 		}
+		
 	}
 	
 	var imageList = doc.getElementsByTagName('img');
@@ -107,25 +135,45 @@ function getAcceptableHTML(content) {
 	//Processing tables
 	var tabList = doc.getElementsByTagName('table');
 	for (var i=tabList.length - 1; i > -1; i--) {
-		var tabStr = '<tab>';
-		var flag = false;
-		for (var j = 0, row; row = tabList[i].rows[j]; j++) {
-			if (row.cells.length == 0) {
+		var parseToTab = false;
+		if ($('#allowImgTxt').val() == 'true') {
+			if (tabList[i].rows[0].cells.length == 0) {
 				continue;
+			} else if (tabList[i].rows[0].cells.length == 1) {
+				parseToTab = true;
+			} else {
+				//parse to imgtxt. Read only the first two cells regardlessly
+				var ImgTxtStr = '<imgtxt>';
+				var flag = false;
+				//TODO
 			}
-			if (flag) {
-				tabStr += '<tbr></tbr>';
-			}
-			flag = true;
-			tabStr += row.cells[0].innerHTML;
+		} else {
+			parseToTab = true;
 		}
 		
-		if (tabStr == '<tab><br>') {
-			tabStr = '';
-		} else {
-			tabStr += '</tab>';
+		//parse to tab. Read only the first cell regardlessly
+		if (parseToTab) {
+			var tabStr = '<tab>';
+			var flag = false;
+			for (var j = 0, row; row = tabList[i].rows[j]; j++) {
+				if (row.cells.length == 0) {
+					continue;
+				}
+				if (flag) {
+					tabStr += '<tbr></tbr>';
+				}
+				flag = true;
+				tabStr += row.cells[0].innerHTML;
+			}
+			
+			if (tabStr == '<tab><br>') {
+				tabStr = '';
+			} else {
+				tabStr += '</tab>';
+			}
+			tabList[i].parentNode.innerHTML = tabList[i].parentNode.innerHTML.replace(tabList[i].outerHTML, tabStr);
 		}
-		tabList[i].parentNode.innerHTML = tabList[i].parentNode.innerHTML.replace(tabList[i].outerHTML, tabStr);
+		
 	}
 	
 	//Processing alignments

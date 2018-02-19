@@ -69,33 +69,10 @@
 									<p class="lead editor-header"><font size="6">Location&emsp;</font>Where your article is placed</p>
 								</div>
 								<div class="card-body" style="min-height:300px">
-									<div class="row">
-										<p class="lead col-xs-3 ml-2">Create</p>
-										<div class="dropdown col-xs-3">
-											<button class="btn btn-outline-secondary dropdown-toggle ml-2" type="button" id="sgType" data-toggle="dropdown">Select one</button>
-											<div class="dropdown-menu">
-												<a class="dropdown-item" onclick="selectSgType(1);" href="#">an article</a>
-												<a class="dropdown-item" onclick="selectSgType(2);" href="#">a menu item</a>
-											</div>
-										</div>
-										
-										<p class="lead col-xs-3 ml-2" id="menuCalledLbl" style="display:none;">called</p>
-										<div class="form-group col-xs-3">
-											<input type="text" class="form-control ml-2" placeholder="Menu name" id="menuNameIn" style="display:none;">
-										</div>
-										
+									<div class="sg-menu-preview border-top border-bottom" id="menuList" style="display:none">
+										${menuList}
 									</div>
-									<div class="row">
-										<p class="lead ml-2">And place it</p>
-										<div class="dropdown col-xs-3">
-											<button class="btn btn-outline-secondary dropdown-toggle ml-2" type="button" id="sgRelLoc" data-toggle="dropdown">after</button>
-											<div class="dropdown-menu">
-												<a class="dropdown-item" onclick="selectRelLoc(1);" href="#">after</a>
-												<a class="dropdown-item" onclick="selectRelLoc(2);" href="#">before</a>
-											</div>
-										</div>
-										<button type="button" class="btn btn-outline-secondary ml-2 mb-2" onclick="toggleMenuList()">Select one</button>
-									</div>
+									<input type="hidden" id="relLocSelection" value="">
 								</div>
 							</div>
 						</div>
@@ -104,8 +81,36 @@
 								<div class="card-header">
 									<p class="lead editor-header"><font size="6">Title&emsp;</font>Title and menu name</p>
 								</div>
-								<div style="min-height:300px">
-									
+								<div class="card-body" style="min-height:300px">
+									<div class="alert alert-success role="alert" id ="alertMsg">
+										Don't forget to check format to make sure your article looks good in all platforms.
+									</div>
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<button class="btn btn-outline-secondary dropdown-toggle" id="currentType" type="button" data-toggle="dropdown">Article</button>
+											<div class="dropdown-menu">
+												<a class="dropdown-item" href="#" onclick="selectSgType(1);">Article</a>
+												<a class="dropdown-item" href="#" onclick="selectSgType(2);">Menu</a>
+											</div>
+										</div>
+										<input type="text" id="title" placeholder="Enter the name of the new article" class="form-control" value="${fm.feed.title}">
+									</div>
+									<div class="input-group mt-3" id="articleTitleDiv" style="display:none;">
+										<div class="input-group-prepend">
+											<span class="input-group-text" id="basic-addon3">Name of the article</span>
+										</div>
+										<input type="text" id="articleTitle" placeholder="Enter the name of the new article" class="form-control" value="${fm.feed.title}">
+									</div>
+									<c:choose>
+										<c:when test="${editMode}">
+											<button type="button" id="saveChangeBtn" class="btn btn-success float-right mt-3">Save changes</button>
+										</c:when>
+										<c:otherwise>
+											<button type="button" id="submitBtn" class="btn btn-success float-right mt-3">Submit</button>
+										</c:otherwise>
+									</c:choose>
+									<button type="button" id="checkFormatBtn" class="btn btn-secondary mt-3">Check formatting</button>
+									<button type="button" id="instructionBtn" class="btn btn-secondary mt-3">Instruction</button>
 								</div>
 							</div>
 						</div>
@@ -120,6 +125,7 @@
 									<textarea></textarea>
 									<div id="editorDefaultText" style="display:none">${fm.feed.body}</div>
 									<input type="hidden" id="editorHTMLOption" value="${editorHTMLOption}">
+									<input type="hidden" id="allowImgTxt" value="true">
 								</div>
 							</div>
 						</div>
@@ -138,7 +144,7 @@
 						<h4 class="modal-title">Select where to place the new article</h4>
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
-					<div class="modal-body" id="menuList">
+					<div class="modal-body" id="menuList111">
 						${menuList}
 					</div>
 					<div class="modal-footer">
