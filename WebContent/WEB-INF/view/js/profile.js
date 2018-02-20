@@ -156,17 +156,3 @@ function deleteFeed(feedId) {
     });
 }
 
-function editFeed(feedId) {
-	
-	
-	/*feedTable.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-		var data = this.data();
-		if (data[0] == feedId) {
-			feedTable.row(this).remove().draw();
-			break;
-		}
-	    var data = this.data();
-	    //alert(data[0] + ' ' + rowIdx);
-	    
-	});*/
-}

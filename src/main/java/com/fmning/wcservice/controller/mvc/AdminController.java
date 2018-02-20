@@ -19,6 +19,7 @@ import com.fmning.service.domain.Event;
 import com.fmning.service.domain.Image;
 import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.EventManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.PaymentManager;
@@ -37,13 +38,14 @@ public class AdminController {
 	@Autowired private EventManager eventManager;
 	@Autowired private ImageManager imageManager;
 	@Autowired private PaymentManager paymentManager;
+	@Autowired private ErrorManager errorManager;
 	
 	@RequestMapping(value = "/admin", method = RequestMethod.GET)
 	public void adminRedirectController(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			response.sendRedirect("/admin/event");
 		} catch (IOException e) {
-			e.printStackTrace();
+			errorManager.logError(e, request);
 		}
 	}
 	

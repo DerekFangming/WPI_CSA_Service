@@ -190,6 +190,9 @@ public class FeedController {
 		try{
 			User user = userManager.validateAccessToken(request);
 			int userId = user.getId();
+			if (!user.getEmailConfirmed()) {
+				throw new IllegalStateException(ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+			}
 			
 			String title = (String)request.get("title");
 			String type = (String)request.get("type");

@@ -56,6 +56,9 @@ public class Utils {
 	/*For doing stuff as CSA Official*/
 	public static final int CSA_ID = 2;
 	
+	/*SG parameters*/
+	public static final String SG_BG_COLOR = "007AFF";
+	
 	@Autowired private HelperManager helperManager;
 	@Autowired private ErrorManager errorManager;
 	

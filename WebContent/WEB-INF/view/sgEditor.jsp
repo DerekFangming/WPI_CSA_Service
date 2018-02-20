@@ -13,10 +13,10 @@
 		<meta name="author" content="">
 		<c:choose>
 			<c:when test="${editMode}">
-				<title>WPI CSA - Edit Article</title>
+				<title>WPI CSA - Edit SG Article</title>
 			</c:when>
 			<c:otherwise>
-				<title>WPI CSA - New Article</title>
+				<title>WPI CSA - New SG Article</title>
 			</c:otherwise>
 		</c:choose>
 		<link href="<%=BScss %>" rel="stylesheet">
@@ -25,8 +25,10 @@
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_style.min.css" rel="stylesheet" type="text/css" />
 		<link href="/resources/css/main.css?v=2" rel="stylesheet">
+		<link href="/resources/css/local/colorPicker.css" rel="stylesheet">
 		<script src="/resources/js/common.js?v=2"></script>
 		<script src="/resources/js/editor.js?v=2"></script>
+		<script src="/resources/css/local/colorPicker.js"></script>
 		<script src="<%=Fjs %>"></script>
 	</head>
 	<body>
@@ -94,7 +96,11 @@
 											</div>
 										</div>
 										<input type="text" id="title" placeholder="Enter the name of the new article" class="form-control" value="${fm.feed.title}">
+										<div id="colorPicker" class="input-group-append" style="display:none;">
+											<button class="btn btn-outline-secondary" type="button">Background</button>
+										</div>
 									</div>
+									<input id="bgColor" type="hidden" value="">
 									<div class="input-group mt-3" id="articleTitleDiv" style="display:none;">
 										<div class="input-group-prepend">
 											<span class="input-group-text" id="basic-addon3">Name of the article</span>

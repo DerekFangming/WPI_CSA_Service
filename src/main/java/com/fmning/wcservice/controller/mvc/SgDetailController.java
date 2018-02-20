@@ -1,5 +1,6 @@
 package com.fmning.wcservice.controller.mvc;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.fmning.service.domain.SurvivalGuide;
 import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.SGManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
@@ -30,8 +32,19 @@ public class SgDetailController {
 	
 	@Autowired private UserManager userManager;
 	@Autowired private SGManager sgManager;
+	@Autowired private ErrorManager errorManager;
 	
 	private String generatedMenu;
+	
+	@RequestMapping(value = "/refresh_sg_menu", method = RequestMethod.GET)
+	public void sgRefreshRedirectController(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			generatedMenu = generateMenu(Util.nullInt, "");
+			response.sendRedirect("/sg");
+		} catch (IOException e) {
+			errorManager.logError(e, request);
+		}
+	}
 	
 	@RequestMapping(value = "/sg", method = RequestMethod.GET)
     public String sgController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {

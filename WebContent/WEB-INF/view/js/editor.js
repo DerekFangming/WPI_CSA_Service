@@ -33,9 +33,9 @@ function checkContentFormat(content) {
 	var parser = new DOMParser();
 	var doc = parser.parseFromString(content, "text/html");
 	
-	/*if (content.replace(/<\/?[^>]+(>|$)/g, "").length < 30) {
+	if (content.replace(/<\/?[^>]+(>|$)/g, "").length < 30) {
 		return 'Content is too short. Please at least have 30 charactors.';
-	}*/
+	}
 	
 	var tableList = doc.getElementsByTagName('table');
 	for (var i=tableList.length - 1; i > -1; i--) {
@@ -105,10 +105,7 @@ function getAcceptableHTML(content) {
 				var imgtxtStr = '';
 				for (var j = 0, row; row = tabList[i].rows[j]; j++) {
 					var imgSrc = row.cells[0].getElementsByTagName('img')[0].src;
-					//alert(row.cells[0].outerHTML);
-					//alert(imgSrc);
 					imgtxtStr += '<imgtxt src="' + imgSrc + '">';
-					//alert(imgtxtStr);
 					imgtxtStr += row.cells[1].innerHTML + '</imgtxt>';
 				}
 				tabList[i].parentNode.innerHTML = tabList[i].parentNode.innerHTML.replace(tabList[i].outerHTML, imgtxtStr);
@@ -119,7 +116,6 @@ function getAcceptableHTML(content) {
 		
 		//parse to tab. Read only the first cell regardlessly
 		if (parseToTab) {
-			alert(1);
 			var tabStr = '<tab>';
 			var flag = false;
 			for (var j = 0, row; row = tabList[i].rows[j]; j++) {
