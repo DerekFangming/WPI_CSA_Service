@@ -94,6 +94,55 @@ function getAcceptableHTML(content) {
 	var parser = new DOMParser();
 	var doc = parser.parseFromString(content, "text/html");
 	
+	//Processing tables
+	var tabList = doc.getElementsByTagName('table');
+	for (var i=tabList.length - 1; i > -1; i--) {
+		var parseToTab = false;
+		if ($('#allowImgTxt').val() == 'true') {
+			if (tabList[i].rows[0].cells.length <= 1) {
+				parseToTab = true;
+			} else {
+				var imgtxtStr = '';
+				for (var j = 0, row; row = tabList[i].rows[j]; j++) {
+					var imgSrc = row.cells[0].getElementsByTagName('img')[0].src;
+					//alert(row.cells[0].outerHTML);
+					//alert(imgSrc);
+					imgtxtStr += '<imgtxt src="' + imgSrc + '">';
+					//alert(imgtxtStr);
+					imgtxtStr += row.cells[1].innerHTML + '</imgtxt>';
+				}
+				tabList[i].parentNode.innerHTML = tabList[i].parentNode.innerHTML.replace(tabList[i].outerHTML, imgtxtStr);
+			}
+		} else {
+			parseToTab = true;
+		}
+		
+		//parse to tab. Read only the first cell regardlessly
+		if (parseToTab) {
+			alert(1);
+			var tabStr = '<tab>';
+			var flag = false;
+			for (var j = 0, row; row = tabList[i].rows[j]; j++) {
+				if (row.cells.length == 0) {
+					continue;
+				}
+				if (flag) {
+					tabStr += '<tbr></tbr>';
+				}
+				flag = true;
+				tabStr += row.cells[0].innerHTML;
+			}
+			
+			if (tabStr == '<tab><br>') {
+				tabStr = '';
+			} else {
+				tabStr += '</tab>';
+			}
+			tabList[i].parentNode.innerHTML = tabList[i].parentNode.innerHTML.replace(tabList[i].outerHTML, tabStr);
+		}
+		
+	}
+	
 	//Processing images
 	var imgList = doc.getElementsByTagName('img');
 	for (var i=imgList.length - 1; i > -1; i--) {
@@ -128,50 +177,6 @@ function getAcceptableHTML(content) {
 			}
 			
 			imgList[i].parentNode.outerHTML = newImgStr;
-		}
-		
-	}
-	
-	//Processing tables
-	var tabList = doc.getElementsByTagName('table');
-	for (var i=tabList.length - 1; i > -1; i--) {
-		var parseToTab = false;
-		if ($('#allowImgTxt').val() == 'true') {
-			if (tabList[i].rows[0].cells.length == 0) {
-				continue;
-			} else if (tabList[i].rows[0].cells.length == 1) {
-				parseToTab = true;
-			} else {
-				//parse to imgtxt. Read only the first two cells regardlessly
-				var ImgTxtStr = '<imgtxt>';
-				var flag = false;
-				//TODO
-			}
-		} else {
-			parseToTab = true;
-		}
-		
-		//parse to tab. Read only the first cell regardlessly
-		if (parseToTab) {
-			var tabStr = '<tab>';
-			var flag = false;
-			for (var j = 0, row; row = tabList[i].rows[j]; j++) {
-				if (row.cells.length == 0) {
-					continue;
-				}
-				if (flag) {
-					tabStr += '<tbr></tbr>';
-				}
-				flag = true;
-				tabStr += row.cells[0].innerHTML;
-			}
-			
-			if (tabStr == '<tab><br>') {
-				tabStr = '';
-			} else {
-				tabStr += '</tab>';
-			}
-			tabList[i].parentNode.innerHTML = tabList[i].parentNode.innerHTML.replace(tabList[i].outerHTML, tabStr);
 		}
 		
 	}

@@ -100,3 +100,8 @@ function checkFormat () {
 	}*/
 	return checkContentFormat($('textarea').froalaEditor('html.get', true));
 }
+
+$("#submitBtn").click(function(){
+	var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
+	alert(content);
+});

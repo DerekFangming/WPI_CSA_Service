@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.CommentManager;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.util.ImageType;
@@ -71,6 +72,7 @@ public class TestController {
 
 	@Autowired private ImageManager imageManager;
 	@Autowired private HelperManager helperManager;
+	@Autowired private CommentManager cManager;
 	
 	@RequestMapping(value = "/test_pass", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
@@ -244,13 +246,15 @@ public class TestController {
 	
 	@RequestMapping(value = "/files", method = RequestMethod.GET)
 	public void getFile(){
-		String a = null;
-		byte[] data = Base64.decodeBase64(a);
-		
 		try (OutputStream stream = new FileOutputStream(Util.imagePath + Integer.toString(99) + ".jpg")) {
-		    stream.write(data);
+		    
+			System.out.println(Instant.now().toString());
+			for (int i = 0; i < 1000; i ++) {
+				cManager.saveComment("something", "something", i, 0, 1);
+			}
+			System.out.println(Instant.now().toString());
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
