@@ -94,9 +94,12 @@ create table Survival_guide_hists (
 CREATE OR REPLACE FUNCTION Survival_guide_func() RETURNS trigger AS
 $$
 BEGIN
-	IF OLD.title != NEW.title OR OLD.content != New.content THEN
+	IF TG_OP = 'DELETE' OR OLD.title != NEW.title OR OLD.content != New.content THEN
 		INSERT INTO Survival_guide_hists
 		VALUES (nextval('survival_guide_hists_id_seq'::regclass), OLD.id, OLD.title, OLD.content, OLD.parent_id, OLD.position, OLD.created_at, OLD.owner_id, substring(TG_OP,1,1), NOW());
+	ELSE
+		INSERT INTO Survival_guide_hists
+		VALUES (nextval('survival_guide_hists_id_seq'::regclass), OLD.id, OLD.title, OLD.content, OLD.parent_id, OLD.position, OLD.created_at, OLD.owner_id, 'L', NOW());
 	END IF;
 	IF TG_OP = 'DELETE' THEN
 		RETURN OLD;

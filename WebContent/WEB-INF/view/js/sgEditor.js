@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	var parser = new DOMParser();
 	var doc = parser.parseFromString($('#menuList').html(), "text/html");
+	var edittingTitle = $('#title').val();
 	
 	//Processing tables
 	var aList = doc.getElementsByTagName('a');
@@ -17,8 +18,25 @@ $(document).ready(function() {
 		newItem += '<div class="btn-group btn-group-sm ml-3" role="group" style="margin-top: -10px;"><button type="button" '
 			+ 'class="btn btn-outline-secondary" onclick="before(this, ' + menuId + ')">Before this</button><button type="button" '
 			+ 'class="btn btn-outline-secondary" onclick="after(this, ' + menuId + ')">After this</button></div>';
+		if (edittingTitle != '') {
+			if (aList[i].innerHTML == edittingTitle) {
+				$(aList[i]).parent().addClass('bg-primary');
+				newItem = '<div class="one-line text-white">' + aList[i].innerHTML + '<span class="ml-3">Currently editting</span></div>';
+			}
+		}
 		aList[i].outerHTML = newItem;
 	}
+	
+	//Adding reset selection button
+	var headerList = doc.getElementsByClassName('card-header');
+	for (var i = 0; i <headerList.length; i++) {
+		if (headerList[i].innerHTML == 'Survival Guide Menu') {
+			headerList[i].innerHTML = headerList[i].innerHTML
+				+ '<button type="button" class="btn btn-outline-secondary btn-sm ml-3" onclick="clearSelection()">Clear selection</button>';
+			break;
+		}
+	}
+	
 	$('#menuList').html(doc.body.innerHTML);
 	$('#menuList').fadeIn();
 	
@@ -42,12 +60,17 @@ function before(elm, menuId) {
 	var prevPlaceholder = $("#menuList").find(".bg-success");
 	prevPlaceholder.remove();
 	
+	var message = $('#sgId').val() == '' ? 'Your new article & menu will appear here.' : 'You will be moving the article to this place.';
 	$(elm).attr('class', 'btn btn-success');
-	var appendDiv = '<div class="card-body sg-menu-item border-bottom bg-success text-white">Your new article & menu will appear here.</div>';
+	var appendDiv = '<div class="card-body sg-menu-item border-bottom bg-success text-white">' + message + '</div>';
 	var parentMenu = $(elm).parent().parent();
-	parentMenu.before(appendDiv);
-	
-	$('#relLocSelection').val('before' + menuId);
+	if (parentMenu.prev().length && parentMenu.prev().attr('class').includes('bg-primary')) {
+		//Moving the article to the original location
+		$('#relLocSelection').val('');
+	} else {
+		parentMenu.before(appendDiv);
+		$('#relLocSelection').val('before' + menuId);
+	}
 }
 
 function after(elm, menuId) {
@@ -56,20 +79,35 @@ function after(elm, menuId) {
 	var prevPlaceholder = $("#menuList").find(".bg-success");
 	prevPlaceholder.remove();
 	
+	var message = $('#sgId').val() == '' ? 'Your new article & menu will appear here.' : 'You will be moving the article to this place.';
 	$(elm).attr('class', 'btn btn-success');
-	var appendDiv = '<div class="card-body sg-menu-item border-bottom bg-success text-white">Your new article & menu will appear here.</div>';
+	var appendDiv = '<div class="card-body sg-menu-item border-bottom bg-success text-white">' + message + '</div>';
 	var parentMenu = $(elm).parent().parent();
 	if (parentMenu.next().length) {
-		if (parentMenu.next().attr('class').includes('card-collapse')) {
+		if (parentMenu.next().attr('class').includes('bg-primary')){
+			//Moving the article to the original location
+			$('#relLocSelection').val('');
+		} else if (parentMenu.next().attr('class').includes('card-collapse')) {
 			parentMenu.next().after(appendDiv);
+			$('#relLocSelection').val('after' + menuId);
 		} else {
 			parentMenu.after(appendDiv);
+			$('#relLocSelection').val('after' + menuId);
 		}
 	} else {
 		parentMenu.after(appendDiv);
+		$('#relLocSelection').val('after' + menuId);
 	}
 	
-	$('#relLocSelection').val('after' + menuId);
+	
+}
+
+function clearSelection() {
+	var prevSelection = $("#menuList").find(".btn-success");
+	prevSelection.attr('class', 'btn btn-outline-secondary');
+	var prevPlaceholder = $("#menuList").find(".bg-success");
+	prevPlaceholder.remove();
+	$('#relLocSelection').val('');
 }
 
 function selectSgType(typeId) {
@@ -98,7 +136,7 @@ $("#checkFormatBtn").click(function(){
 });
 
 function checkFormat () {
-	if ($('#relLocSelection').val() == '') {
+	if ($('#sgId').val() == '' && $('#relLocSelection').val() == '') {
 		return 'Please select a location to place the article & menu by clicking on one of the \'Before this\' or \'After this\' button';
 	}
 	if ($('#currentType').html() == 'Article') {
@@ -183,6 +221,66 @@ $("#submitBtn").click(function(){
 		        	showErrorPopup('Unknown error occured. Please contact support');
 	        }
 	    });
+		
+	}
+});
+
+$("#saveChangeBtn").click(function(){
+	var error = checkFormat();
+	if (error != '' ) {
+		showErrorPopup(error);
+	} else {
+		var locStr = $('#relLocSelection').val();
+		var placeAfter = locStr.includes('after');
+		var relLoc = parseInt(locStr.replace('before', '').replace('after', ''));
+		var params = {accessToken : accessToken, relId : relLoc, placeAfter: placeAfter};
+		
+		var title = $('#title').val().trim();
+		var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
+		
+		//----- todo   also remove div!! also update SG hist trigger!
+		
+		var title = $('#title').val().trim();
+		var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
+		var accessToken = getAccessToken();
+		var params = {accessToken : accessToken, feedId : parseInt($('#feedId').val())};
+		
+		if (!cover.includes('/images/')) {
+			params.coverImage = cover;
+		}
+		
+		if (title != $('#origTitle').val().trim()) {
+			params.title = title;
+		}
+
+		if (content != $('#editorDefaultText').html().replace(/<\/tbr>/g, '')) {
+			params.body = content;
+		}
+		
+		if (Object.keys(params).length == 2) {
+			showErrorPopup('Nothing is changed. Please update something before saving');
+		} else {
+			startBtnLoading('#saveChangeBtn');
+			/*$.ajax({
+		        type: "POST",
+		        url: "./update_feed",
+		        data: JSON.stringify(params),
+		        contentType: "application/json",
+		        dataType: "json",
+		        success: function(data){
+		        		stopBtnLoading('#saveChangeBtn');
+					if (data['error'] == "" ) {
+						window.location.href = "./feed?id=" + $('#feedId').val();
+					} else {
+						showErrorPopup(data['error']);
+					}
+		        },
+		        failure: function(errMsg) {
+			        	stopBtnLoading('#saveChangeBtn');
+			        	showErrorPopup('Unknown error occured. Please contact support');
+		        }
+		    });*/
+		}
 		
 	}
 });

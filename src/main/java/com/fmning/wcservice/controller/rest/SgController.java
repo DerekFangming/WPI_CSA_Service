@@ -19,12 +19,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.SurvivalGuide;
+import com.fmning.service.domain.SurvivalGuideHist;
 import com.fmning.service.domain.User;
+import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.SGManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
+import com.fmning.util.HistType;
 import com.fmning.util.ImageType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
@@ -42,12 +45,48 @@ public class SgController {
 		
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
-			SurvivalGuide sg = sgManager.getArticleById(Integer.parseInt(request.getParameter("id")));
+			int sgId = Integer.parseInt(request.getParameter("id"));
+			SurvivalGuide sg = sgManager.getArticleById(sgId);
 			respond.put("title", sg.getTitle());
 			respond.put("content", sg.getContent());
 			respond.put("createdAt", sg.getCreatedAt().toString());
 			respond.put("ownerId", sg.getOwnerId());
 			respond.put("ownerName", userManager.getUserDisplayedName(sg.getOwnerId()));
+			
+			try {
+				List<SurvivalGuideHist> sghList = sgManager.getEditingHistory(sgId, false, HistType.UPDATE, Util.nullInt);
+				List<Map<String, Object>> processedHistList = new ArrayList<>();
+				for (SurvivalGuideHist s : sghList) {
+					Map<String, Object> ns = new HashMap<>();
+					ns.put("id", s.getId());
+					ns.put("createdAt", s.getActionDate().toString());
+					ns.put("ownerId", s.getOwnerId());
+					ns.put("ownerName", userManager.getUserDisplayedName(s.getOwnerId()));
+					processedHistList.add(ns);
+				}
+				respond.put("history", processedHistList);
+			} catch (NotFoundException e) {}
+			
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = errorManager.createErrorRespondFromException(e, request);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/get_sg_history", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Object>> getSgHist(HttpServletRequest request) {
+		
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			int histId = Integer.parseInt(request.getParameter("historyId"));
+			SurvivalGuideHist sgh = sgManager.getEdintingHistorybyId(histId);
+			respond.put("title", sgh.getTitle());
+			respond.put("content", sgh.getContent());
+			respond.put("createdAt", sgh.getCreatedAt().toString());
+			respond.put("ownerId", sgh.getOwnerId());
+			respond.put("ownerName", userManager.getUserDisplayedName(sgh.getOwnerId()));
+			
 			respond.put("error", "");
 		}catch(Exception e){
 			respond = errorManager.createErrorRespondFromException(e, request);

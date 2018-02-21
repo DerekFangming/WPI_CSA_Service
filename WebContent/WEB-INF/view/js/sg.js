@@ -1,24 +1,82 @@
 $(document).ready(function() {
-	openSG(1);
+	var id = parseInt($('#initialId').val());
+	openSG(id);
 });
 
 function openSG(id) {
+	$('#sgTitle').hide();
+	$('#sgHistDropdown').hide();
+	$('#sgEditBtn').hide();
+	$('#sgLoading').fadeIn();
 	$.ajax({
 		type: "GET",
 		url: "./get_sg?id=" + id,
         contentType: "application/json",
         dataType: "json",
 		success: function (data) {
+			$('#sgLoading').hide();
 			if (data['error'] == '') {
+				var lastEditStr = 'Last updated by ' + data['ownerName'] + ' on ' + parseDateStr(data['createdAt']);
 				$("#sgTitle").text(data['title']);
-				$("#sgSubTitle").text('Last updated by ' + data['ownerName'] + ' on ' + parseDateStr(data['createdAt']));
-				
+				$("#sgSubTitle").text(lastEditStr);
 				$("#sgContent").html(processContent(data['content']));
+				$('#sgEditBtn').html('Edit');
+				$('#sgEditBtn').prop('href', './edit_sg?id=' + id);
+				if(data['history']) {
+					var dropdownContent = '<a class="dropdown-item" href="#" onclick="openSG(' + id + ')"><small class="text-muted">'
+						+ lastEditStr + '</small></a>';
+					var histList = data['history'];
+					for(var i = 0; i < histList.length; i++) {
+						dropdownContent += '<a class="dropdown-item" href="#" onclick="openSGHist(' + histList[i].id + ')"><small class="text-muted">';
+						dropdownContent += 'Updated by ' + histList[i].ownerName + ' on ' + parseDateStr(histList[i].createdAt);
+						dropdownContent += '</small></a>';
+					}
+					$('#sgHistDropdown > div').html(dropdownContent);
+				} else {
+					$('#sgHistDropdown > div').html('<a class="dropdown-item" href="#"><small class="text-muted">No more editing history found</small></a>');
+				}
+				
+				$('#sgTitle').fadeIn();
+				$('#sgHistDropdown').fadeIn();
+				$('#sgEditBtn').fadeIn();
 			} else {
 				showErrorPopup(data['error']);
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
+			$('#sgLoading').hide();
+			showErrorPopup('Unknown error occured. Please contact support');
+		}
+	});
+}
+
+function openSGHist(histId) {
+	$('#sgTitle').hide();
+	$('#sgHistDropdown').hide();
+	$('#sgEditBtn').hide();
+	$('#sgLoading').fadeIn();
+	$.ajax({
+		type: "GET",
+		url: "./get_sg_history?historyId=" + histId,
+        contentType: "application/json",
+        dataType: "json",
+		success: function (data) {
+			$('#sgLoading').hide();
+			if (data['error'] == '') {
+				$("#sgTitle").text(data['title']);
+				$("#sgSubTitle").text('Updated by ' + data['ownerName'] + ' on ' + parseDateStr(data['createdAt']));
+				$("#sgContent").html(processContent(data['content']));
+				$('#sgEditBtn').html('Edit latest version');
+				
+				$('#sgTitle').fadeIn();
+				$('#sgHistDropdown').fadeIn();
+				$('#sgEditBtn').fadeIn();
+			} else {
+				showErrorPopup(data['error']);
+			}
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			$('#sgLoading').hide();
 			showErrorPopup('Unknown error occured. Please contact support');
 		}
 	});

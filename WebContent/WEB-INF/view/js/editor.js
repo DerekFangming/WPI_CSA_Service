@@ -250,6 +250,29 @@ function getEditableHTML(content) {
 		
 		fontList[i].outerHTML = span.outerHTML;
 	}
+	
+	//Processing imgtxt, if allowed
+	//This will be looping from the end to beginning so order is inverted
+	if ($('#allowImgTxt').val() == 'true') {
+		
+		var imgtxtList = doc.getElementsByTagName('imgtxt');
+		var currentTable = '';
+		for (var i=imgtxtList.length - 1; i > -1; i--) {
+			//var currentRow = '<table style="width: 100%;"><tbody><>';
+			var currentRow = '<tr><td style="width: 35%;"><img src="' + imgtxtList[i].getAttribute('src') + '">';
+			currentRow += '</td><td>' + imgtxtList[i].innerHTML + '</td></tr>'
+			
+			currentTable = currentRow + currentTable;//INVERTED!
+			
+			if (imgtxtList[i].previousSibling.tagName != 'imgtxt') {
+				currentTable = '<table style="width: 100%;"><tbody>' + currentTable + '</tbody></table>';
+				imgtxtList[i].outerHTML = currentTable;
+				currentTable = '';
+			} else {
+				imgtxtList[i].outerHTML = '';
+			}
+		}
+	}
 		
 	return doc.body.innerHTML;
 }

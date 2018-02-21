@@ -78,6 +78,13 @@ public class SgDetailController {
 			model.addAttribute("menuList", generatedMenu);
 		}
 		
+		String id = request.getParameter("id");
+		if (id != null) {
+			model.addAttribute("initialId", id);
+		} else {
+			model.addAttribute("initialId", "1");
+		}
+		
 		return "sg";
 	}
 	
@@ -174,6 +181,62 @@ public class SgDetailController {
 		} else {
 			model.addAttribute("menuList", generatedMenu);
 		}
+		return "sgEditor";
+	}
+	
+	@RequestMapping(value = "/edit_sg", method = RequestMethod.GET)
+    public String editFeedController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+		Cookie cookie = null;
+		try {
+			User user = userManager.validateAccessToken(request);
+			if (!user.getUsername().endsWith("@wpi.edu")) {
+				model.addAttribute("errorMessage", ErrorMessage.SG_INVALID_EMAIL.getMsg());
+				return "errorview/403";
+			}
+			if (!user.getEmailConfirmed()) {
+				model.addAttribute("errorMessage", ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+				return "errorview/403";
+			}
+			String name = userManager.getUserDetail(user.getId()).getName();
+			if (name == null){name = "Unknown";}
+			user.setName(name);
+			model.addAttribute("user", user);
+			if (user.isTokenUpdated()) {
+				cookie = new Cookie("accessToken", user.getAccessToken());
+				cookie.setMaxAge(63113904);
+			}
+		} catch (NotFoundException e) {
+			model.addAttribute("errorMessage", ErrorMessage.NO_USER_LOGGED_IN.getMsg());
+			return "errorview/403";
+		}
+		
+		if (cookie != null) {
+			response.addCookie(cookie);
+		}
+		
+		String sgId = request.getParameter("id");
+		try {
+			SurvivalGuide sg = sgManager.getArticleById(Integer.parseInt(sgId));
+			model.addAttribute("sg", sg);
+			model.addAttribute("notFound", false);
+		} catch (Exception e) {
+			errorManager.logError(e, request);
+			model.addAttribute("notFound", true);
+		}
+		
+		if (Utils.prodMode) {
+			model.addAttribute("editorHTMLOption", false);
+		} else {
+			model.addAttribute("editorHTMLOption", true);
+		}
+		
+		if (generatedMenu == null) {
+			generatedMenu = generateMenu(Util.nullInt, "");
+			model.addAttribute("menuList", generatedMenu);
+		} else {
+			model.addAttribute("menuList", generatedMenu);
+		}
+		model.addAttribute("editMode", true);
 		return "sgEditor";
 	}
 	
