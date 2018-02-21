@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.util.Util;
 import com.fmning.wcservice.scheduler.DatabaseBackupScheduler;
@@ -34,6 +35,11 @@ public class Utils {
 	public final static String dbName = "WcServiceProd";
 	public final static String dbUsername = "postgres";
 	
+	/*Ticket passwords*/
+	public static String privateKeyPath = "";
+	public static String appleWWDRCA = "";
+	public static String privateKeyPassword = "";
+	
 	/*Braintree service*/
 	public static BraintreeGateway gateway;
 	
@@ -42,6 +48,7 @@ public class Utils {
 	
 	/*Ticket parameters*/
 	public static String ticketPath = "";
+	public static String ticketTemplatePath = "";
 	
 	/*For error logging, to get the request URL*/
 	public static String rootDir = "";
@@ -49,7 +56,11 @@ public class Utils {
 	/*For doing stuff as CSA Official*/
 	public static final int CSA_ID = 2;
 	
+	/*SG parameters*/
+	public static final String SG_BG_COLOR = "007AFF";
+	
 	@Autowired private HelperManager helperManager;
+	@Autowired private ErrorManager errorManager;
 	
 	public static String createVerificationEmail(String name, String veriCode) {
 		String message = "Hi " + name + ",";
@@ -101,7 +112,9 @@ public class Utils {
 	@Value("${emailVerificationPath}") private String emailVerificationPathProp;
 	@Value("${emailChangePwdPath}") private String emailChangePwdPathProp;
 	@Value("${ticketPath}") private String ticketPathProp;
+	@Value("${templatePath}") private String ticketTemplatePathProp;
 	@Value("${rootDir}") private String rootDirProp;
+	@Value("${ticketPKPassword}") private String ticketPKPasswordProp;
 
 	@Value("${env}") private String env;
 	@Value("${merchantId}") private String merchantId;
@@ -119,7 +132,9 @@ public class Utils {
 		emailVerificationPath = emailVerificationPathProp;
 		emailChangePwdPath = emailChangePwdPathProp;
 		ticketPath = ticketPathProp;
+		ticketTemplatePath = ticketTemplatePathProp;
 		rootDir = rootDirProp;
+		privateKeyPassword = ticketPKPasswordProp;
 		
 		Environment btEnv = env.equals("sandbox") ? Environment.SANDBOX : Environment.PRODUCTION;
 		
@@ -130,7 +145,6 @@ public class Utils {
 				  privateKey
 				);
 		
-		
 		//Set up image path
 		if(!prodMode) {
 			Util.imagePath = "/Volumes/Data/testImages/";
@@ -140,6 +154,8 @@ public class Utils {
 		
 		ClassLoader classLoader = getClass().getClassLoader();
 		DatabaseBackupScheduler.backupScriptPath = classLoader.getResource("dbBackup.sh").getFile();
+		privateKeyPath = classLoader.getResource("passCertificate.p12").getFile();
+		appleWWDRCA = classLoader.getResource("AppleWWDRCA.cer").getFile();
         
 		try {
 			Process process = Runtime.getRuntime().exec("chmod 777 " + DatabaseBackupScheduler.backupScriptPath);
@@ -157,14 +173,23 @@ public class Utils {
 			
 			if (errors.length() > 0){
 				String report = "Error during startup of the service:\n\n";
-				helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
-						"WPI CSA scheduler error report", report + errors);
+				try {
+					helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
+							"WPI CSA scheduler error report", report + errors);
+				} catch (Exception e) {
+					errorManager.logError(e);
+				}
 			}
 			
 		} catch (IOException | InterruptedException e) {
+			errorManager.logError(e);
 			String report = "Error during startup of the service:\n\n";
-			helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
-					"WPI CSA scheduler error report", report + e.getMessage());
+			try {
+				helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
+						"WPI CSA scheduler error report", report + e.getMessage());
+			} catch (Exception e1) {
+				errorManager.logError(e1);
+			}
 		}
 
     }

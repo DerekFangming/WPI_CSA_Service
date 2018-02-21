@@ -1,9 +1,11 @@
 $('#loginForm').submit(function (e) {
+	startBtnLoading('#signinButton');
 	$.ajax({
 		type: "POST",
 		url: "./web_login",
 		data: $("#loginForm").serialize(),
 		success: function (data) {
+			stopBtnLoading('#signinButton');
 			if (data.startsWith("{")) {
 				var obj = $.parseJSON(data);
 				showErrorPopup(obj['error']);
@@ -19,6 +21,7 @@ $('#loginForm').submit(function (e) {
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
+			stopBtnLoading('#signinButton');
 			showErrorPopup('Unknown error occured. Please contact support');
 		}
 	});
@@ -44,11 +47,13 @@ $('#registerForm').submit(function (e) {
 	} else if (!passwordRegex.test(password)) {
 		showErrorPopup('Password needs to have at least one letter and one number');
 	} else {
+		startBtnLoading('#confirmsignup');
 		$.ajax({
 			type: "POST",
 			url: "./web_register",
 			data: $("#registerForm").serialize(),
 			success: function (data) {
+				stopBtnLoading('#confirmsignup');
 				if (data.startsWith("{")) {
 					var obj = $.parseJSON(data);
 					showErrorPopup(obj['error']);
@@ -56,7 +61,7 @@ $('#registerForm').submit(function (e) {
 					if ($('#refreshAfterLogin').length == 0) {
 						$('#loginModal').modal('toggle');
 						$('#loginNav').replaceWith(data);
-						showPopup('Verification email sent', 'An email has been sent to your mail box with a link to confirm your email. '
+						showPopup('Sign up complete', 'An email has been sent to your mail box with a link to confirm your email. '
 								+ 'Please click on the link in 24 hours. Please check your junk folder if you cannot see the email.');
 						
 						$('#userEmailConfirmed').val('false');
@@ -66,6 +71,7 @@ $('#registerForm').submit(function (e) {
 				}
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
+				stopBtnLoading('#confirmsignup');
 				showErrorPopup('Unknown error occured. Please contact support');
 			}
 		});
@@ -75,7 +81,7 @@ $('#registerForm').submit(function (e) {
 });
 
 $('#forgetForm').submit(function (e) {
-	$('#loginModal').modal('toggle');
+	startBtnLoading('#forgetButton');
 	$.ajax({
 		type: "POST",
 		url: "./send_change_pwd_email",
@@ -83,6 +89,8 @@ $('#forgetForm').submit(function (e) {
         dataType: "json",
 		data: JSON.stringify({email : $('#forgetEmail').val()}),
 		success: function (data) {
+			stopBtnLoading('#forgetButton');
+			$('#loginModal').modal('toggle');
 			if (data['error'] != "" ) {
 	    		showErrorPopup(data['error']);
 	    	} else {
@@ -90,6 +98,8 @@ $('#forgetForm').submit(function (e) {
 	    	}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
+			stopBtnLoading('#forgetButton');
+			$('#loginModal').modal('toggle');
 			showErrorPopup('Unknown error occured. Please contact support');
 		}
 	});

@@ -5,18 +5,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.HelperManager;
-import com.fmning.util.Util;
 import com.fmning.wcservice.controller.rest.TestController;
 import com.fmning.wcservice.utils.Utils;
 
@@ -49,6 +46,7 @@ public class DatabaseBackupScheduler {
 	private static Drive drive;
 	
 	@Autowired private HelperManager helperManager;
+	@Autowired private ErrorManager errorManager;
 
 	//@Scheduled(cron = "*/5 * * * * *") //Every 5 seconds, for testing only
 	@Scheduled(cron = "0 0 6 * * ?") //6 am in est time to simulate 1 am in UTC time
@@ -78,8 +76,12 @@ public class DatabaseBackupScheduler {
 				
 				if (errors.length() > 0){
 					String report = "Error during backup of the database:\n\n";
-					helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
-							"WPI CSA scheduler error report", report + errors);
+					try {
+						helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
+								"WPI CSA scheduler error report", report + errors);
+					} catch (Exception e) {
+						errorManager.logError(e);
+					}
 				} else {
 					try {
 						httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -119,16 +121,26 @@ public class DatabaseBackupScheduler {
 					    insert.execute();
 						
 					} catch (Exception e) {
-						String report = "Error during google drive backup of the database:\n\n";
-						helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
-								"WPI CSA scheduler error report", report + e.getMessage());
+						errorManager.logError(e);
+						try {
+							String report = "Error during google drive backup of the database:\n\n";
+							helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
+									"WPI CSA scheduler error report", report + e.getMessage());
+						} catch (Exception e1) {
+							errorManager.logError(e1);
+						}
 					}
 				}
 				
 			} catch (IOException | InterruptedException e) {
-				String report = "Error during backup of the database:\n\n";
-				helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
-						"WPI CSA scheduler error report", report + e.getMessage());
+				errorManager.logError(e);
+				try {
+					String report = "Error during backup of the database:\n\n";
+					helperManager.sendEmail("admin@fmning.com", "fning@wpi.edu,sxie@wpi.edu", 
+							"WPI CSA scheduler error report", report + e.getMessage());
+				} catch (Exception e1) {
+					errorManager.logError(e1);
+				}
 			}
 		} else {
 			System.out.println("Scheduler tested, working");

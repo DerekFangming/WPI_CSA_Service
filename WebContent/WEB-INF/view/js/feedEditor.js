@@ -1,5 +1,11 @@
 $(document).ready(function() {
-	$('#img-picker').imagePicker({name: 'images'});
+	var imgSrc = '';
+	if ($('#feedCoverImageId').val() != '') {
+		imgSrc = './images/' + $('#feedCoverImageId').val() + '.jpg';
+	}
+	$('#img-picker').imagePicker({
+		src: imgSrc
+	});
 })
 
 function selectType(typeId) {
@@ -12,10 +18,10 @@ function selectType(typeId) {
 	} else {
 		if ($('#hasAvatar').val() == 'true') {
 			$('#alertMsg').attr("class", 'alert alert-success');
-			$('#alertMsg').html('Don\'t forget to check format to make sure your article look good in all platforms.');
+			$('#alertMsg').html('Don\'t forget to check format to make sure your article looks good in all platforms.');
 		} else {
 			$('#alertMsg').attr("class",  'alert alert-warning');
-			$('#alertMsg').html('You do not have an avatar and it will show as the default panda. We strongly recommend you to add an avatar from mobile end before posting articles.');
+			$('#alertMsg').html('You do not have an avatar and it will show as the default panda. We strongly recommend you to add an avatar from <a href="./profile" target="blank" >profile page</a> before posting articles.');
 		}
 		if ($('#eventInput').length) {
 			$("#eventInput").fadeOut();
@@ -39,13 +45,11 @@ function getFeedTypeText(typeId) {
 $("#checkFormatBtn").click(function(){
 	var error = checkFormat();
 	if (error == '' ) {
-		showPopup('<span style="color:green"> No errors found<i class="fa fa-check"></i></span>', 'The format has no problems and should look good in all platforms.');
+		showPopup('<span style="color:green"> No errors found<i class="fa fa-check"></i></span>', 'The format has no problems and should looks good in all platforms.');
 	} else {
 		showErrorPopup(error);
 	}
 });
-
-
 
 $("#submitBtn").click(function(){
 	var error = checkFormat();
@@ -57,8 +61,7 @@ $("#submitBtn").click(function(){
 		var type = $("#currentType").html();
 		var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
 		var accessToken = getAccessToken();
-		$("#submitBtn").prop('disabled', true);
-		$("#submitSpinner").show();
+		startBtnLoading('#submitBtn');
 		
 		var params = {accessToken : accessToken, title : title, type : type, body : content, coverImage : cover };
 		
@@ -97,20 +100,15 @@ $("#submitBtn").click(function(){
 	        contentType: "application/json",
 	        dataType: "json",
 	        success: function(data){
-	        	$("#submitBtn").prop('disabled', false);
-	        	$("#submitSpinner").hide();
+	        	stopBtnLoading('#submitBtn');
 				if (data['error'] == "" ) {
-					showPopup('Done', 'Article created. You will be redirected in 5 seconds.');
-					window.setTimeout(function(){
-						window.location.href = "./";
-					}, 5000);
+					window.location.href = "./";
 				} else {
 					showErrorPopup(data['error']);
 				}
 	        },
 	        failure: function(errMsg) {
-	        	$("#submitBtn").prop('disabled', false);
-	        	$("#submitSpinner").hide();
+	        	stopBtnLoading('#submitBtn');
 	        	showErrorPopup('Unknown error occured. Please contact support');
 	        }
 	    });
@@ -263,7 +261,94 @@ function checkEventFormat() {
 		}
 	}
 	
-	
 	return '';
 }
 
+
+
+$("#ticketPreviewBtn").click(function(){
+	var attr = $('#ticketBGImage').attr('src');
+	if(typeof attr == typeof undefined || attr == false) {
+		showErrorPopup('Please select a ticket background image. Note that the image will be blurred and we recommand a dark colorred image for better effect.');
+		return;
+	}
+	attr = $('#ticketThumnImage').attr('src');
+	if(typeof attr == typeof undefined || attr == false) {
+		showErrorPopup('Please select a ticket thumbnail image.');
+		return;
+	}
+	
+	startBtnLoading('#ticketPreviewBtn');
+	var accessToken = getAccessToken();
+	$.ajax({
+        type: "POST",
+        url: "./preview_ticket",
+        data: JSON.stringify({accessToken : accessToken, ticketBgImage: $('#ticketBGImage').attr('src'), ticketThumbImage: $('#ticketThumnImage').attr('src')}),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data){
+        		stopBtnLoading('#ticketPreviewBtn');
+			if (data['error'] == "" ) {
+				showPopup('Done', 'We have emailed you the ticket sample. Check junk or trash folder if you cannot find it.');
+			} else {
+				showErrorPopup(data['error']);
+			}
+        },
+        failure: function(errMsg) {
+	        	stopBtnLoading('#ticketPreviewBtn');
+	        	showErrorPopup('Unknown error occured. Please contact support');
+        }
+    });
+});
+
+
+$("#saveChangeBtn").click(function(){
+	var error = checkFormat();
+	if (error != '' ) {
+		showErrorPopup(error);
+	} else {
+		var cover = $('#img-picker').children().children('img').attr('src');
+		var title = $('#title').val().trim();
+		var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
+		var accessToken = getAccessToken();
+		var params = {accessToken : accessToken, feedId : parseInt($('#feedId').val())};
+		
+		if (!cover.includes('/images/')) {
+			params.coverImage = cover;
+		}
+		
+		if (title != $('#origTitle').val().trim()) {
+			params.title = title;
+		}
+
+		if (content != $('#editorDefaultText').html().replace(/<\/tbr>/g, '')) {
+			params.body = content;
+		}
+		
+		if (Object.keys(params).length == 2) {
+			showErrorPopup('Nothing is changed. Please update something before saving');
+		} else {
+			startBtnLoading('#saveChangeBtn');
+			$.ajax({
+		        type: "POST",
+		        url: "./update_feed",
+		        data: JSON.stringify(params),
+		        contentType: "application/json",
+		        dataType: "json",
+		        success: function(data){
+		        		stopBtnLoading('#saveChangeBtn');
+					if (data['error'] == "" ) {
+						window.location.href = "./feed?id=" + $('#feedId').val();
+					} else {
+						showErrorPopup(data['error']);
+					}
+		        },
+		        failure: function(errMsg) {
+			        	stopBtnLoading('#saveChangeBtn');
+			        	showErrorPopup('Unknown error occured. Please contact support');
+		        }
+		    });
+		}
+		
+	}
+});

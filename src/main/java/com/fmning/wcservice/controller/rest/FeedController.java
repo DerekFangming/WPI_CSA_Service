@@ -1,9 +1,5 @@
 package com.fmning.wcservice.controller.rest;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -17,11 +13,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -124,22 +117,22 @@ public class FeedController {
 	
 	private List<Map<String, Object>> processFeedList (List<Feed> feedList, boolean sendBody) {
 		List<Map<String, Object>> processedFeedList = new ArrayList<Map<String, Object>>();
-		for(Feed m : feedList){
+		for(Feed f : feedList){
 			Map<String, Object> processedFeed = new HashMap<String, Object>();
-			processedFeed.put("id", m.getId());
-			processedFeed.put("title", m.getTitle());
-			processedFeed.put("type", m.getType());
-			if (sendBody) processedFeed.put("body", m.getBody());
-			processedFeed.put("ownerId", m.getOwnerId());
-			processedFeed.put("ownerName", userManager.getUserDisplayedName(m.getOwnerId()));
-			processedFeed.put("createdAt", m.getCreatedAt().toString());
+			processedFeed.put("id", f.getId());
+			processedFeed.put("title", f.getTitle());
+			processedFeed.put("type", f.getType());
+			if (sendBody) processedFeed.put("body", f.getBody());
+			processedFeed.put("ownerId", f.getOwnerId());
+			processedFeed.put("ownerName", userManager.getUserDisplayedName(f.getOwnerId()));
+			processedFeed.put("createdAt", f.getCreatedAt().toString());
 			try {
-				int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
+				int imgId = imageManager.getImageByTypeAndMapping(ImageType.FEED_COVER.getName(), f.getId()).getId();
 				processedFeed.put("coverImgId", imgId);
 			}catch(Exception e) {}
 			
 			try {
-				int avatarId = imageManager.getTypeUniqueImage("Avatar", m.getOwnerId()).getId();
+				int avatarId = imageManager.getTypeUniqueImage(ImageType.AVATAR.getName(), f.getOwnerId()).getId();
 				processedFeed.put("avatarId", avatarId);
 			}catch(Exception e) {}
 			
@@ -197,6 +190,9 @@ public class FeedController {
 		try{
 			User user = userManager.validateAccessToken(request);
 			int userId = user.getId();
+			if (!user.getEmailConfirmed()) {
+				throw new IllegalStateException(ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+			}
 			
 			String title = (String)request.get("title");
 			String type = (String)request.get("type");
@@ -215,33 +211,7 @@ public class FeedController {
 				}
 			}
 			
-			//Saving images, then create feed
-			Matcher imgMatcher = Pattern.compile("<img.*?>").matcher(body);
-			while (imgMatcher.find()) {
-				String imgTag = imgMatcher.group();
-				
-				Matcher srcMatcher = Pattern.compile("src=\".*?\"").matcher(imgTag);
-				
-				if (srcMatcher.find()) {
-					try {
-						String src = srcMatcher.group().replace("src=", "").replace("\"", "");
-						int imgId = 0;
-						if (src.toLowerCase().contains("i.froala.com")) {
-							URL url = new URL(src);
-							imgId = imageManager.createImage(url, ImageType.FEED.getName(), Util.nullInt, userId, null);
-						} else {
-							imgId = imageManager.createImage(src, ImageType.FEED.getName(), Util.nullInt, userId, null);
-						}
-						String dimension = Util.shrinkImageAndGetDimension(imgId);
-						body = body.replace(imgTag, "<img src=\"WCImage_" + Integer.toString(imgId) + "\" " + dimension + " />");
-					} catch (Exception e) {
-						body = body.replace(imgTag, "");
-					}
-					
-				} else {
-					body = body.replace(imgTag, "");
-				}
-			}
+			body = saveImagesForFeedBody(body, userId);
 			
 			int feedId = 0;
 			if (type.equals(FeedType.EVENT.getName())) {
@@ -290,18 +260,21 @@ public class FeedController {
 						}
 						
 						//Creating ticket template
-						String location = "/Volumes/Data/passTemplates/";
 						String folderName = eventTitle.replaceAll("\\s+","");
 						folderName = folderName.length() < 20 ? folderName : folderName.substring(0, 20);
 						folderName += new SimpleDateFormat("yyyyMMddss").format(new Date());
-						location += folderName;
 						
-						int templateId = ticketManager.createTicketTemplate(location, "WPI CSA Event", "WPI CSA", null, userId);
-						createTicketTemplate(ticketBgImage, ticketThumbImage, folderName);
+						int templateId = ticketManager.createTicketTemplate(Utils.ticketTemplatePath + folderName,
+								"WPI CSA Event", "WPI CSA", null, userId);
+						try {
+							TicketController.createTicketTemplate(ticketBgImage, ticketThumbImage, folderName);
+						} catch (IOException e) {
+							errorManager.logError(e, Utils.rootDir + "/create_feed", request);
+						}
 						
 						eventManager.createEvent(EventType.FEED.getName(), feedId, eventTitle, eventDesc, Instant.parse(startTime),
 								Instant.parse(endTime), eventLocation, ticketFee, userId, templateId, ticketActive,
-								"", ticketBalance);
+								"", ticketBalance, user.getId());
 						
 						
 					} catch (NullPointerException | ClassCastException | NumberFormatException e) {
@@ -313,7 +286,7 @@ public class FeedController {
 					// Adding calendar only event with default fee and no ticket design
 					eventManager.createEvent(EventType.FEED.getName(), feedId, eventTitle, eventDesc, Instant.parse(startTime),
 							Instant.parse(endTime), eventLocation, 0, userId, Util.nullInt, false,
-							"", 0);
+							"", 0, user.getId());
 				}
 				
 			}
@@ -329,50 +302,107 @@ public class FeedController {
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
-	private void createTicketTemplate(String background, String thumbnail, String folderName) {
-		File srcDir = new File("/Volumes/Data/passTemplates/base");
-		File destDir = new File("/Volumes/Data/passTemplates/" + folderName);
-
-		try {
-			//Creating base folder
-			FileUtils.copyDirectory(srcDir, destDir);
+	private String saveImagesForFeedBody(String body, int userId) {
+		Matcher imgMatcher = Pattern.compile("<img.*?>").matcher(body);
+		while (imgMatcher.find()) {
+			String imgTag = imgMatcher.group();
 			
-			//Saving background and thumbnails
-			if(background.contains(",")){background = background.split(",")[1];}
-			byte[] bgData = Base64.decodeBase64(background);
-			BufferedImage bg = ImageIO.read(new ByteArrayInputStream(bgData));
-			int bgWidth = bg.getWidth();
-			int bgHeight = bg.getHeight();
-			for (int i = 1; i < 4; i ++) {
-				int newWidth = bgWidth > bgHeight ? bgWidth * 220 / bgHeight * i : 180 * i;
-				int newHeight = bgWidth > bgHeight ? 220 * i : bgHeight * 180 / bgWidth * i;
-				BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
-				Graphics g = newImage.createGraphics();
-				g.drawImage(bg, 0, 0, newWidth, newHeight, null);
-				g.dispose();
-				ImageIO.write(newImage, "png",
-						new File("/Volumes/Data/passTemplates/" + folderName + "/background@" + Integer.toString(i) + "x.png"));
+			Matcher srcMatcher = Pattern.compile("src=\".*?\"").matcher(imgTag);
+			
+			if (srcMatcher.find()) {
+				try {
+					String src = srcMatcher.group().replace("src=", "").replace("\"", "");
+					int imgId = 0;
+					if (src.toLowerCase().contains("i.froala.com")) {
+						URL url = new URL(src);
+						imgId = imageManager.createImage(url, ImageType.FEED.getName(), Util.nullInt, userId, null);
+					} else if(src.toLowerCase().contains("/images/")) {
+						continue;
+					} else {
+						imgId = imageManager.createImage(src, ImageType.FEED.getName(), Util.nullInt, userId, null);
+					}
+					String dimension = Util.shrinkImageAndGetDimension(imgId);
+					body = body.replace(imgTag, "<img src=\"WCImage_" + Integer.toString(imgId) + "\" " + dimension + " />");
+				} catch (Exception e) {
+					body = body.replace(imgTag, "");
+				}
+				
+			} else {
+				body = body.replace(imgTag, "");
 			}
-			
-			if(thumbnail.contains(",")){thumbnail = thumbnail.split(",")[1];}
-			byte[] thData = Base64.decodeBase64(thumbnail);
-			BufferedImage th = ImageIO.read(new ByteArrayInputStream(thData));
-			int thWidth = th.getWidth();
-			int thHeight = th.getHeight();
-			for (int i = 1; i < 4; i ++) {
-				int newWidth = thWidth > thHeight ? thWidth * 90 / thHeight * i : 90 * i;
-				int newHeight = thWidth > thHeight ? 90 * i : thHeight * 90 / thWidth * i;
-				BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
-				Graphics g = newImage.createGraphics();
-				g.drawImage(th, 0, 0, newWidth, newHeight, null);
-				g.dispose();
-				ImageIO.write(newImage, "png",
-						new File("/Volumes/Data/passTemplates/" + folderName + "/thumbnail@" + Integer.toString(i) + "x.png"));
-			}
-			
-		} catch (IOException e) {
-			errorManager.logError(e);
 		}
+		
+		return body;
+	}
+	
+	
+	
+	@RequestMapping(value = "/update_feed")
+    public ResponseEntity<Map<String, Object>> updateFeed(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			User user = userManager.validateAccessToken(request);
+			int userId = user.getId();
+			
+			int feedId = (int)request.get("feedId");
+			String title = (String)request.get("title");
+			String body = (String)request.get("body");
+			String coverImageString = (String)request.get("coverImage");
+			
+			Feed feed = feedManager.getFeedById(feedId);
+			
+			if (body != null) {
+				body = saveImagesForFeedBody(body, userId);
+			}
+			
+			if (feed.getOwnerId() != userId) {
+				if (UserRole.isAdmin(user.getRoleId())) {
+					feedManager.softUpdateFeed(feedId, title, body, null, userId);
+				} else {
+					throw new IllegalStateException(ErrorMessage.NO_PERMISSION.getMsg());
+				}
+			} else {
+				feedManager.softUpdateFeed(feedId, title, body, null, userId);
+			}
+			
+			if (coverImageString != null) {
+				imageManager.saveTypeUniqueImage(coverImageString, ImageType.FEED_COVER.getName(), feedId, userId, null);
+			}
+			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
+			respond.put("error", "");
+		} catch (Exception e) {
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/delete_feed", request);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/delete_feed")
+    public ResponseEntity<Map<String, Object>> deleteFeed(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			User user = userManager.validateAccessToken(request);
+			
+			Feed feed = feedManager.getFeedById((int)request.get("feedId"));
+			
+			if (feed.getOwnerId() == user.getId()) {
+				feedManager.softDeleteFeed(feed.getId(), user.getId());
+			} else if (UserRole.isAdmin(user.getRoleId())) {
+				feedManager.softDeleteFeed(feed.getId(), feed.getOwnerId(), user.getId());
+			} else {
+				throw new IllegalStateException(ErrorMessage.UNAUTHORIZED_FEED_DELETE.getMsg());
+			}
+			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
+			respond.put("error", "");
+		} catch (Exception e) {
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/delete_feed", request);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 
 }

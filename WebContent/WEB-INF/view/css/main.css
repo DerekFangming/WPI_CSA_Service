@@ -23,6 +23,10 @@ body {
 	height: 300px;
 }
 
+.profile-img-container {
+	height: 150px;
+}
+
 .ticket-bg-container {
 	width: 300px;
 	height: 450px;
@@ -109,8 +113,6 @@ body {
 	object-fit: contain;
 }
 
-
-
 .img-upload-btn {} 
 
 .img-upload-btn input[type=file] {
@@ -130,4 +132,40 @@ body {
 	background: #DFDFDF; 
 }
 
+.center-child {
+	min-height: 100%;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+.profile-lable {
+	width:85px;
+}
+
+.profile-article-title {
+	float:left;
+	max-width: 200px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.editor-header {
+	margin-top:-0.5em;
+	margin-bottom:-0.5em;
+}
+
+.menu-block {
+	width:1.5em;
+	height:1em;
+	float:left;
+}
+
+.one-line {
+	float:left
+}
+
+.sg-menu-preview {
+    height: 250px;
+    overflow-y: auto;
+}

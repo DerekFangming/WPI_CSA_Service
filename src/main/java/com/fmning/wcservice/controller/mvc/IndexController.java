@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.fmning.service.domain.Feed;
 import com.fmning.service.domain.User;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.ImageManager;
 import com.fmning.service.manager.UserManager;
-import com.fmning.util.ErrorMessage;
+import com.fmning.util.ImageType;
 import com.fmning.util.Util;
 import com.fmning.wcservice.controller.rest.FeedController;
 import com.fmning.wcservice.model.FeedModel;
@@ -35,6 +36,7 @@ public class IndexController {
 	@Autowired private UserManager userManager;
 	@Autowired private FeedManager feedManager;
 	@Autowired private ImageManager imageManager;
+	@Autowired private ErrorManager errorManager;
 	@Autowired private HelperManager helperManager;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -116,7 +118,11 @@ public class IndexController {
 			userManager.updateVeriCode(username, veriCode);
 			String message = Utils.createVerificationEmail(user.getName(), veriCode);
 			if (Utils.prodMode){
-				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				try {
+					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				} catch (Exception e) {
+					errorManager.logError(e);
+				}
 			} else {
 				System.out.println(message);
 			}
@@ -154,40 +160,6 @@ public class IndexController {
 		return "index";
 	}
 	
-	@RequestMapping(value = "/new_article", method = RequestMethod.GET)
-    public String addFeedController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
-		Cookie cookie = null;
-		try {
-			User user = userManager.validateAccessToken(request);
-			if (!user.getEmailConfirmed()) {
-				model.addAttribute("errorMessage", ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
-				return "errorview/403";
-			}
-			String name = userManager.getUserDetail(user.getId()).getName();
-			if (name == null){name = "Unknown";}
-			user.setName(name);
-			model.addAttribute("user", user);
-			if (user.isTokenUpdated()) {
-				cookie = new Cookie("accessToken", user.getAccessToken());
-				cookie.setMaxAge(63113904);
-			}
-			
-			try{
-				imageManager.getTypeUniqueImage("Avatar", user.getId()).getId();
-				model.addAttribute("hasAvatar", true);
-			}catch(Exception e){}
-		} catch (NotFoundException e) {
-			model.addAttribute("errorMessage", ErrorMessage.NO_USER_LOGGED_IN.getMsg());
-			return "errorview/403";
-		}
-		
-		if (cookie != null) {
-			response.addCookie(cookie);
-		}
-		
-		return "createFeed";
-	}
-	
 	private List<FeedModel> getFeedList(int pageIndex) {
 		List<Feed> feedList = feedManager.getRecentFeedByPageIndex(pageIndex, 10);
 		List<FeedModel> feedModelList = new ArrayList<>();
@@ -199,7 +171,7 @@ public class IndexController {
 			fm.setOwnerName(userManager.getUserDisplayedName(m.getOwnerId()));
 			
 			try {
-				int imgId = imageManager.getImageByTypeAndMapping("FeedCover", m.getId()).getId();
+				int imgId = imageManager.getImageByTypeAndMapping(ImageType.FEED_COVER.getName(), m.getId()).getId();
 				fm.setCoverImageId(imgId);
 			}catch(Exception e) {}
 			

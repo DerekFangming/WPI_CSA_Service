@@ -1,5 +1,7 @@
 package com.fmning.wcservice.controller.rest;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,15 +9,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -27,9 +36,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fmning.service.domain.Event;
 import com.fmning.service.domain.Ticket;
+import com.fmning.service.domain.TicketTemplate;
 import com.fmning.service.domain.User;
 import com.fmning.service.manager.ErrorManager;
+import com.fmning.service.manager.HelperManager;
 import com.fmning.service.manager.TicketManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
@@ -37,12 +49,12 @@ import com.fmning.wcservice.utils.Utils;
 
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKField;
-import de.brendamour.jpasskit.PKLocation;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.enums.PKDateStyle;
 import de.brendamour.jpasskit.passes.PKEventTicket;
 import de.brendamour.jpasskit.signing.PKFileBasedSigningUtil;
+import de.brendamour.jpasskit.signing.PKSigningException;
 import de.brendamour.jpasskit.signing.PKSigningInformation;
 import de.brendamour.jpasskit.signing.PKSigningInformationUtil;
 
@@ -51,122 +63,61 @@ public class TicketController {
 	
 	@Autowired private UserManager userManager;
 	@Autowired private TicketManager ticketManager;
+	@Autowired private HelperManager helperManager;
 	@Autowired private ErrorManager errorManager;
-
-	@RequestMapping(value = "/test_pass", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Object>> getRecentFeedsForUser(HttpServletRequest request) {
-		Map<String, Object> respond = new HashMap<String, Object>();
-		
-		ClassLoader classLoader = getClass().getClassLoader();
-		String privateKeyPath = classLoader.getResource("passCertificate.p12").getFile();
-		String appleWWDRCA = classLoader.getResource("AppleWWDRCA.cer").getFile();
-		
-		String privateKeyPassword = "fmning123!"; // the password you used to export
-        try {
-          
-            PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                    privateKeyPath, privateKeyPassword, appleWWDRCA);
-           
-            PKPass pass = new PKPass();
-            pass.setPassTypeIdentifier("pass.com.fmning.WPI-CSA");
-            //pass.setAuthenticationToken("vxwxd7J8AlNNFPS8k0a0FfUFtq0ewzFdcdc");
-            pass.setSerialNumber("123456780003");
-            pass.setTeamIdentifier("NK4455562X"); // replace this with your team ID
-            pass.setOrganizationName("fmning.com");
-            pass.setDescription("WPI CSA Event6");
-            pass.setLogoText("WPI CSA");
-            pass.setForegroundColor("#630C0C");
-            pass.setBackgroundColor("#212121");
-            pass.setLabelColor("#2D3681");
-            
-
-            PKBarcode barcode = new PKBarcode();
-            barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
-            barcode.setMessageEncoding(Charset.forName("iso-8859-1"));
-            barcode.setMessage("Some very long message oh my fuck god hahahahahahah");
-            pass.setBarcodes(Collections.singletonList(barcode));
-
-            //PKGenericPass generic = new PKGenericPass();
-            PKEventTicket event = new PKEventTicket();
-            PKField member = new PKField();
-            member.setKey("name");
-            member.setValue("11/11 Singles' Day Formal");
-            event.setPrimaryFields(Collections.singletonList(member));
-            
-            List<PKField> secondField = new ArrayList<PKField>();
-            PKField loc = new PKField();
-            loc.setKey("location"); // some unique key for primary field
-            loc.setLabel("Location");
-            loc.setValue("Campus Center Odeum");
-            secondField.add(loc);
-            event.setSecondaryFields(secondField);
-            
-            List<PKField> auxilField = new ArrayList<PKField>();
-            PKField date = new PKField();
-            date.setKey("date");
-            date.setLabel("Start time");
-            date.setDateStyle(PKDateStyle.PKDateStyleMedium);
-            date.setTimeStyle(PKDateStyle.PKDateStyleMedium);
-            date.setValue("2017-11-11T23:00:00Z");
-            auxilField.add(date);
-            
-            PKField att = new PKField();
-            att.setKey("participant");
-            att.setLabel("Participant");
-            att.setValue("Fangming Ning");
-            auxilField.add(att);
-            
-            event.setAuxiliaryFields(auxilField);
-            
-            pass.setEventTicket(event);
-            
-            PKLocation location = new PKLocation();
-            location.setLatitude(37.33182); // replace with some lat
-            location.setLongitude(-122.03118); // replace with some long
-            List<PKLocation> locations = new ArrayList<PKLocation>();
-            locations.add(location);
-            pass.setLocations(locations);
-           
-            if (pass.isValid()) {
-                String pathToTemplateDirectory = "/Volumes/Data/passTemplates/test"; // replace with your folder with the icons
-                byte[] passZipAsByteArray = new PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
-                //respond.put("data", passZipAsByteArray);
-                
-                String outputFile = "/Volumes/Data/testTickets/test.pkpass"; // change the name of the pass
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(passZipAsByteArray);
-                IOUtils.copy(inputStream, new FileOutputStream(outputFile));
-                System.out.println("Done!");
-            } else {
-                System.out.println("the pass is NOT Valid man!!!");
-            }
-        } catch (Exception e) {
-        	errorManager.logError(e);
-        }
-
-		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
-	}
 	
-	@RequestMapping(value = "/get_pass", method = RequestMethod.GET)
-	public void getPass(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping("/preview_ticket")
+    public ResponseEntity<Map<String, Object>> previewTicket(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
+			User user = userManager.validateAccessToken(request);
 			
-			InputStream is = new FileInputStream("/Volumes/Data/testTickets/test.pkpass");
-	        IOUtils.copy(is, response.getOutputStream());
-	        response.setContentType("application/pkpass");
-	        response.setHeader("Content-Disposition", "attachment; filename=\"test.pkpass\"");
-	        response.flushBuffer();
-		} catch (Exception e) {
-			errorManager.logError(e);
+			String ticketBgImage = (String)request.get("ticketBgImage");
+			String ticketThumbImage = (String)request.get("ticketThumbImage");
+			
 			try {
-				response.setStatus(200);
-				response.getWriter().write(e.getMessage());
-				response.getWriter().flush();
-				response.getWriter().close();
-			} catch (IOException e1) {
-				errorManager.logError(e1);
+				TicketController.createTicketTemplate(ticketBgImage, ticketThumbImage, "preview");
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		}
+			
+			TicketTemplate template = new TicketTemplate();
+			template.setDescription("WPI CSA Event Preview");
+			template.setLogoText("WPI CSA");
+			template.setSerialNumber(1234567890);
+			template.setLocation(Utils.ticketTemplatePath + "preview");
 
+
+			Event event = new Event();
+			event.setTitle("Event preview");
+			event.setLocation("Location preview");
+			event.setStartTime(Instant.parse("2018-01-01T16:00:00Z"));
+			
+			byte[] ticket = createTicket(event, template, "Participant preview");
+			
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(ticket);
+			IOUtils.copy(inputStream, new FileOutputStream(Utils.ticketTemplatePath + "preview.pkpass"));
+			
+			try {
+				String message = "Hi " + userManager.getUserDisplayedName(user.getId()) + ",\n\n";
+				message += "Here is the ticket preview. Please make sure you can see fields clearly.\n";
+				message += "For better performace, please make sure ticket size is smaller than 1 MB by using smaller images.\n\n";
+				message += "Thank you \n\n";
+				helperManager.sendEmail("no-reply@fmning.com", user.getUsername(), "Ticket preview", message,
+						Utils.ticketTemplatePath + "preview.pkpass", "preview.pkpass");
+			} catch (Exception e) {
+				errorManager.logError(e);
+			}
+			
+			respond.put("error", "");
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
+		}catch(Exception e){
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/get_ticket", request);
+		}
+	
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/download_ticket", method = RequestMethod.GET)
@@ -177,18 +128,6 @@ public class TicketController {
 			throw new IOException();
 		
 		File file = new File(ticket.getLocation());
-		
-		HttpHeaders respHeaders = new HttpHeaders();
-		respHeaders.add("Content-Type", "application/pkpass");
-		respHeaders.setContentDispositionFormData("attachment", "ticket.pkpass");
-		
-		InputStreamResource isr = new InputStreamResource(new FileInputStream(file));
-		return new ResponseEntity<InputStreamResource>(isr, respHeaders, HttpStatus.OK);
-	}
-	
-	@RequestMapping(value = "/dtt", method = RequestMethod.GET)
-	public ResponseEntity<InputStreamResource> downloadTestTicket(HttpServletRequest request) throws IOException {
-		File file = new File("/Volumes/Data/testTickets/test.pkpass");
 		
 		HttpHeaders respHeaders = new HttpHeaders();
 		respHeaders.add("Content-Type", "application/pkpass");
@@ -221,6 +160,110 @@ public class TicketController {
 		}
 	
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	public static void createTicketTemplate(String background, String thumbnail, String folderName) throws IOException {
+		File srcDir = new File(Utils.ticketTemplatePath + "base");
+		File destDir = new File(Utils.ticketTemplatePath + folderName);
+
+		//Creating base folder
+		FileUtils.copyDirectory(srcDir, destDir);
+		
+		//Saving background and thumbnails
+		if(background.contains(",")){background = background.split(",")[1];}
+		byte[] bgData = Base64.decodeBase64(background);
+		BufferedImage bg = ImageIO.read(new ByteArrayInputStream(bgData));
+		int bgWidth = bg.getWidth();
+		int bgHeight = bg.getHeight();
+		for (int i = 1; i < 4; i ++) {
+			int newWidth = bgWidth > bgHeight ? bgWidth * 220 / bgHeight * i : 180 * i;
+			int newHeight = bgWidth > bgHeight ? 220 * i : bgHeight * 180 / bgWidth * i;
+			BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+			Graphics g = newImage.createGraphics();
+			g.drawImage(bg, 0, 0, newWidth, newHeight, null);
+			g.dispose();
+			ImageIO.write(newImage, "png",
+					new File(Utils.ticketTemplatePath + folderName + "/background@" + Integer.toString(i) + "x.png"));
+		}
+		
+		if(thumbnail.contains(",")){thumbnail = thumbnail.split(",")[1];}
+		byte[] thData = Base64.decodeBase64(thumbnail);
+		BufferedImage th = ImageIO.read(new ByteArrayInputStream(thData));
+		int thWidth = th.getWidth();
+		int thHeight = th.getHeight();
+		for (int i = 1; i < 4; i ++) {
+			int newWidth = thWidth > thHeight ? thWidth * 90 / thHeight * i : 90 * i;
+			int newHeight = thWidth > thHeight ? 90 * i : thHeight * 90 / thWidth * i;
+			BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+			Graphics g = newImage.createGraphics();
+			g.drawImage(th, 0, 0, newWidth, newHeight, null);
+			g.dispose();
+			ImageIO.write(newImage, "png",
+					new File(Utils.ticketTemplatePath + folderName + "/thumbnail@" + Integer.toString(i) + "x.png"));
+		}
+	}
+	
+	public static byte[] createTicket(Event event, TicketTemplate template, String participaintName) throws UnrecoverableKeyException,
+	NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException, PKSigningException{
+		
+		PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
+		       Utils.privateKeyPath, Utils.privateKeyPassword, Utils.appleWWDRCA);
+		
+		PKPass pass = new PKPass();
+		pass.setPassTypeIdentifier("pass.com.fmning.WPI-CSA");
+		pass.setSerialNumber(Integer.toString(template.getSerialNumber()));
+		pass.setTeamIdentifier("NK4455562X");
+		pass.setOrganizationName("fmning.com");
+		pass.setDescription(template.getDescription());
+		pass.setLogoText(template.getLogoText());
+		if(template.getBgColor() != null)
+			pass.setBackgroundColor(template.getBgColor());
+		
+		PKBarcode barcode = new PKBarcode();
+		barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
+		barcode.setMessageEncoding(Charset.forName("iso-8859-1"));
+		barcode.setMessage("If you have questions, please contact admin@fmning.com");
+		pass.setBarcodes(Collections.singletonList(barcode));
+		
+		PKEventTicket eventTicket = new PKEventTicket();
+		PKField title = new PKField();
+		title.setKey("name");
+		title.setValue(event.getTitle());
+		eventTicket.setPrimaryFields(Collections.singletonList(title));
+		
+		PKField location = new PKField();
+		location.setKey("location");
+		location.setLabel("Location");
+		location.setValue(event.getLocation());
+		eventTicket.setSecondaryFields(Collections.singletonList(location));
+		
+		List<PKField> auxilField = new ArrayList<PKField>();
+		PKField startDate = new PKField();
+		startDate.setKey("date");
+		startDate.setLabel("Start time");
+		startDate.setDateStyle(PKDateStyle.PKDateStyleMedium);
+		startDate.setTimeStyle(PKDateStyle.PKDateStyleMedium);
+		startDate.setValue(event.getStartTime().toString());
+		auxilField.add(startDate);
+		
+		PKField participant = new PKField();
+		participant.setKey("participant");
+		participant.setLabel("Participant");
+		participant.setValue(participaintName);
+		auxilField.add(participant);
+		
+		eventTicket.setAuxiliaryFields(auxilField);
+		
+		pass.setEventTicket(eventTicket);
+		
+		if (pass.isValid()) {
+		    String pathToTemplateDirectory = template.getLocation();
+		    byte[] passZipAsByteArray = new PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
+		    
+		    return passZipAsByteArray;
+		} else {
+		    throw new IllegalStateException("Payment processed but ticket failed to generate. Please contact admin@fmning.com");
+		}
 	}
 	
 }

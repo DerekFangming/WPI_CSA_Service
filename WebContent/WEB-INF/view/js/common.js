@@ -3,9 +3,28 @@ function showErrorPopup(message) {
 }
 
 function showPopup(title, message) {
-	document.getElementById('popupTitle').innerHTML = title;
-	document.getElementById('popupMessage').innerHTML = message;
+	$('#popupTitle').html(title);
+	$('#popupMessage').html(message);
 	$('#popupModal').modal('toggle');
+}
+
+function showConfirmPopup(message, action) {
+	$('#confirmMessage').html(message);
+	$('#confirmActionBtn').attr('onclick', action);
+	$('#confirmModal').modal('toggle');
+}
+
+function loadingConfirmPopup() {
+	startBtnLoading('#confirmActionBtn');
+	$('#confirmCancelBtn').prop('disabled', true);
+	$('#confirmNoBtn').prop('disabled', true);
+}
+
+function hideAndStopLoadingConfirmPopup() {
+	stopBtnLoading('#confirmActionBtn');
+	$('#confirmCancelBtn').prop('disabled', false);
+	$('#confirmNoBtn').prop('disabled', false);
+	$('#confirmModal').modal('hide');
 }
 
 function parseDate(date) {
@@ -71,4 +90,14 @@ function formalizeFeeAmount(input) {
 			return list[0] + '.' + list[1].substring(0, 2) + ending;
 		}
 	}
+}
+
+function startBtnLoading(btn) {
+	$(btn).prop('disabled', true);
+	$(btn).prepend('<i class="fa fa-refresh fa-spin mr-1"></i>');
+}
+
+function stopBtnLoading(btn) {
+	$(btn).prop('disabled', false);
+	$(btn).find('i').first().remove();
 }

@@ -68,10 +68,15 @@ public class EmailController {
 			
 			String veriCode = helperManager.getEmailConfirmCode(username);
 			userManager.updateVeriCode(username, veriCode);
+			user = userManager.getUserByUsername(username);
 			String name = userManager.getUserDisplayedName(user.getId());
 			String message = Utils.createVerificationEmail(name, veriCode);
 			if (Utils.prodMode) {
-				helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				try {
+					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+				} catch (Exception e) {
+					errorManager.logError(e);
+				}
 			} else {
 				System.out.println(message);
 			}
@@ -110,18 +115,27 @@ public class EmailController {
 				String name = userManager.getUserDisplayedName(user.getId());
 				String message = Utils.createVerificationEmail(name, veriCode);
 				if (Utils.prodMode) {
-					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+					try {
+						helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+					} catch (Exception e) {
+						errorManager.logError(e);
+					}
 				} else {
 					System.out.println(message);
 				}
 				respond = "resend";
 			}
 		}catch(IllegalStateException e){
+			errorManager.logError(e, request);
 			respond = e.getMessage();
 		}catch(DateTimeParseException e){
+			errorManager.logError(e, request);
 			respond = "Expiration date format incorrect";
 		}catch(NotFoundException e){
+			errorManager.logError(e, request);
 			respond = e.getMessage();
+		}catch(Exception e) {
+			errorManager.logError(e, request);
 		}
 		
 		if (respond.equals("success")) {
@@ -152,7 +166,11 @@ public class EmailController {
 				String name = userManager.getUserDisplayedName(user.getId());
 				String message = Utils.createVerificationEmail(name, veriCode);
 				if (Utils.prodMode) {
-					helperManager.sendEmail("no-reply@fmning.com", username, "Email Confirmation", message);
+					try {
+						helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
+					} catch (Exception e) {
+						errorManager.logError(e);
+					}
 				} else {
 					System.out.println(message);
 				}
@@ -164,7 +182,11 @@ public class EmailController {
 			String name = userManager.getUserDisplayedName(user.getId());
 			String message = Utils.createChangePwdEmail(name, veriCode);
 			if (Utils.prodMode) {
-				helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
+				try {
+					helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
+				} catch (Exception e) {
+					errorManager.logError(e);
+				}
 			} else {
 				System.out.println(message);
 			}
@@ -200,18 +222,27 @@ public class EmailController {
 				String name = userManager.getUserDisplayedName(user.getId());
 				String message = Utils.createChangePwdEmail(name, veriCode);
 				if (Utils.prodMode) {
-					helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
+					try {
+						helperManager.sendEmail("no-reply@fmning.com", username, "Password reset", message);
+					} catch (Exception e) {
+						errorManager.logError(e);
+					}
 				} else {
 					System.out.println(message);
 				}
 				respond = "resend";
 			}
 		}catch(IllegalStateException e){
-			respond = "The token is not in correct form. Please copy and paste the url in browser and try again.";
+			errorManager.logError(e, request);
+			respond = "The token is not in correct format. Please copy and paste the url in browser and try again.";
 		}catch(DateTimeParseException e){
+			errorManager.logError(e, request);
 			respond = "Expiration date format incorrect";
 		}catch(NotFoundException e){
+			errorManager.logError(e, request);
 			respond = e.getMessage();
+		}catch(Exception e) {
+			errorManager.logError(e, request);
 		}
 		
 		if (respond.equals("success")) {

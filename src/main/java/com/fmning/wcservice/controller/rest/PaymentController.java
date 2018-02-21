@@ -2,23 +2,14 @@ package com.fmning.wcservice.controller.rest;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -51,19 +42,7 @@ import com.fmning.util.PaymentStatusType;
 import com.fmning.util.PaymentType;
 import com.fmning.util.TicketType;
 import com.fmning.util.Util;
-import com.fmning.wcservice.utils.UserRole;
 import com.fmning.wcservice.utils.Utils;
-
-import de.brendamour.jpasskit.PKBarcode;
-import de.brendamour.jpasskit.PKField;
-import de.brendamour.jpasskit.PKPass;
-import de.brendamour.jpasskit.enums.PKBarcodeFormat;
-import de.brendamour.jpasskit.enums.PKDateStyle;
-import de.brendamour.jpasskit.passes.PKEventTicket;
-import de.brendamour.jpasskit.signing.PKFileBasedSigningUtil;
-import de.brendamour.jpasskit.signing.PKSigningException;
-import de.brendamour.jpasskit.signing.PKSigningInformation;
-import de.brendamour.jpasskit.signing.PKSigningInformationUtil;
 
 @Controller
 public class PaymentController {
@@ -213,7 +192,7 @@ public class PaymentController {
 				if(event.getTicketBalance() < 1) {
 					throw new IllegalStateException(ErrorMessage.TICKET_SOLD_OUT.getMsg());
 				} else {
-					eventManager.setBalance(event.getId(), event.getTicketBalance() - 1);
+					eventManager.setBalance(event.getId(), event.getTicketBalance() - 1, Util.nullInt);
 				}
 				
 				
@@ -241,11 +220,17 @@ public class PaymentController {
 							String emailMsg = createReceiptEmail(userManager.getUserDisplayedName(user.getId()), event.getTitle(),
 									method, String.format( "%.2f", amount));
 							if (Utils.prodMode){
-								helperManager.sendEmail("no-reply@fmning.com", user.getUsername(), "Receipt", emailMsg);
+								try {
+									helperManager.sendEmail("no-reply@fmning.com", user.getUsername(), "Receipt", emailMsg);
+								} catch (Exception e1) {
+									errorManager.logError(e1);
+								}
 							} else {
 								System.out.println(emailMsg);
 							}
-						} catch (Exception e1){}
+						} catch (Exception e1){
+							errorManager.logError(e1, Utils.rootDir + "/make_payment", request);
+						}
 					} else {
 						paymentRejected = true;
 						status = PaymentStatusType.REJECTED.getName();
@@ -267,11 +252,17 @@ public class PaymentController {
 					try {
 						String emailMsg = createFreeTicketEmail(userManager.getUserDisplayedName(user.getId()), event.getTitle());
 						if (Utils.prodMode){
-							helperManager.sendEmail("no-reply@fmning.com", user.getUsername(), "Receipt", emailMsg);
+							try {
+								helperManager.sendEmail("no-reply@fmning.com", user.getUsername(), "Receipt", emailMsg);
+							} catch (Exception e1) {
+								errorManager.logError(e1);
+							}
 						} else {
 							System.out.println(emailMsg);
 						}
-					} catch (Exception e1){}
+					} catch (Exception e1){
+						errorManager.logError(e1, Utils.rootDir + "/make_payment", request);
+					}
 					respond.put("error", "");
 					respond.put("status", PaymentStatusType.DONE.getName());
 				}
@@ -282,7 +273,7 @@ public class PaymentController {
 				} else if (!paymentRejected){
 					TicketTemplate template = ticketManager.getTicketTemplateById(event.getTicketTemplateId());
 					try{
-						byte[] ticket = createTicket(event, template, payerId);
+						byte[] ticket = TicketController.createTicket(event, template, userManager.getUserDisplayedName(payerId));
 						String ticketFile = Utils.ticketPath + "T_" + Integer.toString(payerId);
 						ticketFile += "_" + formatter.format(Instant.now()) + ".pkpass";
 						int ticketId = ticketManager.createTicket(template.getId(), TicketType.PAYMENT.getName(), paymentId,
@@ -311,73 +302,6 @@ public class PaymentController {
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 		
-	}
-	
-	private byte[] createTicket(Event event, TicketTemplate template, int userId) throws UnrecoverableKeyException,
-			NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException, PKSigningException{
-		ClassLoader classLoader = getClass().getClassLoader();
-		String privateKeyPath = classLoader.getResource("passCertificate.p12").getFile();
-		String appleWWDRCA = classLoader.getResource("AppleWWDRCA.cer").getFile();
-		String privateKeyPassword = "fmning123!";
-		
-		PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                privateKeyPath, privateKeyPassword, appleWWDRCA);
-       
-        PKPass pass = new PKPass();
-        pass.setPassTypeIdentifier("pass.com.fmning.WPI-CSA");
-        pass.setSerialNumber(Integer.toString(template.getSerialNumber()));
-        pass.setTeamIdentifier("NK4455562X");
-        pass.setOrganizationName("fmning.com");
-        pass.setDescription(template.getDescription());
-        pass.setLogoText(template.getLogoText());
-        if(template.getBgColor() != null)
-        	pass.setBackgroundColor(template.getBgColor());
-
-        PKBarcode barcode = new PKBarcode();
-        barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
-        barcode.setMessageEncoding(Charset.forName("iso-8859-1"));
-        barcode.setMessage("If you have questions, please contact admin@fmning.com");
-        pass.setBarcodes(Collections.singletonList(barcode));
-
-        PKEventTicket eventTicket = new PKEventTicket();
-        PKField title = new PKField();
-        title.setKey("name");
-        title.setValue(event.getTitle());
-        eventTicket.setPrimaryFields(Collections.singletonList(title));
-        
-        PKField location = new PKField();
-        location.setKey("location");
-        location.setLabel("Location");
-        location.setValue(event.getLocation());
-        eventTicket.setSecondaryFields(Collections.singletonList(location));
-        
-        List<PKField> auxilField = new ArrayList<PKField>();
-        PKField startDate = new PKField();
-        startDate.setKey("date");
-        startDate.setLabel("Start time");
-        startDate.setDateStyle(PKDateStyle.PKDateStyleMedium);
-        startDate.setTimeStyle(PKDateStyle.PKDateStyleMedium);
-        startDate.setValue(event.getStartTime().toString());
-        auxilField.add(startDate);
-        
-        PKField participant = new PKField();
-        participant.setKey("participant");
-        participant.setLabel("Participant");
-        participant.setValue(userManager.getUserDisplayedName(userId));
-        auxilField.add(participant);
-        
-        eventTicket.setAuxiliaryFields(auxilField);
-        
-        pass.setEventTicket(eventTicket);
-        
-        if (pass.isValid()) {
-            String pathToTemplateDirectory = template.getLocation();
-            byte[] passZipAsByteArray = new PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
-            
-            return passZipAsByteArray;
-        } else {
-            throw new IllegalStateException("Payment processed but ticket failed to generate. Please contact admin@fmning.com");
-        }
 	}
 	
 	public static String createReceiptEmail(String name, String eventName, String paymentMethod, String amount) {
