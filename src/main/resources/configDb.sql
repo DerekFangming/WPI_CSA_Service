@@ -169,5 +169,3 @@ create table error_logs (
 --deployment check list
 --1. use raw git for editor
 --2. remove html option for editor
-
-alter table events add column updated_by integer

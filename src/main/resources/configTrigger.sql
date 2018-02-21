@@ -9,7 +9,8 @@
  */
 
 create table User_detail_hists (
-	id integer,
+	id serial primary key,
+	oid integer,
 	user_id integer not null,
 	name varchar(20),
 	nickname varchar(10),
@@ -28,7 +29,7 @@ CREATE OR REPLACE FUNCTION User_detail_func() RETURNS trigger AS
 $$
 BEGIN
 	INSERT INTO User_detail_hists
-	VALUES (OLD.id, OLD.user_id, OLD.name, OLD.nickname, OLD.age, OLD.gender, OLD.location, OLD.whats_up, OLD.birthday, OLD.year, OLD.major, substring(TG_OP,1,1), NOW());
+	VALUES (nextval('user_detail_hists_id_seq'::regclass), OLD.id, OLD.user_id, OLD.name, OLD.nickname, OLD.age, OLD.gender, OLD.location, OLD.whats_up, OLD.birthday, OLD.year, OLD.major, substring(TG_OP,1,1), NOW());
 	IF TG_OP = 'DELETE' THEN
 		RETURN OLD;
 	ELSE
@@ -43,7 +44,8 @@ ON User_details FOR EACH ROW
 EXECUTE PROCEDURE User_detail_func();
 
 create table Payment_hists (
-	id integer,
+	id serial primary key,
+	oid integer,
 	type varchar(10),
 	mapping_id integer,
 	amount decimal(10, 2) not null,
@@ -62,7 +64,7 @@ CREATE OR REPLACE FUNCTION Payment_func() RETURNS trigger AS
 $$
 BEGIN
 	INSERT INTO Payment_hists
-	VALUES (OLD.id, OLD.type, OLD.mapping_id, OLD.amount, OLD.status, OLD.message, OLD.payer_id, OLD.receiver_id, OLD.method, OLD.nonce, OLD.created_at, substring(TG_OP,1,1), NOW());
+	VALUES (nextval('payment_hists_id_seq'::regclass), OLD.id, OLD.type, OLD.mapping_id, OLD.amount, OLD.status, OLD.message, OLD.payer_id, OLD.receiver_id, OLD.method, OLD.nonce, OLD.created_at, substring(TG_OP,1,1), NOW());
 	IF TG_OP = 'DELETE' THEN
 		RETURN OLD;
 	ELSE
@@ -77,7 +79,8 @@ ON Payments FOR EACH ROW
 EXECUTE PROCEDURE Payment_func();
 
 create table Survival_guide_hists (
-	id integer,
+	id serial primary key,
+	oid integer,
 	title varchar(30) not null,
 	content text,
 	parent_id integer,
@@ -91,8 +94,10 @@ create table Survival_guide_hists (
 CREATE OR REPLACE FUNCTION Survival_guide_func() RETURNS trigger AS
 $$
 BEGIN
-	INSERT INTO Survival_guide_hists
-	VALUES (OLD.id, OLD.title, OLD.content, OLD.parent_id, OLD.position, OLD.created_at, OLD.owner_id, substring(TG_OP,1,1), NOW());
+	IF OLD.title != NEW.title OR OLD.content != New.content THEN
+		INSERT INTO Survival_guide_hists
+		VALUES (nextval('survival_guide_hists_id_seq'::regclass), OLD.id, OLD.title, OLD.content, OLD.parent_id, OLD.position, OLD.created_at, OLD.owner_id, substring(TG_OP,1,1), NOW());
+	END IF;
 	IF TG_OP = 'DELETE' THEN
 		RETURN OLD;
 	ELSE
@@ -107,7 +112,8 @@ ON Survival_guides FOR EACH ROW
 EXECUTE PROCEDURE Survival_guide_func();
 
 create table User_hists (
-	id integer,
+	id serial primary key,
+	oid integer,
 	username varchar(32) not null,
 	password varchar(32) not null,
 	email_confirmed boolean not null default false,
@@ -122,7 +128,7 @@ $$
 BEGIN
 	IF OLD.role_id != NEW.role_id THEN
 		INSERT INTO User_hists
-		VALUES (OLD.id, OLD.username, OLD.password, OLD.email_confirmed, OLD.role_id, OLD.updated_by, substring(TG_OP,1,1), NOW());
+		VALUES (nextval('user_hists_id_seq'::regclass), OLD.id, OLD.username, OLD.password, OLD.email_confirmed, OLD.role_id, OLD.updated_by, substring(TG_OP,1,1), NOW());
 	END IF;
 	IF TG_OP = 'DELETE' THEN
 		RETURN OLD;
@@ -138,15 +144,9 @@ CREATE TRIGGER User_trigger BEFORE UPDATE OR DELETE
 ON Users FOR EACH ROW
 EXECUTE PROCEDURE User_func();
 
-/**
-
-The following triggers have not been deployed yet.
-
-
-*/
-
 create table Feed_hists (
-	id integer,
+	id serial primary key,
+	oid integer,
 	title varchar(100),
 	type varchar(10),
 	body text,
@@ -162,7 +162,7 @@ CREATE OR REPLACE FUNCTION Feed_func() RETURNS trigger AS
 $$
 BEGIN
 	INSERT INTO Feed_hists
-	VALUES (OLD.id, OLD.title, OLD.type, OLD.body, OLD.owner_id, OLD.enabled, OLD.created_at, OLD.updated_by, substring(TG_OP,1,1), NOW());
+	VALUES (nextval('feed_hists_id_seq'::regclass), OLD.id, OLD.title, OLD.type, OLD.body, OLD.owner_id, OLD.enabled, OLD.created_at, OLD.updated_by, substring(TG_OP,1,1), NOW());
 	IF TG_OP = 'DELETE' THEN
 		RETURN OLD;
 	ELSE
@@ -177,7 +177,8 @@ ON Feeds FOR EACH ROW
 EXECUTE PROCEDURE Feed_func();
 
 create table Event_hists (
-	id integer,
+	id serial primary key,
+	oid integer,
 	type varchar(10),
 	mapping_id integer,
 	title varchar(100),
@@ -202,7 +203,7 @@ $$
 BEGIN
 	IF OLD.ticket_balance - NEW.ticket_balance != 1 THEN
 		INSERT INTO Event_hists
-		VALUES (OLD.id, OLD.type, OLD.mapping_id, OLD.title, OLD.description, OLD.start_time, OLD.end_time, OLD.location, OLD.fee, OLD.owner_id, OLD.created_at, OLD.ticket_template_id, OLD.active, OLD.message, OLD.ticket_balance, OLD.updated_by, substring(TG_OP,1,1), NOW());
+		VALUES (nextval('event_hists_id_seq'::regclass), OLD.id, OLD.type, OLD.mapping_id, OLD.title, OLD.description, OLD.start_time, OLD.end_time, OLD.location, OLD.fee, OLD.owner_id, OLD.created_at, OLD.ticket_template_id, OLD.active, OLD.message, OLD.ticket_balance, OLD.updated_by, substring(TG_OP,1,1), NOW());
 	END IF;
 	IF TG_OP = 'DELETE' THEN
 		RETURN OLD;
@@ -216,3 +217,10 @@ LANGUAGE 'plpgsql';
 CREATE TRIGGER Event_trigger BEFORE UPDATE OR DELETE
 ON Events FOR EACH ROW
 EXECUTE PROCEDURE Event_func();
+
+/**
+
+The following triggers have not been deployed yet.
+
+
+*/

@@ -25,10 +25,12 @@
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_style.min.css" rel="stylesheet" type="text/css" />
 		<link href="/resources/css/main.css?v=2" rel="stylesheet">
-		<link href="/resources/css/local/colorPicker.css" rel="stylesheet">
+		<!--<link href="/resources/css/local/colorPicker.css" rel="stylesheet">-->
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.1/css/bootstrap-colorpicker.min.css" rel="stylesheet">
 		<script src="/resources/js/common.js?v=2"></script>
 		<script src="/resources/js/editor.js?v=2"></script>
-		<script src="/resources/css/local/colorPicker.js"></script>
+		<!-- <script src="/resources/css/local/colorPicker.js"></script> -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.1/js/bootstrap-colorpicker.min.js"></script>
 		<script src="<%=Fjs %>"></script>
 	</head>
 	<body>
