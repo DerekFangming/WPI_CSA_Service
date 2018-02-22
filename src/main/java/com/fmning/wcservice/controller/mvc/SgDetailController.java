@@ -124,7 +124,7 @@ public class SgDetailController {
 				} else {
 					String collapseId = Integer.toString(sg.getId());
 					content += "<div class=\"card-header\">" + prefix + "<a data-toggle=\"collapse\" href=\"#collapse"
-							+ collapseId + "\">"+ sg.getTitle() + "</a></div>";
+							+ collapseId + "\">"+ sg.getTitle() + "</a><i class=\"fa fa-address-card float-right\"></i></div>";
 					content += "<div id=\"collapse" + collapseId + "\" class=\"card-collapse collapse\">";
 					content += childContent;
 					content += "</div>";

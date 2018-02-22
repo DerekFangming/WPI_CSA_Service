@@ -311,7 +311,7 @@ $("#saveChangeBtn").click(function(){
 		var title = $('#title').val().trim();
 		var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
 		var accessToken = getAccessToken();
-		var params = {accessToken : accessToken, feedId : parseInt($('#feedId').val())};
+		var params = {accessToken : accessToken, id : parseInt($('#feedId').val())};
 		
 		if (!cover.includes('/images/')) {
 			params.coverImage = cover;
@@ -328,8 +328,9 @@ $("#saveChangeBtn").click(function(){
 		if (Object.keys(params).length == 2) {
 			showErrorPopup('Nothing is changed. Please update something before saving');
 		} else {
-			alert(2);
-			/*startBtnLoading('#saveChangeBtn');
+			/*alert(content);
+			alert($('#editorDefaultText').html().replace(/<\/tbr>/g, ''));*/
+			startBtnLoading('#saveChangeBtn');
 			$.ajax({
 		        type: "POST",
 		        url: "./update_feed",
@@ -348,7 +349,7 @@ $("#saveChangeBtn").click(function(){
 			        	stopBtnLoading('#saveChangeBtn');
 			        	showErrorPopup('Unknown error occured. Please contact support');
 		        }
-		    });*/
+		    });
 		}
 		
 	}

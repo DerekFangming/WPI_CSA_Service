@@ -316,7 +316,7 @@ public class FeedController {
 					if (src.toLowerCase().contains("i.froala.com")) {
 						URL url = new URL(src);
 						imgId = imageManager.createImage(url, ImageType.FEED.getName(), Util.nullInt, userId, null);
-					} else if(src.toLowerCase().contains("/images/")) {
+					} else if(src.toLowerCase().contains("wcimage_")) {
 						continue;
 					} else {
 						imgId = imageManager.createImage(src, ImageType.FEED.getName(), Util.nullInt, userId, null);
@@ -343,8 +343,11 @@ public class FeedController {
 		try{
 			User user = userManager.validateAccessToken(request);
 			int userId = user.getId();
+			if (!user.getEmailConfirmed()) {
+				throw new IllegalStateException(ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+			}
 			
-			int feedId = (int)request.get("feedId");
+			int feedId = (int)request.get("id");
 			String title = (String)request.get("title");
 			String body = (String)request.get("body");
 			String coverImageString = (String)request.get("coverImage");
@@ -374,7 +377,7 @@ public class FeedController {
 			}
 			respond.put("error", "");
 		} catch (Exception e) {
-			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/delete_feed", request);
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/update_feed", request);
 		}
 		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
@@ -385,7 +388,7 @@ public class FeedController {
 		try{
 			User user = userManager.validateAccessToken(request);
 			
-			Feed feed = feedManager.getFeedById((int)request.get("feedId"));
+			Feed feed = feedManager.getFeedById((int)request.get("id"));
 			
 			if (feed.getOwnerId() == user.getId()) {
 				feedManager.softDeleteFeed(feed.getId(), user.getId());

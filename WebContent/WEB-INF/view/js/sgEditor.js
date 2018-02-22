@@ -88,8 +88,12 @@ function after(elm, menuId) {
 			//Moving the article to the original location
 			$('#relLocSelection').val('');
 		} else if (parentMenu.next().attr('class').includes('card-collapse')) {
-			parentMenu.next().after(appendDiv);
-			$('#relLocSelection').val('after' + menuId);
+			if (parentMenu.next().next().attr('class').includes('bg-primary')){
+				$('#relLocSelection').val('');
+			} else {
+				parentMenu.next().after(appendDiv);
+				$('#relLocSelection').val('after' + menuId);
+			}
 		} else {
 			parentMenu.after(appendDiv);
 			$('#relLocSelection').val('after' + menuId);
@@ -243,7 +247,7 @@ $("#saveChangeBtn").click(function(){
 
 function saveChanges() {
 	var accessToken = getAccessToken();
-	var params = {accessToken : accessToken};
+	var params = {accessToken : accessToken, id : parseInt($('#sgId').val())};
 	
 	var title = $('#title').val().trim();
 	var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
@@ -252,7 +256,6 @@ function saveChanges() {
 		content = $('#editorDefaultText').html().split('<\/div>')[0] + '</div>' + content;
 	}
 	
-	
 	if (title != $('#origTitle').val().trim()) {
 		params.title = title;
 	}
@@ -260,38 +263,40 @@ function saveChanges() {
 	if (content != $('#editorDefaultText').html().replace(/<\/tbr>/g, '')) {
 		params.content = content;
 	}
+	
+	var locStr = $('#relLocSelection').val();
+	if (locStr.trim() != '') {
+		params.placeAfter = locStr.includes('after');
+		params.relId = parseInt(locStr.replace('before', '').replace('after', ''));
+	}
 	/*alert(content);
 	alert($('#editorDefaultText').html().replace(/<\/tbr>/g, ''));*/
-	if (Object.keys(params).length == 1) {
+	if (Object.keys(params).length == 2) {
 		showErrorPopup('Nothing is changed. Please update something before saving');
 	} else {
-		alert('save changes');
-		var locStr = $('#relLocSelection').val();
-		if (locStr.trim() != '') {
-			params.placeAfter = locStr.includes('after');
-			params.relId = parseInt(locStr.replace('before', '').replace('after', ''));
-		}
 		loadingConfirmPopup();
-		hideAndStopLoadingConfirmPopup();
-		/*startBtnLoading('#saveChangeBtn');
+		startBtnLoading('#saveChangeBtn');
 		$.ajax({
 	        type: "POST",
-	        url: "./update_feed",
+	        url: "./update_sg",
 	        data: JSON.stringify(params),
 	        contentType: "application/json",
 	        dataType: "json",
 	        success: function(data){
 	        		stopBtnLoading('#saveChangeBtn');
+	        		hideAndStopLoadingConfirmPopup();
 				if (data['error'] == "" ) {
-					window.location.href = "./feed?id=" + $('#feedId').val();
+					//window.location.href = "./feed?id=" + $('#feedId').val();
+					alert('done');
 				} else {
 					showErrorPopup(data['error']);
 				}
 	        },
 	        failure: function(errMsg) {
 		        	stopBtnLoading('#saveChangeBtn');
+		    		hideAndStopLoadingConfirmPopup();
 		        	showErrorPopup('Unknown error occured. Please contact support');
 	        }
-	    });*/
+	    });
 	}
 }

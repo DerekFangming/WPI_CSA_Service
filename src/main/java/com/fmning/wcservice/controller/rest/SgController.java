@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -192,7 +193,7 @@ public class SgController {
 					if (src.toLowerCase().contains("i.froala.com")) {
 						URL url = new URL(src);
 						imgId = imageManager.createImage(url, ImageType.FEED.getName(), Util.nullInt, userId, null);
-					} else if(src.toLowerCase().contains("/images/")) {
+					} else if(src.toLowerCase().contains("wcimage_")) {
 						continue;
 					} else {
 						imgId = imageManager.createImage(src, ImageType.FEED.getName(), Util.nullInt, userId, null);
@@ -214,6 +215,70 @@ public class SgController {
 		}
 		
 		return body;
+	}
+	
+	@RequestMapping(value = "/update_sg")
+    public ResponseEntity<Map<String, Object>> updateSg(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			User user = userManager.validateAccessToken(request);
+			int userId = user.getId();
+			if (!user.getUsername().endsWith("@wpi.edu")) {
+				throw new IllegalStateException(ErrorMessage.SG_INVALID_EMAIL.getMsg());
+			}
+			if (!user.getEmailConfirmed()) {
+				throw new IllegalStateException(ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+			}
+			
+			int sgId = (int)request.get("id");
+			String title = (String)request.get("title");
+			String content = (String)request.get("content");
+			int relId;
+			boolean placeAfter;
+			try {
+				relId = (int)request.get("relId");
+				placeAfter = (boolean)request.get("placeAfter");
+			} catch (Exception e) {
+				relId = Util.nullInt;
+			}
+			
+			if (content != null) {
+				content = saveImagesForSGBody(content, userId);
+			}
+
+			SurvivalGuide sg = sgManager.getArticleById(sgId);
+			if (relId == Util.nullInt) {//If no location change, update title and content only
+				//sgManager.softUpdateSG(sg.getId(), title, content, Util.nullInt, Util.nullInt, userId);
+				System.out.println("No move, content update only");
+			} else {//Otherwise, do location and/or theme color changes
+				List<SurvivalGuide> siblingList = sgManager.getChildArticles(sg.getParentId(), true);
+				boolean needThemeUpdate = false;
+				if (siblingList.size() == 0) {
+					throw new IllegalStateException(ErrorMessage.INTERNAL_LOGIC_ERROR.getMsg());
+				} else if (siblingList.size() == 1) {
+					System.out.println("Remove parent. Only child.");
+				} else {
+					
+					final int finalRelId = relId;
+					List<SurvivalGuide> sameDirList = siblingList.stream()
+						    .filter(s -> s.getId() == finalRelId).collect(Collectors.toList());
+					if (sameDirList.size() == 1) {
+						System.out.println("Move to SAME DIRECTORY without removing parent");
+					} else {
+						System.out.println("Move to DIFF DIRECTORY without removing parent");
+					}
+					
+				}
+			}
+			
+			if (user.isTokenUpdated()) {
+				respond.put("accessToken", user.getAccessToken());
+			}
+			respond.put("error", "");
+		} catch (Exception e) {
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/update_sg", request);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
 	}
 
 }

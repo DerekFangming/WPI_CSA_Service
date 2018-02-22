@@ -162,3 +162,21 @@ $("#createSGBtn").click(function(){
 });
 
 
+$('.card-collapse').on('shown.bs.collapse', function () {
+	alert(this.outerHTML);
+	if ($(this).attr('id') != 'collapse-1') {
+		$(this).find("i").each(function(){
+			$(this).attr('class', 'fa fa-address-card float-right');
+		});
+	}
+});
+
+$('.card-collapse').on('hidden.bs.collapse', function () {
+	if ($(this).attr('id') != 'collapse-1') {
+		$(this).find("i").each(function(){
+			$(this).attr('class', 'fa fa-cog float-right');
+		});
+	}
+});
+	
+	
