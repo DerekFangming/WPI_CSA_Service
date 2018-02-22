@@ -230,57 +230,68 @@ $("#saveChangeBtn").click(function(){
 	if (error != '' ) {
 		showErrorPopup(error);
 	} else {
-		var locStr = $('#relLocSelection').val();
-		var placeAfter = locStr.includes('after');
-		var relLoc = parseInt(locStr.replace('before', '').replace('after', ''));
-		var params = {accessToken : accessToken, relId : relLoc, placeAfter: placeAfter};
+		var currentElm = $("#menuList").find(".bg-primary");
 		
-		var title = $('#title').val().trim();
-		var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
-		
-		//----- todo   also remove div!! also update SG hist trigger!
-		
-		var title = $('#title').val().trim();
-		var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
-		var accessToken = getAccessToken();
-		var params = {accessToken : accessToken, feedId : parseInt($('#feedId').val())};
-		
-		if (!cover.includes('/images/')) {
-			params.coverImage = cover;
-		}
-		
-		if (title != $('#origTitle').val().trim()) {
-			params.title = title;
-		}
-
-		if (content != $('#editorDefaultText').html().replace(/<\/tbr>/g, '')) {
-			params.body = content;
-		}
-		
-		if (Object.keys(params).length == 2) {
-			showErrorPopup('Nothing is changed. Please update something before saving');
+		if ($('#relLocSelection').val() != '' && !currentElm.next().length && !currentElm.prev().length) {
+			showConfirmPopup('This article is the only one in the parent menu. If you move this article to other place, '
+					+'the parent menu will be automatically deleted and this cannot be undone. ', 'saveChanges()');
 		} else {
-			startBtnLoading('#saveChangeBtn');
-			/*$.ajax({
-		        type: "POST",
-		        url: "./update_feed",
-		        data: JSON.stringify(params),
-		        contentType: "application/json",
-		        dataType: "json",
-		        success: function(data){
-		        		stopBtnLoading('#saveChangeBtn');
-					if (data['error'] == "" ) {
-						window.location.href = "./feed?id=" + $('#feedId').val();
-					} else {
-						showErrorPopup(data['error']);
-					}
-		        },
-		        failure: function(errMsg) {
-			        	stopBtnLoading('#saveChangeBtn');
-			        	showErrorPopup('Unknown error occured. Please contact support');
-		        }
-		    });*/
+			saveChanges();
 		}
-		
 	}
 });
+
+function saveChanges() {
+	var accessToken = getAccessToken();
+	var params = {accessToken : accessToken};
+	
+	var title = $('#title').val().trim();
+	var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
+	//Adding back the original div tag
+	if ($('#editorDefaultText').html().includes('div')) {
+		content = $('#editorDefaultText').html().split('<\/div>')[0] + '</div>' + content;
+	}
+	
+	
+	if (title != $('#origTitle').val().trim()) {
+		params.title = title;
+	}
+
+	if (content != $('#editorDefaultText').html().replace(/<\/tbr>/g, '')) {
+		params.content = content;
+	}
+	/*alert(content);
+	alert($('#editorDefaultText').html().replace(/<\/tbr>/g, ''));*/
+	if (Object.keys(params).length == 1) {
+		showErrorPopup('Nothing is changed. Please update something before saving');
+	} else {
+		alert('save changes');
+		var locStr = $('#relLocSelection').val();
+		if (locStr.trim() != '') {
+			params.placeAfter = locStr.includes('after');
+			params.relId = parseInt(locStr.replace('before', '').replace('after', ''));
+		}
+		loadingConfirmPopup();
+		hideAndStopLoadingConfirmPopup();
+		/*startBtnLoading('#saveChangeBtn');
+		$.ajax({
+	        type: "POST",
+	        url: "./update_feed",
+	        data: JSON.stringify(params),
+	        contentType: "application/json",
+	        dataType: "json",
+	        success: function(data){
+	        		stopBtnLoading('#saveChangeBtn');
+				if (data['error'] == "" ) {
+					window.location.href = "./feed?id=" + $('#feedId').val();
+				} else {
+					showErrorPopup(data['error']);
+				}
+	        },
+	        failure: function(errMsg) {
+		        	stopBtnLoading('#saveChangeBtn');
+		        	showErrorPopup('Unknown error occured. Please contact support');
+	        }
+	    });*/
+	}
+}

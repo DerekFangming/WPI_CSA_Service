@@ -328,7 +328,8 @@ $("#saveChangeBtn").click(function(){
 		if (Object.keys(params).length == 2) {
 			showErrorPopup('Nothing is changed. Please update something before saving');
 		} else {
-			startBtnLoading('#saveChangeBtn');
+			alert(2);
+			/*startBtnLoading('#saveChangeBtn');
 			$.ajax({
 		        type: "POST",
 		        url: "./update_feed",
@@ -347,7 +348,7 @@ $("#saveChangeBtn").click(function(){
 			        	stopBtnLoading('#saveChangeBtn');
 			        	showErrorPopup('Unknown error occured. Please contact support');
 		        }
-		    });
+		    });*/
 		}
 		
 	}
