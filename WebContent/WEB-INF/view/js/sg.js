@@ -163,19 +163,20 @@ $("#createSGBtn").click(function(){
 
 
 $('.card-collapse').on('shown.bs.collapse', function () {
-	alert(this.outerHTML);
 	if ($(this).attr('id') != 'collapse-1') {
-		$(this).find("i").each(function(){
-			$(this).attr('class', 'fa fa-address-card float-right');
-		});
+		//No condition check because parents must be opened for child to open
+		$(this).prev().find('i').first().attr('class', 'fa fa-chevron-up float-right');
 	}
 });
 
 $('.card-collapse').on('hidden.bs.collapse', function () {
 	if ($(this).attr('id') != 'collapse-1') {
-		$(this).find("i").each(function(){
-			$(this).attr('class', 'fa fa-cog float-right');
-		});
+		if ($(this).attr('class').includes('show')) {
+			$(this).prev().find('i').first().attr('class', 'fa fa-chevron-up float-right');
+		} else {
+			$(this).prev().find('i').first().attr('class', 'fa fa-chevron-down float-right');
+		}
+		
 	}
 });
 	

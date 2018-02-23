@@ -234,7 +234,7 @@ public class SgController {
 			String title = (String)request.get("title");
 			String content = (String)request.get("content");
 			int relId;
-			boolean placeAfter;
+			boolean placeAfter = false;
 			try {
 				relId = (int)request.get("relId");
 				placeAfter = (boolean)request.get("placeAfter");
@@ -246,26 +246,79 @@ public class SgController {
 				content = saveImagesForSGBody(content, userId);
 			}
 
-			SurvivalGuide sg = sgManager.getArticleById(sgId);
+			SurvivalGuide currentSg = sgManager.getArticleById(sgId);
 			if (relId == Util.nullInt) {//If no location change, update title and content only
-				//sgManager.softUpdateSG(sg.getId(), title, content, Util.nullInt, Util.nullInt, userId);
-				System.out.println("No move, content update only");
+				/*System.out.println("No move, content update only");*/
+				sgManager.softUpdateSG(currentSg.getId(), title, content, Util.nullInt, Util.nullInt, userId);
 			} else {//Otherwise, do location and/or theme color changes
-				List<SurvivalGuide> siblingList = sgManager.getChildArticles(sg.getParentId(), true);
+				List<SurvivalGuide> siblingList = sgManager.getChildArticles(currentSg.getParentId(), false);
 				boolean needThemeUpdate = false;
 				if (siblingList.size() == 0) {
 					throw new IllegalStateException(ErrorMessage.INTERNAL_LOGIC_ERROR.getMsg());
 				} else if (siblingList.size() == 1) {
+					needThemeUpdate = true;
 					System.out.println("Remove parent. Only child.");
 				} else {
-					
 					final int finalRelId = relId;
-					List<SurvivalGuide> sameDirList = siblingList.stream()
+					List<SurvivalGuide> sameDirSg = siblingList.stream()
 						    .filter(s -> s.getId() == finalRelId).collect(Collectors.toList());
-					if (sameDirList.size() == 1) {
+					if (sameDirSg.size() == 1) {
 						System.out.println("Move to SAME DIRECTORY without removing parent");
+						//TODO: UPDATE DATES
+						int newPosition = sameDirSg.get(0).getPosition();
+						if (placeAfter) {
+							newPosition += 1;
+						}
+						if (newPosition < currentSg.getPosition()) {//Moving up the sg in the directory
+							for (SurvivalGuide s : siblingList) {
+								if (s.getPosition() >= newPosition && s.getPosition() < currentSg.getPosition()) {
+									sgManager.softUpdateSG(s.getId(), null, null, Util.nullInt, s.getPosition() + 1, userId);
+								}
+							}
+						} else if (newPosition > currentSg.getPosition()) {//Moving down the sg in the directory
+							for (SurvivalGuide s : siblingList) {
+								if (s.getPosition() > currentSg.getPosition() && s.getPosition() <= newPosition) {
+									sgManager.softUpdateSG(s.getId(), null, null, Util.nullInt, s.getPosition() - 1, userId);
+								}
+							}
+						}
+						sgManager.softUpdateSG(currentSg.getId(), title, content, Util.nullInt, newPosition, userId);
 					} else {
-						System.out.println("Move to DIFF DIRECTORY without removing parent");
+						/*System.out.println("Move to DIFF DIRECTORY without removing parent");*/
+						for (SurvivalGuide s : siblingList) {
+							if (s.getPosition() > currentSg.getPosition()) {
+								sgManager.softUpdateSG(s.getId(), null, null, Util.nullInt, s.getPosition() - 1, userId);
+							}
+						}
+						SurvivalGuide relSg = sgManager.getArticleById(relId);
+						List<SurvivalGuide> relSiblingList = sgManager.getChildArticles(relSg.getParentId(), true);
+						boolean movingDown = false;
+						String bgDivWithColor = null;
+						int newPosition = 0;
+						for (SurvivalGuide s : relSiblingList) {
+							if (movingDown) {
+								sgManager.softUpdateSG(s.getId(), null, null, Util.nullInt, s.getPosition() + 1, user.getId());
+							} else if (s.getId() == relId) {
+								movingDown = true;
+								if (placeAfter) {
+									newPosition = s.getPosition() + 1;
+									//sgManager.softUpdateSG(currentSg.getId(), title, content, s.getParentId(), s.getPosition() + 1, userId);
+								} else {
+									newPosition = s.getPosition();
+									//sgManager.softUpdateSG(currentSg.getId(), title, content, s.getParentId(), s.getPosition(), userId);
+									sgManager.softUpdateSG(s.getId(), null, null, Util.nullInt, s.getPosition() + 1, userId);
+								}
+							}
+							if(bgDivWithColor == null && s.getContent() != null) {
+								bgDivWithColor = s.getContent().split(">", 2)[0] + '>';
+							}
+						}
+						if(bgDivWithColor == null) {
+							bgDivWithColor = "<div color=\"" + Utils.SG_BG_COLOR +"\">";
+						}
+						content = bgDivWithColor + content.split(">", 2)[1];
+						sgManager.softUpdateSG(currentSg.getId(), title, content, relSiblingList.get(0).getParentId(), newPosition, userId);
+						
 					}
 					
 				}
