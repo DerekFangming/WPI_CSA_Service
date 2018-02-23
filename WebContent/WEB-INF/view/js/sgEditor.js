@@ -220,7 +220,7 @@ $("#submitBtn").click(function(){
 			var articleTitle = $('#articleTitle').val().trim();
 			var color = $('#bgColor').val().trim().replace('#', '');
 			params.title = articleTitle;
-			content = '<div color="' + color + '"><br><br><br><h1><big><big><font color=#FFFFFF>' + title + '</font></big></big></h1></div>' + content;
+			content = '<div color="' + color + '"><br><br><br><h1><big><big><font color=#FFFFFF>' + articleTitle + '</font></big></big></h1></div>' + content;
 			params.content = content;
 		}
 		startBtnLoading('#submitBtn');
@@ -233,7 +233,8 @@ $("#submitBtn").click(function(){
 	        success: function(data){
 	        		stopBtnLoading('#submitBtn');
 				if (data['error'] == "" ) {
-					window.location.href = "./refresh_sg_menu";
+					var sgId = data['id'];
+					window.location.href = "./refresh_sg_menu?id=" + sgId;
 				} else {
 					showErrorPopup(data['error']);
 				}
@@ -270,9 +271,15 @@ function saveChanges() {
 	
 	var title = $('#title').val().trim();
 	var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
-	//Adding back the original div tag
+	//Adding back the original div tag. If title is changed, update the div inner title also
 	if ($('#editorDefaultText').html().includes('div')) {
-		content = $('#editorDefaultText').html().split('<\/div>')[0] + '</div>' + content;
+		var originalDiv = $('#editorDefaultText').html().split('<\/div>')[0] + '</div>';
+		if (title != $('#origTitle').val().trim()) {
+			var parts = originalDiv.split('<\/font>')[0].split('>');
+			parts.splice(-1, 1);//removing original title
+			originalDiv = parts.join('>') + '>' + title + '</font></big></big></h1></div>';
+		}
+		content = originalDiv + content;
 	}
 	
 	if (title != $('#origTitle').val().trim()) {
@@ -306,7 +313,6 @@ function saveChanges() {
 	        		hideAndStopLoadingConfirmPopup();
 				if (data['error'] == "" ) {
 					window.location.href = "./refresh_sg_menu?id=" + sgId;
-					alert('done');
 				} else {
 					showErrorPopup(data['error']);
 				}

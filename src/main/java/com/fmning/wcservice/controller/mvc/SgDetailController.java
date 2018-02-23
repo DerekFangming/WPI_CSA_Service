@@ -40,7 +40,8 @@ public class SgDetailController {
 	public void sgRefreshRedirectController(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			generatedMenu = generateMenu(Util.nullInt, "");
-			response.sendRedirect("/sg");
+			String queryString = request.getQueryString();
+			response.sendRedirect("/sg" + (queryString == null ? "" : "?" + queryString));
 		} catch (IOException e) {
 			errorManager.logError(e, request);
 		}
