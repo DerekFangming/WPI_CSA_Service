@@ -58,7 +58,7 @@
 							<p class="lead">${msg}</p>
 						</center>
 						<br>
-						<center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to main page</a></center>
+						<center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to home page</a></center>
 					</header>
 				</c:otherwise>
 			</c:choose>
