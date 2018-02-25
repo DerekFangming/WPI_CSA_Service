@@ -17,9 +17,9 @@
 		<script src="<%=JQjs %>"></script>
 		<link href="<%=DTcss %>" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-		<link href="/resources/css/main.css?v=2" rel="stylesheet">
-		<script src="/resources/js/imagePicker.js?v=2"></script>
-		<script src="/resources/js/common.js?v=2"></script>
+		<link href="/resources/css/main.css?v=3" rel="stylesheet">
+		<script src="/resources/js/imagePicker.js?v=3"></script>
+		<script src="/resources/js/common.js?v=3"></script>
 	</head>
 	<body>
 		<!-- Navigation -->
@@ -136,7 +136,7 @@
 												<tr>
 													<th style="display:none;" id="feedWithId${feed.id}">${feed.id}</th>
 													<th>
-														<div class="profile-article-title ">
+														<div class="profile-article-title">
 															<a href="./feed?id=${feed.id}" target="_blank">${feed.title}</a>
 														</div>
 														<c:if test="${feed.ownerId == 2}">
@@ -175,9 +175,49 @@
 					</div>
 					<div class="card mt-3">
 						<div class="card-header">
-							Edited Survival Guide articles
+							Created & Edited Survival Guides
 						</div>
 						<div class="card-body">
+							<c:choose>
+								<c:when test="${fn:length(sgList) gt 0}">
+									<table id="sgTable" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+										<thead>
+											<tr>
+												<th style="display:none;">ID</th>
+												<th>Name</th>
+												<th>Created & modified at</th>
+											</tr>
+										</thead>
+										<tbody>
+											<c:forEach items="${sgList}" var="sg">
+												<tr>
+													<th style="display:none;" id="sgWithId${sg.id}">${sg.id}</th>
+													<th>
+														<div class="profile-sg-title">
+															<a href="./sg?id=${sg.id}" target="_blank">${sg.title}</a>
+														</div>
+													</th>
+													<th>
+														<script>parseDate('${sg.createdAt}');</script>
+													</th>
+												</tr>
+											</c:forEach>
+										</tbody>
+									</table>
+								</c:when>
+								<c:otherwise>
+									<c:choose>
+										<c:when test="${user.emailConfirmed}">
+											<p class="card-text">You haven't created & edited any articles yet.</p>
+									<button type="button" class="btn btn-outline-primary" onclick="location.href='./new_sg';">Create one</button>
+									<button type="button" class="btn btn-outline-primary" onclick="location.href='./sg';">Edit & improve existing ones</button>
+										</c:when>
+										<c:otherwise>
+											<p class="card-text">You haven't created any articles yet. You need to confirm your email before creating articles. You can click on the re-send button on the Profile section to re-send confirmation email.</p>
+										</c:otherwise>
+									</c:choose>
+								</c:otherwise>
+							</c:choose>
 						</div>
 					</div>
 				</div>
@@ -198,8 +238,8 @@
 		<script src="<%=DTJjs %>"></script>
 		<script src="<%=DTBjs %>"></script>
 		<c:if test="${!user.emailConfirmed}">
-			<script src="/resources/js/verifyEmail.js?v=2"></script>
+			<script src="/resources/js/verifyEmail.js?v=3"></script>
 		</c:if>
-		<script src="/resources/js/profile.js?v=2"></script>
+		<script src="/resources/js/profile.js?v=3"></script>
 	</body>
 </html>

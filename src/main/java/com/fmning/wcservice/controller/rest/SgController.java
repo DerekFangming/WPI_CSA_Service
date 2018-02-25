@@ -256,14 +256,17 @@ public class SgController {
 				if (siblingList.size() == 0) {
 					throw new IllegalStateException(ErrorMessage.INTERNAL_LOGIC_ERROR.getMsg());
 				} else {
+					boolean needFullUpdate = false;
+					String bgDivWithColor = null;
 					if (siblingList.size() == 1) {
 						//The current sg is the only one in parent. The parent needs to be deleted.
 						//Pretending that we need to move the parent to that location. Replacing parameters.
 						SurvivalGuide parentSg = sgManager.getArticleById(currentSg.getParentId());
-						siblingList = sgManager.getChildArticles(parentSg.getParentId(), false);
+						siblingList = sgManager.getChildArticles(parentSg.getParentId(), true);
 						currentSg.setParentId(parentSg.getParentId());
 						currentSg.setPosition(parentSg.getPosition());
-						//Delete parent NOW
+						sgManager.deleteSg(parentSg.getId());
+						needFullUpdate = true;
 					}
 					
 					
@@ -279,6 +282,9 @@ public class SgController {
 								if (s.getPosition() >= newPosition && s.getPosition() < currentSg.getPosition()) {
 									updateSGLocation(s.getId(), s.getPosition() + 1);
 								}
+								if(bgDivWithColor == null && s.getContent() != null) {
+									bgDivWithColor = s.getContent().split(">", 2)[0] + '>';
+								}
 							}
 						} else if (newPosition > currentSg.getPosition()) {//Moving down the sg in the directory
 							if (!placeAfter) {newPosition -= 1;}
@@ -286,10 +292,23 @@ public class SgController {
 								if (s.getPosition() > currentSg.getPosition() && s.getPosition() <= newPosition) {
 									updateSGLocation(s.getId(), s.getPosition() - 1);
 								}
+								if(bgDivWithColor == null && s.getContent() != null) {
+									bgDivWithColor = s.getContent().split(">", 2)[0] + '>';
+								}
 							}
 						}
+						if(bgDivWithColor == null) {
+							bgDivWithColor = "<div color=\"" + Utils.SG_BG_COLOR +"\">";
+						}
 						//Doing a soft update because parent will not be updated anyway
-						sgManager.softUpdateSG(currentSg.getId(), title, content, Util.nullInt, newPosition, userId);
+						if (needFullUpdate) {
+							String newContent = content == null ? currentSg.getContent() : content;
+							newContent = bgDivWithColor + newContent.split(">", 2)[1];
+							String newTitle = title == null ? currentSg.getTitle() : title;
+							sgManager.updateSG(currentSg.getId(), newTitle, newContent, currentSg.getParentId(), newPosition, userId);
+						} else {
+							sgManager.softUpdateSG(currentSg.getId(), title, content, Util.nullInt, newPosition, userId);
+						}
 					} else {
 						/*System.out.println("Move to DIFF DIRECTORY without removing parent");*/
 						for (SurvivalGuide s : siblingList) {
@@ -300,7 +319,6 @@ public class SgController {
 						SurvivalGuide relSg = sgManager.getArticleById(relId);
 						List<SurvivalGuide> relSiblingList = sgManager.getChildArticles(relSg.getParentId(), true);
 						boolean movingDown = false;
-						String bgDivWithColor = null;
 						int newPosition = 0;
 						for (SurvivalGuide s : relSiblingList) {
 							if (movingDown) {

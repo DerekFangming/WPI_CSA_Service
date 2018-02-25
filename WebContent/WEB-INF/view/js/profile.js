@@ -3,6 +3,10 @@ $(document).ready(function() {
 	feedTable = $('#feedTable').DataTable({
 		"order": [[ 2, "desc" ]]
 	});
+	
+	$('#sgTable').DataTable({
+		"order": [[ 2, "desc" ]]
+	});
 })
 
 $('#profileEditBtn').click(function(){

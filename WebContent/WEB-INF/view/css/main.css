@@ -146,6 +146,11 @@ body {
 	white-space: nowrap;
 }
 
+.profile-sg-title {
+	max-width: 350px;
+	overflow: hidden;
+}
+
 .editor-header {
 	margin-top:-0.5em;
 	margin-bottom:-0.5em;

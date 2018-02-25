@@ -19,11 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.Feed;
+import com.fmning.service.domain.SurvivalGuide;
 import com.fmning.service.domain.User;
 import com.fmning.service.domain.UserDetail;
 import com.fmning.service.exceptions.NotFoundException;
 import com.fmning.service.manager.FeedManager;
 import com.fmning.service.manager.ImageManager;
+import com.fmning.service.manager.SGManager;
 import com.fmning.service.manager.UserManager;
 import com.fmning.util.ErrorMessage;
 import com.fmning.util.ImageType;
@@ -38,6 +40,7 @@ public class ProfileController {
 	@Autowired private UserManager userManager;
 	@Autowired private ImageManager imageManager;
 	@Autowired private FeedManager feedManager;
+	@Autowired private SGManager sgManager;
 	
 	@RequestMapping(value = "/profile", method = RequestMethod.GET)
     public String adminEventController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
@@ -106,6 +109,10 @@ public class ProfileController {
 		}
 		
 		model.addAttribute("feedList", feedList);
+		
+		List<SurvivalGuide> sgList = sgManager.getEditingHistoryForUser(um.getUser().getId());
+		
+		model.addAttribute("sgList", sgList);
 		model.addAttribute("user", um.getUser());//For nav bar
 		model.addAttribute("um", um);
 		

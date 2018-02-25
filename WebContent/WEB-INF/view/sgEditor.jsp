@@ -24,11 +24,11 @@
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_style.min.css" rel="stylesheet" type="text/css" />
-		<link href="/resources/css/main.css?v=2" rel="stylesheet">
+		<link href="/resources/css/main.css?v=3" rel="stylesheet">
 		<!--<link href="/resources/css/local/colorPicker.css" rel="stylesheet">-->
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.1/css/bootstrap-colorpicker.min.css" rel="stylesheet">
-		<script src="/resources/js/common.js?v=2"></script>
-		<script src="/resources/js/editor.js?v=2"></script>
+		<script src="/resources/js/common.js?v=3"></script>
+		<script src="/resources/js/editor.js?v=3"></script>
 		<!-- <script src="/resources/css/local/colorPicker.js"></script> -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.1/js/bootstrap-colorpicker.min.js"></script>
 		<script src="<%=Fjs %>"></script>
@@ -181,7 +181,7 @@
 
 		<%@include file="subview/popup.jsp" %><!-- This must be placed below all other modals -->
 		<%@include file="subview/footer.jsp" %>
-		<script src="/resources/js/sgEditor.js?v=2"></script>
+		<script src="/resources/js/sgEditor.js?v=3"></script>
 		<script src="<%=BSjs %>"></script>
 	</body>
 </html>
