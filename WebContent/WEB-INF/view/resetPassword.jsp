@@ -14,7 +14,7 @@
 		<link href="<%=BScss %>" rel="stylesheet">
 		<script src="<%=JQjs %>"></script>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-		<script src="/resources/js/common.js?v=2"></script>
+		<script src="/resources/js/common.js?v=3"></script>
 		<link href="/resources/css/main.css" rel="stylesheet">
 	</head>
 	<body>
@@ -58,7 +58,7 @@
 							<p class="lead">${msg}</p>
 						</center>
 						<br>
-						<center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to main page</a></center>
+						<center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to home page</a></center>
 					</header>
 				</c:otherwise>
 			</c:choose>

@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	var parser = new DOMParser();
 	var doc = parser.parseFromString($('#menuList').html(), "text/html");
+	var edittingTitle = $('#title').val();
 	
 	//Processing tables
 	var aList = doc.getElementsByTagName('a');
@@ -17,8 +18,25 @@ $(document).ready(function() {
 		newItem += '<div class="btn-group btn-group-sm ml-3" role="group" style="margin-top: -10px;"><button type="button" '
 			+ 'class="btn btn-outline-secondary" onclick="before(this, ' + menuId + ')">Before this</button><button type="button" '
 			+ 'class="btn btn-outline-secondary" onclick="after(this, ' + menuId + ')">After this</button></div>';
+		if (edittingTitle != '') {
+			if (aList[i].innerHTML == edittingTitle) {
+				$(aList[i]).parent().addClass('bg-primary');
+				newItem = '<div class="one-line text-white">' + aList[i].innerHTML + '<span class="ml-3">Currently editting</span></div>';
+			}
+		}
 		aList[i].outerHTML = newItem;
 	}
+	
+	//Adding reset selection button
+	var headerList = doc.getElementsByClassName('card-header');
+	for (var i = 0; i <headerList.length; i++) {
+		if (headerList[i].innerHTML == 'Survival Guide Menu') {
+			headerList[i].innerHTML = headerList[i].innerHTML
+				+ '<button type="button" class="btn btn-outline-secondary btn-sm ml-3" onclick="clearSelection()">Clear selection</button>';
+			break;
+		}
+	}
+	
 	$('#menuList').html(doc.body.innerHTML);
 	$('#menuList').fadeIn();
 	
@@ -34,6 +52,24 @@ $(document).ready(function() {
 		$('#colorPicker > button').css('color', color);
 		$('#bgColor').val(color);
 	});
+	
+	$('.card-collapse').on('shown.bs.collapse', function () {
+		if ($(this).attr('id') != 'collapse-1') {
+			//No condition check because parents must be opened for child to open
+			$(this).prev().find('i').first().attr('class', 'fa fa-chevron-up float-right');
+		}
+	});
+
+	$('.card-collapse').on('hidden.bs.collapse', function () {
+		if ($(this).attr('id') != 'collapse-1') {
+			if ($(this).attr('class').includes('show')) {
+				$(this).prev().find('i').first().attr('class', 'fa fa-chevron-up float-right');
+			} else {
+				$(this).prev().find('i').first().attr('class', 'fa fa-chevron-down float-right');
+			}
+			
+		}
+	});
 });
 
 function before(elm, menuId) {
@@ -42,12 +78,17 @@ function before(elm, menuId) {
 	var prevPlaceholder = $("#menuList").find(".bg-success");
 	prevPlaceholder.remove();
 	
+	var message = $('#sgId').val() == '' ? 'Your new article & menu will appear here.' : 'You will be moving the article to this place.';
 	$(elm).attr('class', 'btn btn-success');
-	var appendDiv = '<div class="card-body sg-menu-item border-bottom bg-success text-white">Your new article & menu will appear here.</div>';
+	var appendDiv = '<div class="card-body sg-menu-item border-bottom bg-success text-white">' + message + '</div>';
 	var parentMenu = $(elm).parent().parent();
-	parentMenu.before(appendDiv);
-	
-	$('#relLocSelection').val('before' + menuId);
+	if (parentMenu.prev().length && parentMenu.prev().attr('class').includes('bg-primary')) {
+		//Moving the article to the original location
+		$('#relLocSelection').val('');
+	} else {
+		parentMenu.before(appendDiv);
+		$('#relLocSelection').val('before' + menuId);
+	}
 }
 
 function after(elm, menuId) {
@@ -56,20 +97,39 @@ function after(elm, menuId) {
 	var prevPlaceholder = $("#menuList").find(".bg-success");
 	prevPlaceholder.remove();
 	
+	var message = $('#sgId').val() == '' ? 'Your new article & menu will appear here.' : 'You will be moving the article to this place.';
 	$(elm).attr('class', 'btn btn-success');
-	var appendDiv = '<div class="card-body sg-menu-item border-bottom bg-success text-white">Your new article & menu will appear here.</div>';
+	var appendDiv = '<div class="card-body sg-menu-item border-bottom bg-success text-white">' + message + '</div>';
 	var parentMenu = $(elm).parent().parent();
 	if (parentMenu.next().length) {
-		if (parentMenu.next().attr('class').includes('card-collapse')) {
-			parentMenu.next().after(appendDiv);
+		if (parentMenu.next().attr('class').includes('bg-primary')){
+			//Moving the article to the original location
+			$('#relLocSelection').val('');
+		} else if (parentMenu.next().attr('class').includes('card-collapse')) {
+			if (parentMenu.next().next().attr('class').includes('bg-primary')){
+				$('#relLocSelection').val('');
+			} else {
+				parentMenu.next().after(appendDiv);
+				$('#relLocSelection').val('after' + menuId);
+			}
 		} else {
 			parentMenu.after(appendDiv);
+			$('#relLocSelection').val('after' + menuId);
 		}
 	} else {
 		parentMenu.after(appendDiv);
+		$('#relLocSelection').val('after' + menuId);
 	}
 	
-	$('#relLocSelection').val('after' + menuId);
+	
+}
+
+function clearSelection() {
+	var prevSelection = $("#menuList").find(".btn-success");
+	prevSelection.attr('class', 'btn btn-outline-secondary');
+	var prevPlaceholder = $("#menuList").find(".bg-success");
+	prevPlaceholder.remove();
+	$('#relLocSelection').val('');
 }
 
 function selectSgType(typeId) {
@@ -98,7 +158,7 @@ $("#checkFormatBtn").click(function(){
 });
 
 function checkFormat () {
-	if ($('#relLocSelection').val() == '') {
+	if ($('#sgId').val() == '' && $('#relLocSelection').val() == '') {
 		return 'Please select a location to place the article & menu by clicking on one of the \'Before this\' or \'After this\' button';
 	}
 	if ($('#currentType').html() == 'Article') {
@@ -160,7 +220,7 @@ $("#submitBtn").click(function(){
 			var articleTitle = $('#articleTitle').val().trim();
 			var color = $('#bgColor').val().trim().replace('#', '');
 			params.title = articleTitle;
-			content = '<div color="' + color + '"><br><br><br><h1><big><big><font color=#FFFFFF>' + title + '</font></big></big></h1></div>' + content;
+			content = '<div color="' + color + '"><br><br><br><h1><big><big><font color=#FFFFFF>' + articleTitle + '</font></big></big></h1></div>' + content;
 			params.content = content;
 		}
 		startBtnLoading('#submitBtn');
@@ -173,7 +233,8 @@ $("#submitBtn").click(function(){
 	        success: function(data){
 	        		stopBtnLoading('#submitBtn');
 				if (data['error'] == "" ) {
-					window.location.href = "./refresh_sg_menu";
+					var sgId = data['id'];
+					window.location.href = "./refresh_sg_menu?id=" + sgId;
 				} else {
 					showErrorPopup(data['error']);
 				}
@@ -186,3 +247,83 @@ $("#submitBtn").click(function(){
 		
 	}
 });
+
+$("#saveChangeBtn").click(function(){
+	var error = checkFormat();
+	if (error != '' ) {
+		showErrorPopup(error);
+	} else {
+		var currentElm = $("#menuList").find(".bg-primary");
+		
+		if ($('#relLocSelection').val() != '' && !currentElm.next().length && !currentElm.prev().length) {
+			showConfirmPopup('This article is the only one in the parent menu. If you move this article to other place, '
+					+'the parent menu will be automatically deleted and this cannot be undone. ', 'saveChanges()');
+		} else {
+			saveChanges();
+		}
+	}
+});
+
+function saveChanges() {
+	var accessToken = getAccessToken();
+	var sgId = parseInt($('#sgId').val());
+	var params = {accessToken : accessToken, id : sgId};
+	
+	var title = $('#title').val().trim();
+	var content = getAcceptableHTML($('textarea').froalaEditor('html.get', true));
+	//Adding back the original div tag. If title is changed, update the div inner title also
+	if ($('#editorDefaultText').html().includes('div')) {
+		var originalDiv = $('#editorDefaultText').html().split('<\/div>')[0] + '</div>';
+		if (title != $('#origTitle').val().trim()) {
+			var parts = originalDiv.split('<\/font>')[0].split('>');
+			parts.splice(-1, 1);//removing original title
+			originalDiv = parts.join('>') + '>' + title + '</font></big></big></h1></div>';
+		}
+		content = originalDiv + content;
+	}
+	
+	if (title != $('#origTitle').val().trim()) {
+		params.title = title;
+	}
+
+	if (content != $('#editorDefaultText').html().replace(/<\/tbr>/g, '')) {
+		params.content = content;
+	}
+	
+	var locStr = $('#relLocSelection').val();
+	if (locStr.trim() != '') {
+		params.placeAfter = locStr.includes('after');
+		params.relId = parseInt(locStr.replace('before', '').replace('after', ''));
+	}
+	/*alert(content);
+	alert($('#editorDefaultText').html().replace(/<\/tbr>/g, ''));*/
+	if (Object.keys(params).length == 2) {
+		showErrorPopup('Nothing is changed. Please update something before saving');
+	} else {
+		loadingConfirmPopup();
+		startBtnLoading('#saveChangeBtn');
+		$.ajax({
+	        type: "POST",
+	        url: "./update_sg",
+	        data: JSON.stringify(params),
+	        contentType: "application/json",
+	        dataType: "json",
+	        success: function(data){
+	        		stopBtnLoading('#saveChangeBtn');
+	        		hideAndStopLoadingConfirmPopup();
+				if (data['error'] == "" ) {
+					window.location.href = "./refresh_sg_menu?id=" + sgId;
+				} else {
+					showErrorPopup(data['error']);
+				}
+	        },
+	        failure: function(errMsg) {
+		        	stopBtnLoading('#saveChangeBtn');
+		    		hideAndStopLoadingConfirmPopup();
+		        	showErrorPopup('Unknown error occured. Please contact support');
+	        }
+	    });
+	}
+}
+
+

@@ -24,11 +24,11 @@
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_style.min.css" rel="stylesheet" type="text/css" />
-		<link href="/resources/css/main.css?v=2" rel="stylesheet">
+		<link href="/resources/css/main.css?v=3" rel="stylesheet">
 		<!--<link href="/resources/css/local/colorPicker.css" rel="stylesheet">-->
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.1/css/bootstrap-colorpicker.min.css" rel="stylesheet">
-		<script src="/resources/js/common.js?v=2"></script>
-		<script src="/resources/js/editor.js?v=2"></script>
+		<script src="/resources/js/common.js?v=3"></script>
+		<script src="/resources/js/editor.js?v=3"></script>
 		<!-- <script src="/resources/css/local/colorPicker.js"></script> -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.1/js/bootstrap-colorpicker.min.js"></script>
 		<script src="<%=Fjs %>"></script>
@@ -65,6 +65,14 @@
 						</center>
 					</header>
 				</c:when>
+				<c:when test="${sg != null && sg.content == null}">
+					<header class="jumbotron my-4">
+						<center>
+							<h1 class="display-4 mb-0">You cannot edit a menu item</h1>
+							<p class="lead mt-2 mb-0">If you need to, please contact admin@fmning.com</p>
+						</center>
+					</header>
+				</c:when>
 				<c:otherwise>
 					<div class = row>
 						<div class="col-lg-6 col-sm-12">
@@ -91,13 +99,21 @@
 									</div>
 									<div class="input-group">
 										<div class="input-group-prepend">
-											<button class="btn btn-outline-secondary dropdown-toggle" id="currentType" type="button" data-toggle="dropdown">Article</button>
+											<c:choose>
+												<c:when test="${sg == null}">
+													<button class="btn btn-outline-secondary dropdown-toggle" id="currentType" type="button" data-toggle="dropdown">Article</button>
+												</c:when>
+												<c:otherwise>
+													<button class="btn btn-outline-secondary dropdown-toggle" id="currentType" type="button" data-toggle="dropdown" disabled>Article</button>
+												</c:otherwise>
+											</c:choose>
 											<div class="dropdown-menu">
 												<a class="dropdown-item" href="#" onclick="selectSgType(1);">Article</a>
 												<a class="dropdown-item" href="#" onclick="selectSgType(2);">Menu</a>
 											</div>
 										</div>
-										<input type="text" id="title" placeholder="Enter the name of the new article" class="form-control" value="${fm.feed.title}">
+										<input type="text" id="title" placeholder="Enter the name of the new article" class="form-control" value="${sg.title}">
+										<input type="hidden" id="origTitle" value="${sg.title}">
 										<div id="colorPicker" class="input-group-append" style="display:none;">
 											<button class="btn btn-outline-secondary" type="button">Background</button>
 										</div>
@@ -107,7 +123,7 @@
 										<div class="input-group-prepend">
 											<span class="input-group-text" id="basic-addon3">Name of the article</span>
 										</div>
-										<input type="text" id="articleTitle" placeholder="Enter the name of the new article" class="form-control" value="${fm.feed.title}">
+										<input type="text" id="articleTitle" placeholder="Enter the name of the new article" class="form-control">
 									</div>
 									<c:choose>
 										<c:when test="${editMode}">
@@ -131,7 +147,8 @@
 								</div>
 								<div style="min-height:300px">
 									<textarea></textarea>
-									<div id="editorDefaultText" style="display:none">${fm.feed.body}</div>
+									<div id="editorDefaultText" style="display:none">${sg.content}</div>
+									<input type="hidden" id="sgId" value="${sg.id}">
 									<input type="hidden" id="editorHTMLOption" value="${editorHTMLOption}">
 									<input type="hidden" id="allowImgTxt" value="true">
 								</div>
@@ -164,7 +181,7 @@
 
 		<%@include file="subview/popup.jsp" %><!-- This must be placed below all other modals -->
 		<%@include file="subview/footer.jsp" %>
-		<script src="/resources/js/sgEditor.js?v=2"></script>
+		<script src="/resources/js/sgEditor.js?v=3"></script>
 		<script src="<%=BSjs %>"></script>
 	</body>
 </html>

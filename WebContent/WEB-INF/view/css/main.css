@@ -68,10 +68,6 @@ body {
 	line-height: 10px;
 }
 
-.sg-title {
-	height: 80px;
-}
-
 .sg-body{
 	height: 660px;
     overflow-y: auto;
@@ -148,6 +144,11 @@ body {
 	max-width: 200px;
 	overflow: hidden;
 	white-space: nowrap;
+}
+
+.profile-sg-title {
+	max-width: 350px;
+	overflow: hidden;
 }
 
 .editor-header {

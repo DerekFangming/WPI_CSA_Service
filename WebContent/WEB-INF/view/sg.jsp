@@ -14,8 +14,8 @@
 		<link href="<%=BScss %>" rel="stylesheet">
 		<script src="<%=JQjs %>"></script>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-		<link href="/resources/css/main.css?v=2" rel="stylesheet">
-		<script src="/resources/js/common.js?v=2"></script>
+		<link href="/resources/css/main.css?v=3" rel="stylesheet">
+		<script src="/resources/js/common.js?v=3"></script>
 	</head>
 	<body>
 		<!-- Navigation -->
@@ -59,10 +59,19 @@
 					</div>
 				</div>
 				<div class="col-lg-8 clm-sm-12">
-					<div class="card sg-title">
-						<div class="card-header sg-title">
-							<h1 class="lead"><big><big id="sgTitle"></big></big></h1>
-							<p><small class="text-muted" id="sgSubTitle"></small></p>
+					<div class="card">
+						<div class="card-header">
+							<h1 class="lead mb-0"><big><big id="sgTitle" style="display:none;"></big></big></h1>
+							<div class="dropdown one-line" id="sgHistDropdown" style="display:none;">
+								<button class="btn btn-light btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+									<small class="text-muted" id="sgSubTitle"></small>
+								</button>
+								<div class="dropdown-menu">
+									<a class="dropdown-item" href="#"><small class="text-muted">No more editing history found</small></a>
+								</div>
+							</div>
+							<a role="button" id="sgEditBtn" class="btn btn-sm btn-outline-secondary ml-3" style="display:none;">Edit</a>
+							<div id="sgLoading"><center><i class="fa fa-refresh fa-3x fa-spin" style="color:black"></i></center></div>
 						</div>
 					</div>
 					<div class="card mt-3 sg-body">
@@ -78,6 +87,7 @@
 					<input type="hidden" id="userEmailConfirmed" value="false">
 				</c:otherwise>
 			</c:choose>
+			<input type="hidden" id="initialId" value="${initialId}">
 		</div>
 		<!-- /.container -->
 		<c:if test="${user == null}">
@@ -87,12 +97,12 @@
 		<%@include file="subview/footer.jsp" %>
 		<script src="<%=BSjs %>"></script>
 		<c:if test="${user == null || (user != null && !user.emailConfirmed)}">
-			<script src="/resources/js/verifyEmail.js?v=2"></script>
+			<script src="/resources/js/verifyEmail.js?v=3"></script>
 		</c:if>
 		<c:if test="${user == null}">
-			<script src="/resources/js/formLogin.js?v=2"></script>
+			<script src="/resources/js/formLogin.js?v=3"></script>
 		</c:if>
-		<script src="/resources/js/sg.js?v=2"></script>
-		<script src="/resources/js/parser.js?v=2"></script>
+		<script src="/resources/js/sg.js?v=3"></script>
+		<script src="/resources/js/parser.js?v=3"></script>
 	</body>
 </html>

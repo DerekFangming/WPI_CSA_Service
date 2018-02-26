@@ -14,7 +14,7 @@
 		<link href="<%=BScss %>" rel="stylesheet">
 		<script src="<%=JQjs %>"></script>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-		<script src="/resources/js/common.js?v=2"></script>
+		<script src="/resources/js/common.js?v=3"></script>
 		<link href="/resources/css/main.css" rel="stylesheet">
 	</head>
 	<body>

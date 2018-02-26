@@ -131,6 +131,10 @@ public class FeedDetailController {
 		User user;
 		try {
 			user = userManager.validateAccessToken(request);
+			if (!user.getEmailConfirmed()) {
+				model.addAttribute("errorMessage", ErrorMessage.EMAIL_NOT_CONFIRMED.getMsg());
+				return "errorview/403";
+			}
 			String name = userManager.getUserDetail(user.getId()).getName();
 			if (name == null){name = "Unknown";}
 			user.setName(name);

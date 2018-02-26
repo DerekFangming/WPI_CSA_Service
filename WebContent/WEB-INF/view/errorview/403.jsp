@@ -36,7 +36,7 @@
 					<p class="lead">You do not have permission to access this page.${errorMessage} If you believe this is an error, please contact CSA</p>
 				</center>
 				<br>
-				<center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to main page</a></center>
+				<center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to home page</a></center>
 			</header>
 		</div>
 		<!-- /.container -->

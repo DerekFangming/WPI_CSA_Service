@@ -35,7 +35,7 @@
 					<p class="lead">The page you are looking for does not exist. If you believe that this is an error, please report to <a href="mailto:admin@fmning.com">admin@fmning.com</a></p>
 				</center>
 				<br>
-				<center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to main page</a></center>
+				<center><a class="btn btn-primary" href="<%=rootDir %>" role="button">Take me back to home page</a></center>
 			</header>
 		</div>
 		<!-- /.container -->

@@ -3,6 +3,10 @@ $(document).ready(function() {
 	feedTable = $('#feedTable').DataTable({
 		"order": [[ 2, "desc" ]]
 	});
+	
+	$('#sgTable').DataTable({
+		"order": [[ 2, "desc" ]]
+	});
 })
 
 $('#profileEditBtn').click(function(){
@@ -138,7 +142,7 @@ function deleteFeed(feedId) {
 	$.ajax({
         type: "POST",
         url: "./delete_feed",
-        data: JSON.stringify({accessToken : accessToken, feedId : feedId}),
+        data: JSON.stringify({accessToken : accessToken, id : feedId}),
         contentType: "application/json",
         dataType: "json",
         success: function(data){

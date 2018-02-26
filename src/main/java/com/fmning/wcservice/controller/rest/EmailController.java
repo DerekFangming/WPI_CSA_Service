@@ -143,7 +143,7 @@ public class EmailController {
 		} else if (respond.equals("resend")) {
 			model.addAttribute("msg", "Your confirmation code has expired and a new confirmation email has been sent to your inbox.");
 		} else {
-			model.addAttribute("msg", respond + "<br>Please email <a style=\"color:white\" href=\"mailto:admin@fmning.com?Subject=" + 
+			model.addAttribute("msg", respond + "<br>Please email <a href=\"mailto:admin@fmning.com?Subject=" + 
 						respond.replace(" ", "%20") + "\" target=\"_top\">admin@fmning.com</a> for support");
 		}
 		

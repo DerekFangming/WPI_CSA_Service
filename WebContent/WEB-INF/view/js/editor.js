@@ -17,6 +17,7 @@ $(function() {
 		}, 
 		imageInsertButtons: ['imageBack', '|', 'imageUpload'],
 		imageEditButtons: ['imageReplace', 'imageSize', 'imageRemove'],
+		imageAllowedTypes: ['jpeg', 'jpg', 'png'],
 		tableEditButtons: ['tableRows', 'tableRemove'],
 		tableInsertMaxSize: tabSize,
 		colorsBackground: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
@@ -104,8 +105,8 @@ function getAcceptableHTML(content) {
 			} else {
 				var imgtxtStr = '';
 				for (var j = 0, row; row = tabList[i].rows[j]; j++) {
-					var imgSrc = row.cells[0].getElementsByTagName('img')[0].src;
-					imgtxtStr += '<imgtxt src="' + imgSrc + '">';
+					var imgElm = row.cells[0].getElementsByTagName('img')[0];
+					imgtxtStr += imgElm.outerHTML.replace('<img', '<imgtxt');
 					imgtxtStr += row.cells[1].innerHTML + '</imgtxt>';
 				}
 				tabList[i].parentNode.innerHTML = tabList[i].parentNode.innerHTML.replace(tabList[i].outerHTML, imgtxtStr);
@@ -249,6 +250,36 @@ function getEditableHTML(content) {
 		span.innerHTML = fontList[i].innerHTML;
 		
 		fontList[i].outerHTML = span.outerHTML;
+	}
+	
+	//Processing imgtxt, if allowed
+	//This will be looping from the end to beginning so order is inverted
+	//Also remove div. Should we only remove this in SG? or even in feed?
+	if ($('#allowImgTxt').val() == 'true') {
+		
+		var imgtxtList = doc.getElementsByTagName('imgtxt');
+		var currentTable = '';
+		for (var i=imgtxtList.length - 1; i > -1; i--) {
+			var imgStr = imgtxtList[i].outerHTML.split(imgtxtList[i].innerHTML)[0].replace('imgtxt', 'img');
+			var currentRow = '<tr><td style="width: 35%;">' + imgStr;
+			currentRow += '</td><td>' + imgtxtList[i].innerHTML + '</td></tr>'
+			
+			currentTable = currentRow + currentTable;//INVERTED!
+			
+			if (imgtxtList[i].previousSibling.tagName.toLowerCase() != 'imgtxt') {
+				currentTable = '<table style="width: 100%;"><tbody>' + currentTable + '</tbody></table>';
+				imgtxtList[i].outerHTML = currentTable;
+				currentTable = '';
+			} else {
+				imgtxtList[i].outerHTML = '';
+			}
+		}
+		
+		var divList = doc.getElementsByTagName('div');
+		for (var i=divList.length - 1; i > -1; i--) {
+			divList[i].outerHTML = '';
+		}
+		
 	}
 		
 	return doc.body.innerHTML;
