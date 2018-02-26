@@ -70,6 +70,8 @@ $(document).ready(function() {
 			
 		}
 	});
+	
+	
 });
 
 function before(elm, menuId) {
@@ -326,4 +328,25 @@ function saveChanges() {
 	}
 }
 
-
+window.setInterval(function(){
+	var accessToken = getAccessToken();
+	var sgId = parseInt($('#sgId').val());
+	$.ajax({
+        type: "POST",
+        url: "./check_editing_queue",
+        data: JSON.stringify({accessToken : accessToken, type : 'SG', mappingId : sgId}),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data){
+			if (data['error'] == "" ) {
+				if (data['conflict']) {
+					$('#editWarningDiv').fadeIn();
+				} else {
+					$('#editWarningDiv').fadeOut();
+				}
+			}
+        },
+        failure: function(errMsg) {
+        }
+    });
+}, 15000);

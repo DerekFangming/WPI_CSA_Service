@@ -74,7 +74,20 @@
 					</header>
 				</c:when>
 				<c:otherwise>
-					<div class = row>
+					
+						<div id="editWarningDiv" class = "row" <c:out default="None" escapeXml="true" value="${confUser != null ? '' : 'style=display:none;'}" />>
+							<div class="col">
+								<div class="alert alert-warning mt-3 mb-0" role="alert">
+									<h4 class="alert-heading">Warning</h4>
+									<p>It seems like ${confUser.name} is editing this article at the same time. Your content will be overwritten if ${confUser.name} save changes after you.
+										You can contact him & her through <a href="mailto:${confUser.username}" target="_top">this email link</a>.
+									</p>
+									<p>This message will automatically disappear when the other user saved or canceled editing.</p>
+								</div>
+							</div>
+						</div>
+					
+					<div class = "row">
 						<div class="col-lg-6 col-sm-12">
 							<div class="card mt-3">
 								<div class="card-header">

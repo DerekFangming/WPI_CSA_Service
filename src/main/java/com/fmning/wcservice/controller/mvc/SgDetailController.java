@@ -1,6 +1,8 @@
 package com.fmning.wcservice.controller.mvc;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +21,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fmning.service.domain.SurvivalGuide;
 import com.fmning.service.domain.User;
+import com.fmning.service.domain.EditingQueue;
 import com.fmning.service.exceptions.NotFoundException;
+import com.fmning.service.manager.EditingQueueManager;
 import com.fmning.service.manager.ErrorManager;
 import com.fmning.service.manager.SGManager;
 import com.fmning.service.manager.UserManager;
+import com.fmning.util.EditingQueueType;
 import com.fmning.util.ErrorMessage;
 import com.fmning.util.Util;
 import com.fmning.wcservice.utils.Utils;
@@ -32,6 +37,7 @@ public class SgDetailController {
 	
 	@Autowired private UserManager userManager;
 	@Autowired private SGManager sgManager;
+	@Autowired private EditingQueueManager eqManager;
 	@Autowired private ErrorManager errorManager;
 	
 	private String generatedMenu;
@@ -188,8 +194,9 @@ public class SgDetailController {
 	@RequestMapping(value = "/edit_sg", method = RequestMethod.GET)
     public String editFeedController(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 		Cookie cookie = null;
+		User user;
 		try {
-			User user = userManager.validateAccessToken(request);
+			user = userManager.validateAccessToken(request);
 			if (!user.getUsername().endsWith("@wpi.edu")) {
 				model.addAttribute("errorMessage", ErrorMessage.SG_INVALID_EMAIL.getMsg());
 				return "errorview/403";
@@ -236,6 +243,16 @@ public class SgDetailController {
 			model.addAttribute("menuList", generatedMenu);
 		} else {
 			model.addAttribute("menuList", generatedMenu);
+		}
+		
+		EditingQueue eq = eqManager.updateQueue(EditingQueueType.SG, Integer.parseInt(sgId), user.getId());
+		if (eq != null && eq.getOwnerId() != user.getId()) {
+			Instant now = Instant.now();
+			if (eq.getCreatedAt().isAfter(now.minus(Duration.ofMinutes(1)))) {
+				User confUser = userManager.getUserById(eq.getOwnerId());
+				confUser.setName(userManager.getUserDisplayedName(eq.getOwnerId()));
+				model.addAttribute("confUser", confUser);
+			}
 		}
 		model.addAttribute("editMode", true);
 		return "sgEditor";
