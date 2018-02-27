@@ -166,10 +166,6 @@ create table error_logs (
 	created_at timestamp without time zone not null
 );
 
---deployment check list
---1. use raw git for editor
---2. remove html option for editor
-
 create table editing_queues (
 	id serial primary key,
 	type varchar(10),
@@ -177,3 +173,8 @@ create table editing_queues (
 	owner_id integer not null,
 	created_at timestamp without time zone not null
 );
+
+--deployment check list
+--1. use raw git for editor
+--2. remove html option for editor
+

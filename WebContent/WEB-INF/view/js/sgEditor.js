@@ -340,6 +340,9 @@ window.setInterval(function(){
         success: function(data){
 			if (data['error'] == "" ) {
 				if (data['conflict']) {
+					$('#editingWarningMsg').html='It seems like ' + data["name"] + ' is editing this article at '
+						+ 'the same time. Your content will be overwritten if ' + data["name"] + ' save changes after you.'
+						+ 'You can contact him & her through <a href="mailto:' + data["username"] + '" target="_top">this email link</a>.';
 					$('#editWarningDiv').fadeIn();
 				} else {
 					$('#editWarningDiv').fadeOut();
