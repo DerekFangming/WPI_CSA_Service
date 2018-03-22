@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -79,7 +81,7 @@ public class TempController {
 	}
 	
 	@RequestMapping(value = "/download_ppgecg", method = RequestMethod.GET)
-    public void downloadPpgEcg(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<InputStreamResource> downloadPpgEcg(HttpServletRequest request, HttpServletResponse response) {
 		try{
 			int id = Integer.parseInt(request.getParameter("id"));
 			
@@ -134,15 +136,17 @@ public class TempController {
             workbook.close();
 			
 			File file = new File(filename);
-			InputStream is = new FileInputStream(file);
-	        org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-	        response.setContentType("application/octet-stream");
-	        response.setHeader("Content-Disposition",
-	                "attachment;filename=report");
-	        response.flushBuffer();
+	        
+	        HttpHeaders respHeaders = new HttpHeaders();
+			respHeaders.add("Content-Type", "application/vnd.ms-excel");
+			respHeaders.setContentDispositionFormData("attachment", "data.xls");
+			
+			InputStreamResource isr = new InputStreamResource(new FileInputStream(file));
+			return new ResponseEntity<InputStreamResource>(isr, respHeaders, HttpStatus.OK);
 			
 		}catch(Exception e){
 			e.printStackTrace();
+			return null;
 		}
 	}
 	

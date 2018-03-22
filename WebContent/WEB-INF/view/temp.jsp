@@ -15,7 +15,7 @@
 			<div class="container">
 				<a class="navbar-brand" href="./mqp">Doctor's panel</a>
 				
-				<div class="float-right">
+				<div id="buttonBar" class="float-right" style="display:none;">
 					<button id="downloadBtn" class="btn btn-outline-success float-right ml-4">Download</button>
 					<button id="refreshBtn" class="btn btn-outline-success float-right">Refresh</button>
 				</div>
@@ -28,7 +28,7 @@
 			<div class="row my-4" style="height:30px"></div>
 			
 			<!-- Fake login div -->
-			<div id="loginDiv" class="row" style="max-width:350px;margin:0 auto;display:none;">
+			<div id="loginDiv" class="row" style="max-width:350px;margin:0 auto;">
 				<div class="input-group" style="margin-top:120px;">
 					<div class="input-group-prepend">
 						<span class="input-group-text" id="basic-addon1">Username</span>
@@ -45,7 +45,7 @@
 			</div>
 			
 			<!-- Data div -->
-			<div id="dataDiv" class="row" >
+			<div id="dataDiv" class="row" style="display:none;">
 				
 				<div class="col-5">
 					<table class="table table-striped">
@@ -94,6 +94,7 @@
 				setTimeout(function() {
 					$('#loginDiv').fadeOut('slow', function() {
 						$('#dataDiv').fadeIn();
+						$('#buttonBar').fadeIn();
 					});
 				}, 500);
 			});
