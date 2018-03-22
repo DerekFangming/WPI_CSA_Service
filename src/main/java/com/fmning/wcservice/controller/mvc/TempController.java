@@ -1,17 +1,24 @@
 package com.fmning.wcservice.controller.mvc;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fmning.service.dao.impl.QueryTerm;
 import com.fmning.service.temp.Cmain;
 import com.fmning.service.temp.CmainDao;
 import com.fmning.service.temp.Ecg;
@@ -25,6 +32,44 @@ public class TempController {
 	@Autowired private CmainDao mainDao;
 	@Autowired private PpgDao ppgDao;
 	@Autowired private EcgDao ecgDao;
+	
+	@RequestMapping(value = "/mqp", method = RequestMethod.GET)
+    public String map(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+		
+		model.addAttribute("list", getAllList());
+		
+		return "temp";
+	}
+	
+	@RequestMapping(value = "/get_all_ppgecg", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Object>> getAllPpgEcg(HttpServletRequest request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		List<Cmain> origList = getAllList();
+		List<Map<String, Object>> theList = new ArrayList<Map<String, Object>>();
+		
+		for (Cmain c : origList) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", c.getId());
+			map.put("ehr", c.getEhr());
+			map.put("phr", c.getPhr());
+			map.put("temp", c.getTemp());
+			map.put("spo2", c.getSpo2());
+			map.put("createdAt", c.getCreatedAt().toString());
+			theList.add(map);
+		}
+		
+		respond.put("list", theList);
+		respond.put("error", "");
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	private List<Cmain> getAllList() {
+		try {
+			return mainDao.findAllObjects();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/save_ppgecg")
@@ -78,6 +123,43 @@ public class TempController {
 			}
 			
 			respond.put("error", "");
+		}catch(Exception e){
+			e.printStackTrace();
+			respond = new HashMap<String, Object>();
+			respond.put("error", e.getLocalizedMessage());
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/get_graph_data", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Object>> getGraphData(HttpServletRequest request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			int id = Integer.parseInt(request.getParameter("id"));
+			List<QueryTerm> values = new ArrayList<QueryTerm>();
+			values.add(PpgDao.Field.MID.getQueryTerm(id));
+			
+			List<Ppg> ppgList = ppgDao.findAllObjects(values);
+			List<Integer> irdList = new ArrayList<>();
+			List<Integer> rdList = new ArrayList<>();
+			for (Ppg p : ppgList) {
+				irdList.add(p.getIrd());
+				rdList.add(p.getRd());
+			}
+			respond.put("irdList", irdList);
+			respond.put("rdList", rdList);
+			
+			values = new ArrayList<QueryTerm>();
+			values.add(EcgDao.Field.MID.getQueryTerm(id));
+			
+			List<Ecg> ecgList = ecgDao.findAllObjects(values);
+			List<Integer> edList = new ArrayList<>();
+			for (Ecg e : ecgList) {
+				edList.add(e.getEd());
+			}
+			respond.put("edList", edList);
+			respond.put("error", "");
+			
 		}catch(Exception e){
 			e.printStackTrace();
 			respond = new HashMap<String, Object>();
