@@ -73,6 +73,7 @@
 							
 						</tbody>
 					</table>
+					<input type="hidden" id="currentId" value="${last}">
 				</div>
 				<div class="col-7">
 					<div class="row ml-2">
@@ -98,7 +99,7 @@
 			});
 			
 			$(document).ready(function() {
-				loadGraph(3);
+				loadGraph($('#currentId').val());
 			});
 			
 			$('#refreshBtn').click(function(){
@@ -107,110 +108,115 @@
 		    		url: "./get_all_ppgecg",
 		            contentType: "application/json",
 		            dataType: "json",
-		    		success: function (data) {
-		    			if (data['error'] != '') {
-		    				alert(data['error']);
-		    			} else {
-		    				var arr = data['list'];
-		    				var body = '';
-		    				for(var i = 0; i < arr.length; i++) {
-		    					var obj = arr[i];
-		    					body += '<tr><td><button type="button" class="btn btn-primary" onclick="loadGraph(' + obj.id;
-		    					body += ');"><i class="fa fa-sign-in"></i></button></td>';
-		    					body += '<td>' + parseDateStr(obj.createdAt) + '</td>';
-		    					body += '<td>' + obj.ehr + '</td>';
-		    					body += '<td>' + obj.phr + '</td>';
-		    					body += '<td>' + obj.temp + '</td>';
-		    					body += '<td>' + obj.spo2 + '</td></tr>';
-		    				}
-		    				
-		    				$('#mainList').html(body);
-		    			}
-		    		},
-		    		error: function (jqXHR, textStatus, errorThrown) {
-		    			alert('Unknown error occured.');
-		    		}
-		    	});
+			    		success: function (data) {
+			    			if (data['error'] != '') {
+			    				alert(data['error']);
+			    			} else {
+			    				var arr = data['list'];
+			    				var body = '';
+			    				for(var i = 0; i < arr.length; i++) {
+			    					var obj = arr[i];
+			    					body += '<tr><td><button type="button" class="btn btn-primary" onclick="loadGraph(' + obj.id;
+			    					body += ');"><i class="fa fa-sign-in"></i></button></td>';
+			    					body += '<td>' + parseDateStr(obj.createdAt) + '</td>';
+			    					body += '<td>' + obj.ehr + '</td>';
+			    					body += '<td>' + obj.phr + '</td>';
+			    					body += '<td>' + obj.temp + '</td>';
+			    					body += '<td>' + obj.spo2 + '</td></tr>';
+			    				}
+			    				
+			    				$('#mainList').html(body);
+			    			}
+			    		},
+			    		error: function (jqXHR, textStatus, errorThrown) {
+			    			alert('Unknown error occured.');
+			    		}
+			    	});
+			});
+			
+			$('#downloadBtn').click(function(){
+				window.location="./download_ppgecg?id=" + $('#currentId').val();
 			});
 			
 			function loadGraph(id) {
+				$('#currentId').val(id);
 				$.ajax({
-		    		type: "GET",
-		    		url: "./get_graph_data",
-		    		data: {"id": id},
+			    		type: "GET",
+			    		url: "./get_graph_data",
+			    		data: {"id": id},
 		            contentType: "application/json",
 		            dataType: "json",
-		    		success: function (data) {
-		    			if (data['error'] != '') {
-		    				alert(data['error']);
-		    			} else {
-		    				var ecgXAxis = createXAxis(data['edList']);
-		    				var ecgChartCan = document.getElementById('ecgChart').getContext('2d');
-		    				var ecgChart = new Chart(ecgChartCan, {
-		    					// The type of chart we want to create
-		    					type: 'line',
-		    				
-		    					// The data for our dataset
-		    					data: {
-		    						labels: ecgXAxis,
-		    						datasets: [{
-		    							label: "ECG",
-		    							//backgroundColor: 'rgb(255, 99, 132)',
-		    							borderColor: 'rgb(255, 99, 132)',
-		    							data: data['edList'],
-		    						}]
-		    					},
-		    				
-		    					// Configuration options go here
-		    					options: {scales:{xAxes: [{display: false}]}}
-		    				});
-		    				
-		    				var ppgXAxis = createXAxis(data['rdList']);
-		    				var rdChartCan = document.getElementById('rdChart').getContext('2d');
-		    				var rdChart = new Chart(rdChartCan, {
-		    					// The type of chart we want to create
-		    					type: 'line',
-		    				
-		    					// The data for our dataset
-		    					data: {
-		    						labels: ppgXAxis,
-		    						datasets: [{
-		    							label: "ECG",
-		    							//backgroundColor: 'rgb(255, 99, 132)',
-		    							borderColor: 'rgb(255, 99, 132)',
-		    							data: data['rdList'],
-		    						}]
-		    					},
-		    				
-		    					// Configuration options go here
-		    					options: {scales:{xAxes: [{display: false}]}}
-		    				});
-		    				
-		    				var irdChartCan = document.getElementById('irdChart').getContext('2d');
-		    				var irdChart = new Chart(irdChartCan, {
-		    					// The type of chart we want to create
-		    					type: 'line',
-		    				
-		    					// The data for our dataset
-		    					data: {
-		    						labels: ppgXAxis,
-		    						datasets: [{
-		    							label: "ECG",
-		    							//backgroundColor: 'rgb(255, 99, 132)',
-		    							borderColor: 'rgb(255, 99, 132)',
-		    							data: data['irdList'],
-		    						}]
-		    					},
-		    				
-		    					// Configuration options go here
-		    					options: {scales:{xAxes: [{display: false}]}}
-		    				});
-		    			}
-		    		},
-		    		error: function (jqXHR, textStatus, errorThrown) {
-		    			alert('Unknown error occured.');
-		    		}
-		    	});
+			    		success: function (data) {
+			    			if (data['error'] != '') {
+			    				alert(data['error']);
+			    			} else {
+			    				var ecgXAxis = createXAxis(data['edList']);
+			    				var ecgChartCan = document.getElementById('ecgChart').getContext('2d');
+			    				var ecgChart = new Chart(ecgChartCan, {
+			    					// The type of chart we want to create
+			    					type: 'line',
+			    				
+			    					// The data for our dataset
+			    					data: {
+			    						labels: ecgXAxis,
+			    						datasets: [{
+			    							label: "ECG",
+			    							//backgroundColor: 'rgb(255, 99, 132)',
+			    							borderColor: 'rgb(255, 99, 132)',
+			    							data: data['edList'],
+			    						}]
+			    					},
+			    				
+			    					// Configuration options go here
+			    					options: {scales:{xAxes: [{display: false}]}}
+			    				});
+			    				
+			    				var ppgXAxis = createXAxis(data['rdList']);
+			    				var rdChartCan = document.getElementById('rdChart').getContext('2d');
+			    				var rdChart = new Chart(rdChartCan, {
+			    					// The type of chart we want to create
+			    					type: 'line',
+			    				
+			    					// The data for our dataset
+			    					data: {
+			    						labels: ppgXAxis,
+			    						datasets: [{
+			    							label: "RD",
+			    							//backgroundColor: 'rgb(255, 99, 132)',
+			    							borderColor: 'rgb(255, 99, 132)',
+			    							data: data['rdList'],
+			    						}]
+			    					},
+			    				
+			    					// Configuration options go here
+			    					options: {scales:{xAxes: [{display: false}]}}
+			    				});
+			    				
+			    				var irdChartCan = document.getElementById('irdChart').getContext('2d');
+			    				var irdChart = new Chart(irdChartCan, {
+			    					// The type of chart we want to create
+			    					type: 'line',
+			    				
+			    					// The data for our dataset
+			    					data: {
+			    						labels: ppgXAxis,
+			    						datasets: [{
+			    							label: "IRD",
+			    							//backgroundColor: 'rgb(255, 99, 132)',
+			    							borderColor: 'rgb(255, 99, 132)',
+			    							data: data['irdList'],
+			    						}]
+			    					},
+			    				
+			    					// Configuration options go here
+			    					options: {scales:{xAxes: [{display: false}]}}
+			    				});
+			    			}
+			    		},
+			    		error: function (jqXHR, textStatus, errorThrown) {
+			    			alert('Unknown error occured.');
+			    		}
+			    	});
 			};
 			
 			function createXAxis(array) {

@@ -26,6 +26,11 @@ import com.fmning.service.temp.EcgDao;
 import com.fmning.service.temp.Ppg;
 import com.fmning.service.temp.PpgDao;
 
+import  java.io.*;
+import  org.apache.poi.hssf.usermodel.HSSFSheet;
+import  org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import  org.apache.poi.hssf.usermodel.HSSFRow;
+
 @Controller
 public class TempController {
 	
@@ -36,7 +41,9 @@ public class TempController {
 	@RequestMapping(value = "/mqp", method = RequestMethod.GET)
     public String map(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 		
-		model.addAttribute("list", getAllList());
+		List<Cmain> list = getAllList();
+		model.addAttribute("list", list);
+		model.addAttribute("last", list.get(list.size() - 1).getId());
 		
 		return "temp";
 	}
@@ -68,6 +75,74 @@ public class TempController {
 			return mainDao.findAllObjects();
 		} catch (Exception e) {
 			return new ArrayList<>();
+		}
+	}
+	
+	@RequestMapping(value = "/download_ppgecg", method = RequestMethod.GET)
+    public void downloadPpgEcg(HttpServletRequest request, HttpServletResponse response) {
+		try{
+			int id = Integer.parseInt(request.getParameter("id"));
+			
+			Cmain main = mainDao.findById(id);
+			
+			List<QueryTerm> values = new ArrayList<QueryTerm>();
+			values.add(PpgDao.Field.MID.getQueryTerm(id));
+			
+			List<Ppg> ppgList = ppgDao.findAllObjects(values);
+			
+			values = new ArrayList<QueryTerm>();
+			values.add(EcgDao.Field.MID.getQueryTerm(id));
+			
+			List<Ecg> ecgList = ecgDao.findAllObjects(values);
+			
+			String filename = "/Volumes/Data/excel/report.xls";
+			HSSFWorkbook workbook = new HSSFWorkbook();
+			
+            HSSFSheet mainSheet = workbook.createSheet("Main");
+            HSSFRow mainRowhead = mainSheet.createRow((short)0);
+            mainRowhead.createCell(0).setCellValue("ECG");
+            mainRowhead.createCell(1).setCellValue("PPG");
+            mainRowhead.createCell(2).setCellValue("Temp");
+            mainRowhead.createCell(3).setCellValue("SPO2");
+            HSSFRow mainRow = mainSheet.createRow((short)1);
+            mainRow.createCell(0).setCellValue(main.getEhr());
+            mainRow.createCell(1).setCellValue(main.getPhr());
+            mainRow.createCell(2).setCellValue(main.getTemp());
+            mainRow.createCell(3).setCellValue(main.getSpo2());
+            
+            HSSFSheet ppgSheet = workbook.createSheet("PPG");
+            HSSFRow ppgRowHead = ppgSheet.createRow((short)0);
+            ppgRowHead.createCell(0).setCellValue("ird");
+            ppgRowHead.createCell(1).setCellValue("rd");
+            for (int i = 0; i < ppgList.size(); i++) {
+				HSSFRow ppgRow = ppgSheet.createRow((short) i + 1);
+				ppgRow.createCell(0).setCellValue(ppgList.get(i).getIrd());
+				ppgRow.createCell(1).setCellValue(ppgList.get(i).getRd());
+			}
+            
+            HSSFSheet ecgSheet = workbook.createSheet("ECG");
+            HSSFRow ecgRowHead = ecgSheet.createRow((short)0);
+            ecgRowHead.createCell(0).setCellValue("ed");
+            for (int i = 0; i < ecgList.size(); i++) {
+				HSSFRow ecgRow = ecgSheet.createRow((short) i + 1);
+				ecgRow.createCell(0).setCellValue(ecgList.get(i).getEd());
+			}
+			
+            FileOutputStream fileOut = new FileOutputStream(filename);
+            workbook.write(fileOut);
+            fileOut.close();
+            workbook.close();
+			
+			File file = new File(filename);
+			InputStream is = new FileInputStream(file);
+	        org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+	        response.setContentType("application/octet-stream");
+	        response.setHeader("Content-Disposition",
+	                "attachment;filename=report");
+	        response.flushBuffer();
+			
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 	
