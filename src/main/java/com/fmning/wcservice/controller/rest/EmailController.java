@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,6 +34,36 @@ public class EmailController {
 	@Autowired private HelperManager helperManager;
 	@Autowired private UserManager userManager;
 	@Autowired private ErrorManager errorManager;
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping("/send_email")
+    public ResponseEntity<Map<String, Object>> sendEmail(@RequestBody Map<String, Object> request) {
+		Map<String, Object> respond = new HashMap<String, Object>();
+		try{
+			String title = (String)request.get("title");
+			String content = (String)request.get("content");
+			String recipient = (String)request.get("recipient");
+			
+			if (title == null && content == null && recipient == null) 
+				throw new IllegalStateException("Nothing to send");
+			
+			if (recipient == null)
+				recipient = "fning@wpi.edu";
+			if (title == null)
+				title = "New message from fmning.com";
+			
+			if (Utils.prodMode) {
+				helperManager.sendEmail("no-reply@fmning.com", recipient, title, content);
+			} else {
+				System.out.println(recipient + "\n\n" + title + "\n\n" + content);
+			}
+			
+			respond.put("error", "");
+		}catch(Exception e){
+			respond = errorManager.createErrorRespondFromException(e, Utils.rootDir + "/send_email", request);
+		}
+		return new ResponseEntity<Map<String, Object>>(respond, HttpStatus.OK);
+	}
 	
 	@RequestMapping("/send_verification_email")
     public ResponseEntity<Map<String, Object>> sendEmailConfirmation(@RequestBody Map<String, Object> request) {
