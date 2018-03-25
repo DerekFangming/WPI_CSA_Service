@@ -35,8 +35,8 @@ public class EmailController {
 	@Autowired private UserManager userManager;
 	@Autowired private ErrorManager errorManager;
 	
-	@CrossOrigin(origins = "*")
-	@RequestMapping("/send_email")
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/send_email", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> sendEmail(@RequestBody Map<String, Object> request) {
 		Map<String, Object> respond = new HashMap<String, Object>();
 		try{
