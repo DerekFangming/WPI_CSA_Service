@@ -139,6 +139,10 @@
 				window.location="./download_ppgecg?id=" + $('#currentId').val();
 			});
 			
+			var ecgChart;
+			var rdChart;
+			var irdChart;
+			
 			function loadGraph(id) {
 				$('#currentId').val(id);
 				$.ajax({
@@ -151,9 +155,16 @@
 			    			if (data['error'] != '') {
 			    				alert(data['error']);
 			    			} else {
+			    				
+			    				if (typeof ecgChart != 'undefined') {
+			    					ecgChart.destroy();
+			    					rdChart.destroy();
+			    					irdChart.destroy();
+			    				}
+			    				
 			    				var ecgXAxis = createXAxis(data['edList']);
 			    				var ecgChartCan = document.getElementById('ecgChart').getContext('2d');
-			    				var ecgChart = new Chart(ecgChartCan, {
+			    				ecgChart = new Chart(ecgChartCan, {
 			    					// The type of chart we want to create
 			    					type: 'line',
 			    				
@@ -174,7 +185,7 @@
 			    				
 			    				var ppgXAxis = createXAxis(data['rdList']);
 			    				var rdChartCan = document.getElementById('rdChart').getContext('2d');
-			    				var rdChart = new Chart(rdChartCan, {
+			    				rdChart = new Chart(rdChartCan, {
 			    					// The type of chart we want to create
 			    					type: 'line',
 			    				
@@ -194,7 +205,7 @@
 			    				});
 			    				
 			    				var irdChartCan = document.getElementById('irdChart').getContext('2d');
-			    				var irdChart = new Chart(irdChartCan, {
+			    				irdChart = new Chart(irdChartCan, {
 			    					// The type of chart we want to create
 			    					type: 'line',
 			    				

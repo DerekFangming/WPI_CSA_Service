@@ -177,7 +177,7 @@ public class TempController {
 			Cmain c = new Cmain();
 			c.setEhr((int)request.get("ehr"));
 			c.setPhr((int)request.get("phr"));
-			c.setTemp((double)request.get("temp"));
+			c.setTemp((Double)request.get("temp"));
 			c.setSpo2((int)request.get("spo2"));
 			c.setCreatedAt(Instant.now());
 			int mainId = mainDao.persist(c);
