@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.fmning</groupId>
             <artifactId>CoreSDK</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
       		<groupId>junit</groupId>
@@ -109,7 +109,7 @@
 		<dependency>
     		<groupId>de.brendamour</groupId>
     		<artifactId>jpasskit</artifactId>
-    		<version>0.0.9</version>
+    		<version>0.1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>jstl</groupId>
@@ -125,6 +125,11 @@
 		    <groupId>org.apache.poi</groupId>
 		    <artifactId>poi</artifactId>
 		    <version>3.17</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.bouncycastle</groupId>
+		    <artifactId>bcprov-jdk15on</artifactId>
+		    <version>1.60</version>
 		</dependency>
     </dependencies>
 </project>
